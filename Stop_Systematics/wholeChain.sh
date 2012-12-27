@@ -216,6 +216,11 @@ cat ../TotalEstimatedNumbers_Errors_new.C \
     > tmp.txt ;
 mv tmp.txt TotalEstimatedNumbers_Errors_new.C
 
+cat ../ControlRegions.C \
+| sed -e "s#\(^[ ]*std::string path = \"\)\(.*\)\(\"[ ]*;\)#\1${nomDir}\3#" \
+> tmp.txt
+mv tmp.txt ControlRegions.C ;
+
 
 for channel in 1 2 3 ; do
 #    cp TotalEstimatedNumbers_Errors_new.C TotalEstimatedNumbers_Errors_new_${channel}.C ;
@@ -241,6 +246,12 @@ for channel in 1 2 3 ; do
 #cat test.txt
 	    echo -e -n "err=$err\n"
 #systUncert : eXbq sur VJets method ????
+cat ControlRegions.C \
+| sed -e "s/^  nbOfEvents\[[ ]*${idx}[ ]*\] =[ ]*\([0-9\.]*\);/  nbOfEvents[${idx}] = ${estimation} ; \/\/ ${varName} \/\/ /" \
+| sed -e "s/^  statUncert\[[ ]*${idx}[ ]*\] =[ ]*\([0-9\.]*\);/  statUncert[${idx}] = ${err} ; \/\/ ${varName} \/\/ /" \
+> tmp.txt
+mv tmp.txt ControlRegions_${channel}.C
+
 	    if [ "${channel}" = "3" ]; then 
 		cat TotalEstimatedNumbers_Errors_new.C \
 		    | sed -e "s/^  nbOfEvents\[[ ]*${idx}[ ]*\] =[ ]*\([0-9]*\);/  nbOfEvents[${idx}] = ${estimation} ; \/\/ ${varName} \/\/ /" \
@@ -279,6 +290,15 @@ echo -e "\n --> Computing the total numbers ....\n" ;
 
 for useCase in 0 1 2 3 ; do
     for channel in 1 2 3 ; do
+        cat <<EOD | root -l -b > ControlRegions_channel_${channel}_${useCase}_${useCase}.txt 2>&1
+.L ControlRegions_${channel}.C++
+Int_t bin = (${useCase}==0?18:19)*0
+bin
+Bool_t UseWNJets = kFALSE
+UseWNJets
+ControlRegions("corrMatr_${channel}.txt", ${useCase}, bin, UseWNJets, ${channel})
+.q
+EOD
 	if [ "${channel}" == "3" ] ; then
 	    cat <<EOD | root -l -b > TotNumbers_channel_${channel}_${useCase}.txt 2>&1
 .L TotalEstimatedNumbers_Errors_new.C++
