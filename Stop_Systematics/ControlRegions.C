@@ -7,7 +7,7 @@
 
 #include "VJetEstimation.h"
 
-void ControlRegions(string filename, int UseCase, int bin, bool UseWNJets, int channelConf){
+void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, int channelConf){
     
     std::ifstream file;
     
@@ -31,7 +31,7 @@ void ControlRegions(string filename, int UseCase, int bin, bool UseWNJets, int c
             corrMatrix[i][j] = 0;
     }
     
-    string names[15] = {"$N_{st+jets}^{4jets}$","$N_{st+jets}^{5jets}$","$N_{st+jets}^{6jets}$","$\\Nttlike^{4jets}$","$\\Nttlike^{5jets}$","$\\Nttlike^{6jets}$","$\\Nvlike^{4jets}$","$\\Nvlike^{5jets}$","$\\Nvlike^{6jets}$","$N_{Vbb}^{4jets}$","$N_{Vbb}^{5jets}$","$N_{Vbb}^{6jets}$","$N_{VV}^{4jets}$","$N_{VV}^{5jets}$","$N_{VV}^{6jets}$"};
+    std::string names[15] = {"$N_{st+jets}^{4jets}$","$N_{st+jets}^{5jets}$","$N_{st+jets}^{6jets}$","$\\Nttlike^{4jets}$","$\\Nttlike^{5jets}$","$\\Nttlike^{6jets}$","$\\Nvlike^{4jets}$","$\\Nvlike^{5jets}$","$\\Nvlike^{6jets}$","$N_{Vbb}^{4jets}$","$N_{Vbb}^{5jets}$","$N_{Vbb}^{6jets}$","$N_{VV}^{4jets}$","$N_{VV}^{5jets}$","$N_{VV}^{6jets}$"};
     
     {
         UInt_t i=0;
@@ -157,8 +157,8 @@ void ControlRegions(string filename, int UseCase, int bin, bool UseWNJets, int c
     
     
     const int NbOfFiles = 15;
-    string BckgdNames[NbOfFiles];
-    string CChannel[2] = {"_mu","_el"};
+    std::string BckgdNames[NbOfFiles];
+    std::string CChannel[2] = {"_mu","_el"};
     
     printf("UseWnJets : %d\n", UseWNJets);
     printf("NN UseCase : %d (%s)\n", UseCase, MVA[UseCase].c_str());

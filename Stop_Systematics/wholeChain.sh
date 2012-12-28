@@ -15,6 +15,9 @@ cd ${timestamp}_workingDir ;
 echo "cd ${timestamp}_workingDir"
 echo -e "\n --> Extracting content from the V+jets estimation ....\n"
 
+cp ../VJetEstimation.h ./VJetEstimation.h
+cp ../VJetEstimation.cc ./VJetEstimation.cc
+
 # 1 : muon
 # 2 : electron
 # 3 : both
