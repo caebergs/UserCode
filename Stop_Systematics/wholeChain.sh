@@ -4,6 +4,7 @@ outputFromVJetsEstimation="/user/caebergs/VJetEstimation/nominal_STbar017/stdout
 #nomDir="/user/caebergs/Leg3_WnJets_DataMC/miguelf/" ;
 nomDir="/user/caebergs/Leg3/Leg3Output_5Dreweigh/" ;
 systDir="/user/caebergs/VJetEstimation/testChain/samplesSyst/" ;
+controlRegionsDir="/user/caebergs/Leg3/Leg3NewTEff/" ;
 extrapolatedRV="false" ;
 
 nbOfUseCase=4 ;
@@ -217,7 +218,7 @@ cat ../TotalEstimatedNumbers_Errors_new.C \
 mv tmp.txt TotalEstimatedNumbers_Errors_new.C
 
 cat ../ControlRegions.C \
-| sed -e "s#\(^[ ]*std::string path = \"\)\(.*\)\(\"[ ]*;\)#\1${nomDir}\3#" \
+| sed -e "s#\(^[ ]*std::string path = \"\)\(.*\)\(\"[ ]*;\)#\1${controlRegionsDir}\3#" \
 > tmp.txt
 mv tmp.txt ControlRegions.C ;
 
