@@ -295,12 +295,13 @@ echo -e "\n --> Computing the total numbers ....\n" ;
 for useCase in 0 1 2 3 ; do
     for channel in 1 2 3 ; do
         cat <<EOD | root -l -b > ControlRegions_channel_${channel}_${useCase}_${useCase}.txt 2>&1
+.L VJetEstimation.cc++
 .L ControlRegions_${channel}.C++
 Int_t bin = (${useCase}==0?18:19)*0
 bin
 Bool_t UseWNJets = kFALSE
 UseWNJets
-ControlRegions("corrMatr_${channel}.txt", ${useCase}, bin, UseWNJets, ${channel})
+ControlRegions("corrMatr_${channel}.txt", ${useCase}, bin, UseWNJets, ${channel}-1)
 .q
 EOD
 	if [ "${channel}" == "3" ] ; then
