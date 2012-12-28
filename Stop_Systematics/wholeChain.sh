@@ -227,6 +227,7 @@ mv tmp.txt ControlRegions.C ;
 
 
 for channel in 1 2 3 ; do
+    cp ControlRegions.C ControlRegions_${channel}.C ;
 #    cp TotalEstimatedNumbers_Errors_new.C TotalEstimatedNumbers_Errors_new_${channel}.C ;
     declare -i idx=0 ;
     idx=0;
@@ -250,7 +251,7 @@ for channel in 1 2 3 ; do
 #cat test.txt
 	    echo -e -n "err=$err\n"
 #systUncert : eXbq sur VJets method ????
-cat ControlRegions.C \
+cat ControlRegions_${channel}.C \
 | sed -e "s/^[ ]*nbOfEvents\[[ ]*${idx}[ ]*\] =[ ]*\([0-9\.]*\);/  nbOfEvents[${idx}] = ${estimation} ; \/\/ ${varName} \/\/ /" \
 | sed -e "s/^[ ]*statUncert\[[ ]*${idx}[ ]*\] =[ ]*\([0-9\.]*\);/  statUncert[${idx}] = ${err} ; \/\/ ${varName} \/\/ /" \
 > tmp.txt

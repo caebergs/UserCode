@@ -151,7 +151,7 @@ const UInt_t NbOfMVARegions = 2;
     
     std::string MVA[NbOfUseCase] = { "LowDM" , "IntDM1", "IntDM2" , "HighDM" };
     std::string controlRegions[NbOfControlRegions] = { "4jExc_0b", "4jExc_2b" } ;
-    std::string MVAcut[NbOfMVARegions] = { "_00MVA05" , "_05MVA08" } ;
+    std::string MVAcut[NbOfMVARegions] = { "_02MVA05" , "_05MVA08" } ;
     
     
     
