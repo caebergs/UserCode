@@ -14,7 +14,8 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
     const UInt_t nrpoints = 15;
     const UInt_t nreffs = 3;
     const UInt_t NbOfUseCase = 4;
-    
+   const UInt_t NbOfControlRegions = 2;
+const UInt_t NbOfMVARegions = 2; 
     Double_t ilel = 5050.821;
     Double_t ilmu = 5049.92;
     Double_t Wn_SF = 1.34;
@@ -149,8 +150,8 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
      */
     
     std::string MVA[NbOfUseCase] = { "LowDM" , "IntDM1", "IntDM2" , "HighDM" };
-    std::string controlRegions[2] = { "4jExc_0b", "4jExc_2b" } ;
-    std::string MVAcut[3] = { "",  "_02MVA05" , "_05MVA08" } ;
+    std::string controlRegions[NbOfControlRegions] = { "4jExc_0b", "4jExc_2b" } ;
+    std::string MVAcut[NbOfMVARegions] = { "_00MVA05" , "_05MVA08" } ;
     
     
     
@@ -349,8 +350,8 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
     }
     
 //    for (UInt_t l=0; l<NbOfUseCase; l++) {
-        for (UInt_t j=0; j<2; j++) {
-            for (UInt_t k=0; k<3; k++) {
+        for (UInt_t j=0; j<NbOfControlRegions; j++) {
+            for (UInt_t k=0; k<NbOfMVARegions; k++) {
                 std::string teffname = "Eff_" + MVA[UseCase] + "_" + controlRegions[j] + MVAcut[k] ;
                 printf("\n\n\nInvestigated TEfficiency name : %s     ... gives your info on the Control Region ...\n", teffname.c_str());
                 /**

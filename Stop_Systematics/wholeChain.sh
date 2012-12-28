@@ -251,8 +251,8 @@ for channel in 1 2 3 ; do
 	    echo -e -n "err=$err\n"
 #systUncert : eXbq sur VJets method ????
 cat ControlRegions.C \
-| sed -e "s/^  nbOfEvents\[[ ]*${idx}[ ]*\] =[ ]*\([0-9\.]*\);/  nbOfEvents[${idx}] = ${estimation} ; \/\/ ${varName} \/\/ /" \
-| sed -e "s/^  statUncert\[[ ]*${idx}[ ]*\] =[ ]*\([0-9\.]*\);/  statUncert[${idx}] = ${err} ; \/\/ ${varName} \/\/ /" \
+| sed -e "s/^[ ]*nbOfEvents\[[ ]*${idx}[ ]*\] =[ ]*\([0-9\.]*\);/  nbOfEvents[${idx}] = ${estimation} ; \/\/ ${varName} \/\/ /" \
+| sed -e "s/^[ ]*statUncert\[[ ]*${idx}[ ]*\] =[ ]*\([0-9\.]*\);/  statUncert[${idx}] = ${err} ; \/\/ ${varName} \/\/ /" \
 > tmp.txt
 mv tmp.txt ControlRegions_${channel}.C
 
