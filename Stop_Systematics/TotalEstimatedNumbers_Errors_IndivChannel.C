@@ -9,7 +9,6 @@
 #include <TGraphErrors.h>
 #include <TH1.h>
 
-#include "VJetEstimation.h"
 
 double ErrorOnRatio(double A, double sigmaA, double B, double sigmaB);
 double ErrorOnProd( double N, double sigmaN, double R, double sigmaR);
@@ -49,31 +48,7 @@ void TotalEstimatedNumbers_Errors_IndivChannel(string filename, int UseCase, int
     }
     file.close();
   }
-  VJetEstimation vj ;
 
-  if (channel==0) {
-    //SemiMuon
-    std::vector<Double_t> va, vb, vc;
-    Double_t a[7]={0,0,0,0, 0.022348, 0.016215, 0.013229 }; for (int k=0; k<7; k++) { va.push_back(a[k]); }
-    Double_t b[7]={0,0,0,0, 0.283191, 0.238223, 0.211845 }; for (int k=0; k<7; k++) { vb.push_back(b[k]); }
-    Double_t c[7]={0,0,0,0, 0.686278, 0.725439, 0.732775 }; for (int k=0; k<7; k++) { vc.push_back(c[k]); }
-    vj.SetTTEffbq(va, vb, vc);
-  } else if (channel==1) {
-    //SemiElectron
-    std::vector<Double_t> va, vb, vc;
-    Double_t a[7]={0,0,0,0, 0.023797, 0.017614, 0.013601 }; for (int k=0; k<7; k++) { va.push_back(a[k]); }
-    Double_t b[7]={0,0,0,0, 0.288904, 0.242580, 0.217566 }; for (int k=0; k<7; k++) { vb.push_back(b[k]); }
-    Double_t c[7]={0,0,0,0, 0.679199, 0.719735, 0.727453 }; for (int k=0; k<7; k++) { vc.push_back(c[k]); }
-        vj.SetTTEffbq(va, vb, vc);
-  }
-
-/*
-   //SemiMuonSemiElectron
-    std::vector<Double_t> va, vb, vc;
-    Double_t a[7]={0,0,0,0, 0.022928, 0.016823, 0.013386 }; for (int k=0; k<7; k++) { va.push_back(a[k]); }
-    Double_t a[7]={0,0,0,0, 0.284861, 0.240341, 0.214254 }; for (int k=0; k<7; k++) { vb.push_back(b[k]); }
-    Double_t a[7]={0,0,0,0, 0.684076, 0.722721, 0.730549 }; for (int k=0; k<7; k++) { vc.push_back(c[k]); }
-*/
   nbOfEvents[ 0] = (channel==0 ?   604 :   418);//  1030; // Nstjets 4 jets
   nbOfEvents[ 1] = (channel==0 ?   137 :   106);//   245; // Nstjets 5 jets
   nbOfEvents[ 2] = (channel==0 ?    31 :    27);//    60; // Nstjets 6 jets
