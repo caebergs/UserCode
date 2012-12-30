@@ -442,11 +442,11 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 sum = 0.;
                 printf("  Process %d : ", i);
                 std::vector<Double_t>::const_iterator beg = passed[i].begin();
-                for (std::vector<Double_t>::const_iterator it = beg; it<passed[i].end(); it++) {
+                for (std::vector<Double_t>::const_iterator it = beg; it!=passed[i].end(); it++) {
                     if (it==beg) {
-                        printf("%lf");
+                        printf("%lf", *it);
                     } else {
-                        printf(" + %lf");
+                        printf(" + %lf", *it);
                     }
                     sum += *it ;
                 }
@@ -457,50 +457,50 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 sum = 0.;
                 printf("  Process %d : ", i);
                 std::vector<Double_t>::const_iterator beg = weights[i].begin();
-                for (std::vector<Double_t>::const_iterator it = beg; it<weights[i].end(); it++) {
+                for (std::vector<Double_t>::const_iterator it = beg; it!=weights[i].end(); it++) {
                     if (it==beg) {
-                        printf("%lf");
+                        printf("%lf", *it);
                     } else {
-                        printf(" + %lf");
+                        printf(" + %lf", *it);
                     }
                     sum += *it ;
                 }
                 printf(" = %lf\n", sum);
             }
             sum = 0.;
-            printf(" all_passed : \n  ")
+            printf(" all_passed : \n  ");
             std::vector<Double_t>::const_iterator beg = all_passed.begin();
-            for (std::vector<Double_t>::const_iterator it = beg; it<all_passed.end(); it++) {
+            for (std::vector<Double_t>::const_iterator it = beg; it!=all_passed.end(); it++) {
                 if (it==beg) {
-                    printf("%lf");
+                    printf("%lf", *it);
                 } else {
-                    printf(" + %lf");
+                    printf(" + %lf", *it);
                 }
                 sum += *it ;
             }
             printf(" = %lf\n", sum);
             
             sum = 0.;
-            printf(" all_weights : \n  ")
+            printf(" all_weights : \n  ");
             beg = all_weights.begin();
-            for (std::vector<Double_t>::const_iterator it = beg; it<all_weights.end(); it++) {
+            for (std::vector<Double_t>::const_iterator it = beg; it!=all_weights.end(); it++) {
                 if (it==beg) {
-                    printf("%lf");
+                    printf("%lf", *it);
                 } else {
-                    printf(" + %lf");
+                    printf(" + %lf", *it);
                 }
                 sum += *it ;
             }
             printf(" = %lf\n", sum);
             
             sum = 0.;
-            printf(" all_weights_forCombineV : \n  ")
+            printf(" all_weights_forCombineV : \n  ");
             beg = all_weights_forCombineV.begin();
-            for (std::vector<Double_t>::const_iterator it = beg; it<all_weights_forCombineV.end(); it++) {
+            for (std::vector<Double_t>::const_iterator it = beg; it!=all_weights_forCombineV.end(); it++) {
                 if (it==beg) {
-                    printf("%lf");
+                    printf("%lf", *it);
                 } else {
-                    printf(" + %lf");
+                    printf(" + %lf", *it);
                 }
                 sum += *it ;
             }
