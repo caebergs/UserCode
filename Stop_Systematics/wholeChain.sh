@@ -4,7 +4,8 @@ outputFromVJetsEstimation="/user/caebergs/VJetEstimation/nominal_STbar017/stdout
 #nomDir="/user/caebergs/Leg3_WnJets_DataMC/miguelf/" ;
 nomDir="/user/caebergs/Leg3/Leg3Output_5Dreweigh/" ;
 systDir="/user/caebergs/VJetEstimation/testChain/samplesSyst/" ;
-controlRegionsDir="/user/caebergs/Leg3/Leg3NewTEff/" ;
+#controlRegionsDir="/user/caebergs/Leg3/Leg3NewTEff/" ;
+controlRegionsDir="/user/caebergs/Leg3/Leg3_newTEff/" ;
 extrapolatedRV="false" ;
 
 nbOfUseCase=4 ;
@@ -295,9 +296,9 @@ echo -e "\n --> Computing the total numbers ....\n" ;
 
 for useCase in 0 1 2 3 ; do
     for channel in 1 2 3 ; do
-        cat <<EOD | root -l -b > ControlRegions_channel_${channel}_${useCase}_${useCase}.txt 2>&1
-.L VJetEstimation.cc++
-.L ControlRegions_${channel}.C++
+        cat <<EOD | root -l -b > ControlRegions_channel_${channel}_${useCase}.txt 2>&1
+.L VJetEstimation.cc++g
+.L ControlRegions_${channel}.C++g
 Int_t bin = (${useCase}==0?18:19)*0
 bin
 Bool_t UseWNJets = kFALSE

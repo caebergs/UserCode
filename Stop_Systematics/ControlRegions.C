@@ -151,7 +151,7 @@ const UInt_t NbOfMVARegions = 2;
     
     std::string MVA[NbOfUseCase] = { "LowDM" , "IntDM1", "IntDM2" , "HighDM" };
     std::string controlRegions[NbOfControlRegions] = { "4jExc_0b", "4jExc_2b" } ;
-    std::string MVAcut[NbOfMVARegions] = { "_02MVA05" , "_05MVA08" } ;
+    std::string MVAcut[NbOfMVARegions] = { "_00MVA05" , "_05MVA08" } ;
     
     
     
@@ -164,24 +164,38 @@ const UInt_t NbOfMVARegions = 2;
     printf("UseWnJets : %d\n", UseWNJets);
     printf("NN UseCase : %d (%s)\n", UseCase, MVA[UseCase].c_str());
     cout<<"Lepton channel : "<<(channelConf==0 ? CChannel[0] : (channelConf==1?CChannel[1]:"_combined"))<<endl;
-    
+   cerr<<"aerr"<< endl;
+printf("a\n"); 
     std::string path = "$HOME/AnalysisCode/GentStopAnalysis/UGentCode/Leg3/v1/Samples_21102012/";
+   printf("b\n");
     std::vector<std::vector<TFile *> > inputfiles(5, std::vector<TFile*>(0, NULL));
+   printf("c\n");
     std::vector<std::vector<std::string> > listNames(5, std::vector<std::string>(0, ""));
+   printf("d\n");
     std::vector<std::vector<Double_t> > weight_onMC(5, std::vector<Double_t>(0, -1.));
+   printf("e\n");
     std::vector<std::vector<Double_t> > weight_VJet(5, std::vector<Double_t>(0, -1.));
+   printf("f\n");
     
     std::vector<TFile *> datafiles(0, NULL);
+   printf("g\n");
     std::vector<std::string> dataNames(0, "");
+   printf("h\n");
     std::vector<Double_t> weight_data(0, -1.);
+   printf("i\n");
     std::vector<Double_t> weight_data_est(0, -1.);
+   printf("j\n");
     
     
     for (int i=0; (1<<i)<=channelConf+1; i++) {
+cerr << "1err" <<endl; 
+  printf("1\n");
         Int_t channel=(1<<i)-1 ;
+   printf("2\n");
         if (((channel+1)&(channelConf+1))==0) {
             continue;
         }
+printf("channel : %d\n", channel) ;
         // TT+jets
         BckgdNames[1] = "TT-like";
         listNames[1].push_back("ttbar"+CChannel[channel]);
@@ -342,7 +356,7 @@ const UInt_t NbOfMVARegions = 2;
             
             //  BckgdNames[0] = "ElHad2011B";
             dataNames.push_back("ElHad2011B");
-            datafiles.push_back(TFile::Open((path+"ElHad2011B_el.root").c_str()));
+            datafiles.push_back(TFile::Open((path+"ElHad_2011B_el.root").c_str()));
             weight_data.push_back( 1 ); //ElHad2011B
             weight_data_est.push_back( 1 ); //ElHad2011B
         }
@@ -359,8 +373,8 @@ const UInt_t NbOfMVARegions = 2;
                  */
                 TGraphAsymmErrors **tg_categ = new TGraphAsymmErrors*[5];
                 TGraphAsymmErrors *tg_tot = NULL;
-                std::vector<std::vector<Double_t> > weights ;
-                std::vector<std::vector<Double_t> > passed ;
+                std::vector<std::vector<Double_t> > weights(5, std::vector<Double_t>()) ;
+                std::vector<std::vector<Double_t> > passed(5, std::vector<Double_t>()) ;
                 std::vector<Double_t> all_weights, all_weights_forCombineV ;
                 std::vector<Double_t> all_passed ;
                 std::vector<std::vector<TH1D*> > bJetMult(5, std::vector<TH1D*>() );
@@ -374,8 +388,12 @@ const UInt_t NbOfMVARegions = 2;
                     Double_t sumwMC = 0.;
                     for (UInt_t m=0; m<inputfiles[i].size(); m++) {
                         TEfficiency *teff = (TEfficiency*) inputfiles[i][m]->Get(teffname.c_str());
+//if (teff==NULL) {
+//continue ;
+//}
                         std::string fichName = inputfiles[i][m]->GetName() ;
                         std::string chan = ( fichName.find("_mu.root")==fichName.size()-8 ? "Mu" : ( fichName.find("_el.root")==fichName.size()-8 ? "El" : "" ) );
+                      printf("%s\n", (std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
                         TH1D* bJetDistr = (TH1D*) inputfiles[i][m]->Get((std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
                         bJetMult[i].push_back(bJetDistr);
                         if (bJetDistr!=NULL) {
@@ -393,9 +411,10 @@ const UInt_t NbOfMVARegions = 2;
                         sumwMC += weight_onMC[i][m];
                         weights[i].push_back(w); //Number of events (after the cut, before the TEff cut), pure MC
                         all_weights.push_back(w * weight_VJet[i][m]); //number of events after cut (before the TEff cut) from MC and VJetEstimation (both taken into account)
-                        all_weights.push_back(weight_onMC[i][m] * weight_VJet[i][m]); //weight for combination (number of events after cut) from MC and VJetEstimation (both taken into account)
+                        all_weights_forCombineV.push_back(weight_onMC[i][m] * weight_VJet[i][m]); //weight for combination (number of events after cut) from MC and VJetEstimation (both taken into account)
                         passed[i].push_back(ppp);
                         all_passed.push_back(ppp * weight_VJet[i][m]); //number of passed element
+if (teff==NULL) { printf("NULL TEfficiency\n"); }
                         tlist->Add(teff);
                         tlist_tot->Add(teff);                        
                     }
@@ -405,17 +424,25 @@ const UInt_t NbOfMVARegions = 2;
                         all_weights[kk] /= sumw;
                         all_weights_forCombineV[kk] /= sumwMC;
                     }
-                    tg_categ[i] = TEfficiency::Combine(tlist, "mode", weight_onMC[i].size(), & weight_onMC[i][0]);
+if (weight_onMC[i].size()!=0) { 
+cerr << "Category combination"<< endl;
+                   tg_categ[i] = TEfficiency::Combine(tlist, "mode", weight_onMC[i].size(), & weight_onMC[i][0]);
+}
                     tlist->Clear();
                 }
+if (all_weights_forCombineV.size()!=0) {
+cerr << "Whole combination" << endl;
                 tg_tot = TEfficiency::Combine(tlist_tot, "mode", all_weights_forCombineV.size(), & all_weights_forCombineV[0]);
-                
+                }
                 // Printing results for pure MC (non reweighted)
                 printf("\n\nPrinting results for pure MC (non reweighted) : \n");
                 for (UInt_t i=0; i<5; i++) {
                     printf("Process %d : %s : ", i, BckgdNames[i].c_str());
                     Double_t sum = 0.;
                     for (UInt_t m=0; m<inputfiles[i].size(); m++) {
+if (bJetMult[i][m] == NULL) {
+continue ;
+}
                         Double_t bBinFrac = bJetMult[i][m]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult[i][m]->Integral(0,-1);
                         if (m==0) {
                             printf(" %lf", bBinFrac * passed[i][m]);
@@ -447,6 +474,10 @@ const UInt_t NbOfMVARegions = 2;
                 for (UInt_t i=0; i<5; i++) {
                     printf("Process %d : %s : ", i, BckgdNames[i].c_str());
                     Double_t sum = 0.;
+if (bJetMult_Avg[i] == NULL) {
+printf("\n");
+continue ;
+}
                     Double_t bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
                     sum += bBinFrac * nbOfEvents[i] ;
                     printf(" %lf \\pm %lf \n", sum, bBinFrac * statUncert[i]);
@@ -495,5 +526,5 @@ const UInt_t NbOfMVARegions = 2;
     
     
     
-    
+printf(" --> End of the program.\n") ;    
 }
