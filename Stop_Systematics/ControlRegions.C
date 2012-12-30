@@ -32,7 +32,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             corrMatrix[i][j] = 0;
     }
     
-    std::string names[15] = {"$N_{st+jets}^{4jets}$","$N_{st+jets}^{5jets}$","$N_{st+jets}^{6jets}$","$\\Nttlike^{4jets}$","$\\Nttlike^{5jets}$","$\\Nttlike^{6jets}$","$\\Nvlike^{4jets}$","$\\Nvlike^{5jets}$","$\\Nvlike^{6jets}$","$N_{Vbb}^{4jets}$","$N_{Vbb}^{5jets}$","$N_{Vbb}^{6jets}$","$N_{VV}^{4jets}$","$N_{VV}^{5jets}$","$N_{VV}^{6jets}$"};
+    std::string names[nrpoints+nreffs] = {"$N_{st+jets}^{4jets}$","$N_{st+jets}^{5jets}$","$N_{st+jets}^{6jets}$","$\\Nttlike^{4jets}$","$\\Nttlike^{5jets}$","$\\Nttlike^{6jets}$","$\\Nvlike^{4jets}$","$\\Nvlike^{5jets}$","$\\Nvlike^{6jets}$","$N_{Vbb}^{4jets}$","$N_{Vbb}^{5jets}$","$N_{Vbb}^{6jets}$","$N_{VV}^{4jets}$","$N_{VV}^{5jets}$","$N_{VV}^{6jets}$"    ,"$\\epsilon_{b}$","$\\epsilon_{uds}$","$\\epsilon_{udsc}$"};
     
     {
         UInt_t i=0;
