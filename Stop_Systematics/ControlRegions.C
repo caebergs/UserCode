@@ -399,9 +399,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                     if (bJetDistr!=NULL) {
                         if (bJetMult_Avg[i]==NULL) {
                             bJetMult_Avg[i] = (TH1D*) bJetDistr->Clone();
-                            bJetMult_Avg[i]->Scale( 1./((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2) );
+                            bJetMult_Avg[i]->Scale( weight_onMC[i][m] /*1./((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2)*/ );
                         } else {
-                            bJetMult_Avg[i]->Add(bJetDistr, 1./((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2) );
+                            bJetMult_Avg[i]->Add(bJetDistr, weight_onMC[i][m] /*1./((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2)*/ );
                         }
                     }
                     Double_t w = weight_onMC[i][m]*teff->GetTotalHistogram()->GetBinContent(1+bin) ;
@@ -559,13 +559,21 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             for (UInt_t i=0; i<5; i++) {
                 printf("Process %d : %s : ", i, BckgdNames[i].c_str());
                 Double_t sum = 0.;
+
+                tg[2]->GetPoint(bin, NULL,y);
+                yerr = tg[2]->GetErrorYlow(bin);
+                ytemp = tg[2]->GetErrorYhigh(bin);
+                if (ytemp>yerr) {
+                    yerr = ytemp;
+                }
+
                 if (bJetMult_Avg[i] == NULL) {
                     printf("\n");
                     continue ;
                 }
                 Double_t bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
                 sum += bBinFrac * nbOfEvents[i] ;
-                printf(" %lf \\pm %lf \n", sum, bBinFrac * statUncert[i]);
+                printf(" %lf \\pm %lf \n", sum, bBinFrac*y*sum * (statUncert[i]/nbOfEvents[i] + yerr/y) );
             }
             
             /**
