@@ -14,15 +14,15 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
     const UInt_t nrpoints = 15;
     const UInt_t nreffs = 3;
     const UInt_t NbOfUseCase = 4;
-   const UInt_t NbOfControlRegions = 2;
-const UInt_t NbOfMVARegions = 2; 
+    const UInt_t NbOfControlRegions = 2;
+    const UInt_t NbOfMVARegions = 2; 
     Double_t ilel = 5050.821;
     Double_t ilmu = 5049.92;
     Double_t Wn_SF = 1.34;
     Int_t njets = 0 ; // 0 for 4jExc, 1 for 5jExc , 2 for 6jInc
     double **corrMatrix = new double*[nrpoints+nreffs];
     double *statUncert = new double[nrpoints+nreffs];
-//    double *systUncert = new double[nrpoints+nreffs];
+    //    double *systUncert = new double[nrpoints+nreffs];
     double *nbOfEvents = new double[nrpoints+nreffs];
     
     for(UInt_t i=0; i<nrpoints+nreffs; i++){
@@ -37,11 +37,11 @@ const UInt_t NbOfMVARegions = 2;
     {
         UInt_t i=0;
         file.open(filename.c_str());
-        while (i<nrpoints){//(file.good()) {
+        while (i<nrpoints+nreffs){//(file.good()) {
             file >> corrMatrix[i][0] >> corrMatrix[i][1] >> corrMatrix[i][2] >> corrMatrix[i][3] >> corrMatrix[i][4] >> corrMatrix[i][5] >> corrMatrix[i][6] >> corrMatrix[i][7] >> corrMatrix[i][8] >> corrMatrix[i][9] >> corrMatrix[i][10] >> corrMatrix[i][11] >> corrMatrix[i][12] >> corrMatrix[i][13] >> corrMatrix[i][14]          >> corrMatrix[i][15]  >> corrMatrix[i][16]  >> corrMatrix[i][17] ;
             //cout<<std::fixed<<setprecision(1);
             cout<<names[i];
-            for(UInt_t j=0;j<nrpoints;j++) cout<<"& $"<<corrMatrix[i][j]*100<<"$ ";
+            for(UInt_t j=0;j<nrpoints+nreffs;j++) cout<<"& $"<<corrMatrix[i][j]*100<<"$ ";
             cout<<"\\\\"<<endl;
             ++i;
         }
@@ -164,38 +164,38 @@ const UInt_t NbOfMVARegions = 2;
     printf("UseWnJets : %d\n", UseWNJets);
     printf("NN UseCase : %d (%s)\n", UseCase, MVA[UseCase].c_str());
     cout<<"Lepton channel : "<<(channelConf==0 ? CChannel[0] : (channelConf==1?CChannel[1]:"_combined"))<<endl;
-   cerr<<"aerr"<< endl;
-printf("a\n"); 
+    cerr<<"aerr"<< endl;
+    printf("a\n"); 
     std::string path = "$HOME/AnalysisCode/GentStopAnalysis/UGentCode/Leg3/v1/Samples_21102012/";
-   printf("b\n");
+    printf("b\n");
     std::vector<std::vector<TFile *> > inputfiles(5, std::vector<TFile*>(0, NULL));
-   printf("c\n");
+    printf("c\n");
     std::vector<std::vector<std::string> > listNames(5, std::vector<std::string>(0, ""));
-   printf("d\n");
+    printf("d\n");
     std::vector<std::vector<Double_t> > weight_onMC(5, std::vector<Double_t>(0, -1.));
-   printf("e\n");
+    printf("e\n");
     std::vector<std::vector<Double_t> > weight_VJet(5, std::vector<Double_t>(0, -1.));
-   printf("f\n");
+    printf("f\n");
     
     std::vector<TFile *> datafiles(0, NULL);
-   printf("g\n");
+    printf("g\n");
     std::vector<std::string> dataNames(0, "");
-   printf("h\n");
+    printf("h\n");
     std::vector<Double_t> weight_data(0, -1.);
-   printf("i\n");
+    printf("i\n");
     std::vector<Double_t> weight_data_est(0, -1.);
-   printf("j\n");
+    printf("j\n");
     
     
     for (int i=0; (1<<i)<=channelConf+1; i++) {
-cerr << "1err" <<endl; 
-  printf("1\n");
+        cerr << "1err" <<endl; 
+        printf("1\n");
         Int_t channel=(1<<i)-1 ;
-   printf("2\n");
+        printf("2\n");
         if (((channel+1)&(channelConf+1))==0) {
             continue;
         }
-printf("channel : %d\n", channel) ;
+        printf("channel : %d\n", channel) ;
         // TT+jets
         BckgdNames[1] = "TT-like";
         listNames[1].push_back("ttbar"+CChannel[channel]);
@@ -363,168 +363,253 @@ printf("channel : %d\n", channel) ;
         
     }
     
-//    for (UInt_t l=0; l<NbOfUseCase; l++) {
-        for (UInt_t j=0; j<NbOfControlRegions; j++) {
-            for (UInt_t k=0; k<NbOfMVARegions; k++) {
-                std::string teffname = "Eff_" + MVA[UseCase] + "_" + controlRegions[j] + MVAcut[k] ;
-                printf("\n\n\nInvestigated TEfficiency name : %s     ... gives your info on the Control Region ...\n", teffname.c_str());
-                /**
-                 Pure MC and extracting numbers from the files for the efficiencies
-                 */
-                TGraphAsymmErrors **tg_categ = new TGraphAsymmErrors*[5];
-                TGraphAsymmErrors *tg_tot = NULL;
-                std::vector<std::vector<Double_t> > weights(5, std::vector<Double_t>()) ;
-                std::vector<std::vector<Double_t> > passed(5, std::vector<Double_t>()) ;
-                std::vector<Double_t> all_weights, all_weights_forCombineV ;
-                std::vector<Double_t> all_passed ;
-                std::vector<std::vector<TH1D*> > bJetMult(5, std::vector<TH1D*>() );
-                std::vector<TH1D*> bJetMult_Avg(5, NULL); //Average b-jet mult on the different sub-processes
-                TList *tlist_tot = new TList();
-                for (UInt_t i=0; i<5; i++) { //Number of categories for V+jets method
-                    tg_categ[i] = NULL ;
-                    TList *tlist = new TList();
-                    Double_t sumppp = 0.;
-                    Double_t sumw = 0.;
-                    Double_t sumwMC = 0.;
-                    for (UInt_t m=0; m<inputfiles[i].size(); m++) {
-                        TEfficiency *teff = (TEfficiency*) inputfiles[i][m]->Get(teffname.c_str());
-//if (teff==NULL) {
-//continue ;
-//}
-                        std::string fichName = inputfiles[i][m]->GetName() ;
-                        std::string chan = ( fichName.find("_mu.root")==fichName.size()-8 ? "Mu" : ( fichName.find("_el.root")==fichName.size()-8 ? "El" : "" ) );
-                      printf("%s\n", (std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
-                        TH1D* bJetDistr = (TH1D*) inputfiles[i][m]->Get((std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
-                        bJetMult[i].push_back(bJetDistr);
-                        if (bJetDistr!=NULL) {
-                            if (bJetMult_Avg[i]==NULL) {
-                                bJetMult_Avg[i] = (TH1D*) bJetDistr->Clone();
-                                bJetMult_Avg[i]->Scale( 1./((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2) );
-                            } else {
-                                bJetMult_Avg[i]->Add(bJetDistr, 1./((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2) );
-                            }
-                        }
-                        Double_t w = weight_onMC[i][m]*teff->GetTotalHistogram()->GetBinContent(1+bin) ;
-                        Double_t ppp = weight_onMC[i][m]*teff->GetPassedHistogram()->GetBinContent(1+bin) ;
-                        sumw += w;
-                        sumppp += ppp;
-                        sumwMC += weight_onMC[i][m];
-                        weights[i].push_back(w); //Number of events (after the cut, before the TEff cut), pure MC
-                        all_weights.push_back(w * weight_VJet[i][m]); //number of events after cut (before the TEff cut) from MC and VJetEstimation (both taken into account)
-                        all_weights_forCombineV.push_back(weight_onMC[i][m] * weight_VJet[i][m]); //weight for combination (number of events after cut) from MC and VJetEstimation (both taken into account)
-                        passed[i].push_back(ppp);
-                        all_passed.push_back(ppp * weight_VJet[i][m]); //number of passed element
-if (teff==NULL) { printf("NULL TEfficiency\n"); }
-                        tlist->Add(teff);
-                        tlist_tot->Add(teff);                        
-                    }
-                    for (UInt_t kk=all_passed.size()-passed.size(); kk<all_passed.size(); kk++) {
-//                        bJetMult_Avg[i]->Scale(1./);
-                        all_passed[kk] /= sumppp;
-                        all_weights[kk] /= sumw;
-                        all_weights_forCombineV[kk] /= sumwMC;
-                    }
-if (weight_onMC[i].size()!=0) { 
-cerr << "Category combination"<< endl;
-                   tg_categ[i] = TEfficiency::Combine(tlist, "mode", weight_onMC[i].size(), & weight_onMC[i][0]);
-}
-                    tlist->Clear();
-                }
-if (all_weights_forCombineV.size()!=0) {
-cerr << "Whole combination" << endl;
-                tg_tot = TEfficiency::Combine(tlist_tot, "mode", all_weights_forCombineV.size(), & all_weights_forCombineV[0]);
-                }
-                // Printing results for pure MC (non reweighted)
-                printf("\n\nPrinting results for pure MC (non reweighted) : \n");
-                for (UInt_t i=0; i<5; i++) {
-                    printf("Process %d : %s : ", i, BckgdNames[i].c_str());
-                    Double_t sum = 0.;
-                    for (UInt_t m=0; m<inputfiles[i].size(); m++) {
-if (bJetMult[i][m] == NULL) {
-continue ;
-}
-                        Double_t bBinFrac = bJetMult[i][m]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult[i][m]->Integral(0,-1);
-                        if (m==0) {
-                            printf(" %lf", bBinFrac * passed[i][m]);
-                        } else {
-                            printf(" + %lf", bBinFrac * passed[i][m]);
-                        }
-                        sum += bBinFrac * passed[i][m] ;
-                    }
-                    printf(" = %lf\n", sum);
-                }
-                /**
-                 Estimated with V+jets on data (and R_X from MC)
-                 */
-                Double_t ntt=0., ntt_err=0., nv=0., nv_err=0. ;
-                if (j==0) {
-                    ntt     = vj.Ntt_0bjet(nbOfEvents[3], nbOfEvents[15], nbOfEvents[17], 4);
-                    ntt_err = vj.Ntt_err_0bjet(nbOfEvents[3], statUncert[3], nbOfEvents[15], statUncert[15], nbOfEvents[17], statUncert[17], 4);
-                    nv      = vj.Nv_0bjet(nbOfEvents[6], nbOfEvents[16], 4);
-                    nv_err  = vj.Nv_err_0bjet(nbOfEvents[6], statUncert[6], nbOfEvents[16], statUncert[16], 4);
-                } else if (j==1) {
-                    ntt     = vj.Ntt_2bjets(nbOfEvents[3], nbOfEvents[15], nbOfEvents[17], 4);
-                    ntt_err = vj.Ntt_err_2bjets(nbOfEvents[3], statUncert[3], nbOfEvents[15],  statUncert[15], nbOfEvents[17], statUncert[17], 4);
-                    nv      = vj.Nv_2bjets(nbOfEvents[6], nbOfEvents[16], 4);
-                    nv_err  = vj.Nv_err_2bjets(nbOfEvents[6], statUncert[6], nbOfEvents[16], statUncert[16], 4);
-                }
-                printf("\n\nPrinting results for the estimated channels : \n");
-                printf("  Ntt = %lf \\pm %lf \n", ntt, ntt_err);
-                printf("  Nv = %lf \\pm %lf \n", nv, nv_err);
-                for (UInt_t i=0; i<5; i++) {
-                    printf("Process %d : %s : ", i, BckgdNames[i].c_str());
-                    Double_t sum = 0.;
-if (bJetMult_Avg[i] == NULL) {
-printf("\n");
-continue ;
-}
-                    Double_t bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
-                    sum += bBinFrac * nbOfEvents[i] ;
-                    printf(" %lf \\pm %lf \n", sum, bBinFrac * statUncert[i]);
-                }
-                
-                /**
-                 Observed in data (only totals ...)
-                 */
-                printf("\n\nPrinting results for pure data (total numbers only ...) : \n");
-                Double_t sum = 0.;
-                printf("  From B_Jet_Multiplicities \n");
-                for (UInt_t i=0; i<datafiles.size(); i++) {
-                    std::string fichName = datafiles[i]->GetName() ;
+    //    for (UInt_t l=0; l<NbOfUseCase; l++) {
+    for (UInt_t j=0; j<NbOfControlRegions; j++) {
+        for (UInt_t k=0; k<NbOfMVARegions; k++) {
+            std::string teffname = "Eff_" + MVA[UseCase] + "_" + controlRegions[j] + MVAcut[k] ;
+            printf("\n\n\nInvestigated TEfficiency name : %s     ... gives your info on the Control Region ...\n", teffname.c_str());
+            /**
+             Pure MC and extracting numbers from the files for the efficiencies
+             */
+            TGraphAsymmErrors **tg_categ = new TGraphAsymmErrors*[5];
+            TGraphAsymmErrors *tg_tot = NULL;
+            std::vector<std::vector<Double_t> > weights(5, std::vector<Double_t>()) ;
+            std::vector<std::vector<Double_t> > passed(5, std::vector<Double_t>()) ;
+            std::vector<Double_t> all_weights, all_weights_forCombineV ;
+            std::vector<Double_t> all_passed ;
+            std::vector<std::vector<TH1D*> > bJetMult(5, std::vector<TH1D*>() );
+            std::vector<TH1D*> bJetMult_Avg(5, NULL); //Average b-jet mult on the different sub-processes
+            TList *tlist_tot = new TList();
+            for (UInt_t i=0; i<5; i++) { //Number of categories for V+jets method
+                tg_categ[i] = NULL ;
+                TList *tlist = new TList();
+                Double_t sumppp = 0.;
+                Double_t sumw = 0.;
+                Double_t sumwMC = 0.;
+                for (UInt_t m=0; m<inputfiles[i].size(); m++) {
+                    TEfficiency *teff = (TEfficiency*) inputfiles[i][m]->Get(teffname.c_str());
+                    //if (teff==NULL) {
+                    //continue ;
+                    //}
+                    std::string fichName = inputfiles[i][m]->GetName() ;
                     std::string chan = ( fichName.find("_mu.root")==fichName.size()-8 ? "Mu" : ( fichName.find("_el.root")==fichName.size()-8 ? "El" : "" ) );
-                    TH1D* histo = (TH1D*) datafiles[i]->Get((std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
-                    if (histo==NULL) {
-                        continue;
+                    printf("%s\n", (std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
+                    TH1D* bJetDistr = (TH1D*) inputfiles[i][m]->Get((std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
+                    bJetMult[i].push_back(bJetDistr);
+                    if (bJetDistr!=NULL) {
+                        if (bJetMult_Avg[i]==NULL) {
+                            bJetMult_Avg[i] = (TH1D*) bJetDistr->Clone();
+                            bJetMult_Avg[i]->Scale( 1./((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2) );
+                        } else {
+                            bJetMult_Avg[i]->Add(bJetDistr, 1./((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2) );
+                        }
                     }
-                    Double_t bBinFrac = histo->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0)));
-                    if (i==0) {
-                        printf(" %lf", bBinFrac );
-                    } else {
-                        printf(" + %lf", bBinFrac);
-                    }
-                    sum += bBinFrac ;
+                    Double_t w = weight_onMC[i][m]*teff->GetTotalHistogram()->GetBinContent(1+bin) ;
+                    Double_t ppp = weight_onMC[i][m]*teff->GetPassedHistogram()->GetBinContent(1+bin) ;
+                    sumw += w;
+                    sumppp += ppp;
+                    sumwMC += weight_onMC[i][m];
+                    weights[i].push_back(w); //Number of events (after the cut, before the TEff cut), pure MC
+                    all_weights.push_back(w * weight_VJet[i][m]); //number of events after cut (before the TEff cut) from MC and VJetEstimation (both taken into account)
+                    all_weights_forCombineV.push_back(weight_onMC[i][m] * weight_VJet[i][m]); //weight for combination (number of events after cut) from MC and VJetEstimation (both taken into account)
+                    passed[i].push_back(ppp);
+                    all_passed.push_back(ppp * weight_VJet[i][m]); //number of passed element
+                    if (teff==NULL) { printf("NULL TEfficiency\n"); }
+                    tlist->Add(teff);
+                    tlist_tot->Add(teff);                        
                 }
-                printf(" = %lf\n", sum);
-                printf("  From TEfficiencies \n");
-                sum=0.;
-                for (UInt_t i=0; i<datafiles.size(); i++) {
-                    TEfficiency *teff = (TEfficiency*) datafiles[i]->Get(teffname.c_str());
-                    Double_t bBinFrac = teff->GetPassedHistogram()->GetBinContent(1+bin);
-                    if (i==0) {
-                        printf(" %lf", bBinFrac );
-                    } else {
-                        printf(" + %lf", bBinFrac);
-                    }
-                    sum += bBinFrac ;
+                for (UInt_t kk=all_passed.size()-passed.size(); kk<all_passed.size(); kk++) {
+                    //                        bJetMult_Avg[i]->Scale(1./);
+                    all_passed[kk] /= sumppp;
+                    all_weights[kk] /= sumw;
+                    all_weights_forCombineV[kk] /= sumwMC;
                 }
-                printf(" = %lf\n", sum);
-                
+                if (weight_onMC[i].size()!=0) { 
+                    cerr << "Category combination"<< endl;
+                    tg_categ[i] = TEfficiency::Combine(tlist, "mode", weight_onMC[i].size(), & weight_onMC[i][0]);
+                }
+                tlist->Clear();
             }
+            if (all_weights_forCombineV.size()!=0) {
+                cerr << "Whole combination" << endl;
+                tg_tot = TEfficiency::Combine(tlist_tot, "mode", all_weights_forCombineV.size(), & all_weights_forCombineV[0]);
+            }
+            // Printing input values
+            printf("\n\nPrinting input values (for checks) : \n");
+            Double_t sum;
+            printf(" passed : \n");
+            for (UInt_t i=0; i<5; i++) {
+                sum = 0.;
+                printf("  Process %d : ", i);
+                std::vector<Double_t>::const_iterator beg = passed[i].begin();
+                for (std::vector<Double_t>::const_iterator it = beg; it<passed[i].end(); it++) {
+                    if (it==beg) {
+                        printf("%lf");
+                    } else {
+                        printf(" + %lf");
+                    }
+                    sum += *it ;
+                }
+                printf(" = %lf\n", sum);
+            }
+            printf(" weights : \n");
+            for (UInt_t i=0; i<5; i++) {
+                sum = 0.;
+                printf("  Process %d : ", i);
+                std::vector<Double_t>::const_iterator beg = weights[i].begin();
+                for (std::vector<Double_t>::const_iterator it = beg; it<weights[i].end(); it++) {
+                    if (it==beg) {
+                        printf("%lf");
+                    } else {
+                        printf(" + %lf");
+                    }
+                    sum += *it ;
+                }
+                printf(" = %lf\n", sum);
+            }
+            sum = 0.;
+            printf(" all_passed : \n  ")
+            std::vector<Double_t>::const_iterator beg = all_passed.begin();
+            for (std::vector<Double_t>::const_iterator it = beg; it<all_passed.end(); it++) {
+                if (it==beg) {
+                    printf("%lf");
+                } else {
+                    printf(" + %lf");
+                }
+                sum += *it ;
+            }
+            printf(" = %lf\n", sum);
+            
+            sum = 0.;
+            printf(" all_weights : \n  ")
+            beg = all_weights.begin();
+            for (std::vector<Double_t>::const_iterator it = beg; it<all_weights.end(); it++) {
+                if (it==beg) {
+                    printf("%lf");
+                } else {
+                    printf(" + %lf");
+                }
+                sum += *it ;
+            }
+            printf(" = %lf\n", sum);
+            
+            sum = 0.;
+            printf(" all_weights_forCombineV : \n  ")
+            beg = all_weights_forCombineV.begin();
+            for (std::vector<Double_t>::const_iterator it = beg; it<all_weights_forCombineV.end(); it++) {
+                if (it==beg) {
+                    printf("%lf");
+                } else {
+                    printf(" + %lf");
+                }
+                sum += *it ;
+            }
+            printf(" = %lf\n", sum);
+            
+            // Printing results for pure MC (non reweighted)
+            printf("\n\nPrinting results for pure MC (non reweighted) : \n");
+            for (UInt_t i=0; i<5; i++) {
+                printf("Process %d : %s : ", i, BckgdNames[i].c_str());
+                Double_t sum = 0.;
+                for (UInt_t m=0; m<inputfiles[i].size(); m++) {
+                    if (bJetMult[i][m] == NULL) {
+                        continue ;
+                    }
+                    Double_t bBinFrac = bJetMult[i][m]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult[i][m]->Integral(0,-1);
+                    if (m==0) {
+                        printf(" %lf", bBinFrac * passed[i][m]);
+                    } else {
+                        printf(" + %lf", bBinFrac * passed[i][m]);
+                    }
+                    sum += bBinFrac * passed[i][m] ;
+                }
+                printf(" = %lf\n", sum);
+            }
+            /**
+             Estimated with V+jets on data (and R_X from MC)
+             */
+            Double_t ntt=0., ntt_err=0., nv=0., nv_err=0. ;
+            if (j==0) {
+                ntt     = vj.Ntt_0bjet(nbOfEvents[3], nbOfEvents[15], nbOfEvents[17], 4);
+                ntt_err = vj.Ntt_err_0bjet(nbOfEvents[3], statUncert[3], nbOfEvents[15], statUncert[15], nbOfEvents[17], statUncert[17], 4);
+                nv      = vj.Nv_0bjet(nbOfEvents[6], nbOfEvents[16], 4);
+                nv_err  = vj.Nv_err_0bjet(nbOfEvents[6], statUncert[6], nbOfEvents[16], statUncert[16], 4);
+            } else if (j==1) {
+                ntt     = vj.Ntt_2bjets(nbOfEvents[3], nbOfEvents[15], nbOfEvents[17], 4);
+                ntt_err = vj.Ntt_err_2bjets(nbOfEvents[3], statUncert[3], nbOfEvents[15],  statUncert[15], nbOfEvents[17], statUncert[17], 4);
+                nv      = vj.Nv_2bjets(nbOfEvents[6], nbOfEvents[16], 4);
+                nv_err  = vj.Nv_err_2bjets(nbOfEvents[6], statUncert[6], nbOfEvents[16], statUncert[16], 4);
+            }
+            printf("\n\nPrinting results for the estimated channels : \n");
+            Doublt_t y = 0., ytemp=0., yerr=0.;
+            tg[1]->GetPoint(bin, NULL,y);
+            yerr = tg[1]->GetErrorYlow(bin);
+            ytemp = tg[1]->GetErrorYhigh(bin);
+            if (ytemp>yerr) {
+                yerr = ytemp;
+            }
+            printf("  Ntt = ( %lf \\pm %lf ) * %lf = %lf \n", ntt, ntt_err, y, yerr, ntt*y);
+            tg[2]->GetPoint(bin, NULL,y);
+            yerr = tg[2]->GetErrorYlow(bin);
+            ytemp = tg[2]->GetErrorYhigh(bin);
+            if (ytemp>yerr) {
+                yerr = ytemp;
+            }
+            printf("  Nv = ( %lf \\pm %lf ) * %lf = %lf \n", nv, nv_err);
+            for (UInt_t i=0; i<5; i++) {
+                printf("Process %d : %s : ", i, BckgdNames[i].c_str());
+                Double_t sum = 0.;
+                if (bJetMult_Avg[i] == NULL) {
+                    printf("\n");
+                    continue ;
+                }
+                Double_t bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
+                sum += bBinFrac * nbOfEvents[i] ;
+                printf(" %lf \\pm %lf \n", sum, bBinFrac * statUncert[i]);
+            }
+            
+            /**
+             Observed in data (only totals ...)
+             */
+            printf("\n\nPrinting results for pure data (total numbers only ...) : \n");
+            Double_t sum = 0.;
+            printf("  From B_Jet_Multiplicities \n");
+            for (UInt_t i=0; i<datafiles.size(); i++) {
+                std::string fichName = datafiles[i]->GetName() ;
+                std::string chan = ( fichName.find("_mu.root")==fichName.size()-8 ? "Mu" : ( fichName.find("_el.root")==fichName.size()-8 ? "El" : "" ) );
+                TH1D* histo = (TH1D*) datafiles[i]->Get((std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
+                if (histo==NULL) {
+                    continue;
+                }
+                Double_t bBinFrac = histo->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0)));
+                if (i==0) {
+                    printf(" %lf", bBinFrac );
+                } else {
+                    printf(" + %lf", bBinFrac);
+                }
+                sum += bBinFrac ;
+            }
+            printf(" = %lf\n", sum);
+            printf("  From TEfficiencies \n");
+            sum=0.;
+            for (UInt_t i=0; i<datafiles.size(); i++) {
+                TEfficiency *teff = (TEfficiency*) datafiles[i]->Get(teffname.c_str());
+                Double_t bBinFrac = teff->GetPassedHistogram()->GetBinContent(1+bin);
+                if (i==0) {
+                    printf(" %lf", bBinFrac );
+                } else {
+                    printf(" + %lf", bBinFrac);
+                }
+                sum += bBinFrac ;
+            }
+            printf(" = %lf\n", sum);
+            
         }
- //   }
+    }
+    //   }
     
     
     
     
-printf(" --> End of the program.\n") ;    
+    printf(" --> End of the program.\n") ;    
 }
