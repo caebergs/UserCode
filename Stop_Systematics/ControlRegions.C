@@ -434,15 +434,71 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 cerr << "Whole combination" << endl;
                 tg_tot = TEfficiency::Combine(tlist_tot, "mode", all_weights_forCombineV.size(), & all_weights_forCombineV[0]);
             }
+            
             // Printing input values
-            printf("\n\nPrinting input values (for checks) : \n");
-            Double_t sum;
-            printf(" passed : \n");
-            for (UInt_t i=0; i<5; i++) {
+            {
+                printf("\n\nPrinting input values (for checks) : \n");
+                Double_t sum;
+                printf(" passed : \n");
+                for (UInt_t i=0; i<5; i++) {
+                    sum = 0.;
+                    printf("  Process %d : ", i);
+                    std::vector<Double_t>::const_iterator beg = passed[i].begin();
+                    for (std::vector<Double_t>::const_iterator it = beg; it!=passed[i].end(); it++) {
+                        if (it==beg) {
+                            printf("%lf", *it);
+                        } else {
+                            printf(" + %lf", *it);
+                        }
+                        sum += *it ;
+                    }
+                    printf(" = %lf\n", sum);
+                }
+                printf(" weights : \n");
+                for (UInt_t i=0; i<5; i++) {
+                    sum = 0.;
+                    printf("  Process %d : ", i);
+                    std::vector<Double_t>::const_iterator beg = weights[i].begin();
+                    for (std::vector<Double_t>::const_iterator it = beg; it!=weights[i].end(); it++) {
+                        if (it==beg) {
+                            printf("%lf", *it);
+                        } else {
+                            printf(" + %lf", *it);
+                        }
+                        sum += *it ;
+                    }
+                    printf(" = %lf\n", sum);
+                }
                 sum = 0.;
-                printf("  Process %d : ", i);
-                std::vector<Double_t>::const_iterator beg = passed[i].begin();
-                for (std::vector<Double_t>::const_iterator it = beg; it!=passed[i].end(); it++) {
+                printf(" all_passed : \n  ");
+                std::vector<Double_t>::const_iterator beg = all_passed.begin();
+                for (std::vector<Double_t>::const_iterator it = beg; it!=all_passed.end(); it++) {
+                    if (it==beg) {
+                        printf("%lf", *it);
+                    } else {
+                        printf(" + %lf", *it);
+                    }
+                    sum += *it ;
+                }
+                printf(" = %lf\n", sum);
+                
+                sum = 0.;
+                printf(" all_weights : \n  ");
+                beg = all_weights.begin();
+                for (std::vector<Double_t>::const_iterator it = beg; it!=all_weights.end(); it++) {
+                    if (it==beg) {
+                        printf("%lf", *it);
+                    } else {
+                        printf(" + %lf", *it);
+                    }
+                    sum += *it ;
+                }
+                printf(" = %lf\n", sum);
+                
+                sum = 0.;
+                printf(" all_weights_forCombineV : \n  ");
+                beg = all_weights_forCombineV.begin();
+                for (std::vector<Double_t>::const_iterator it = beg; it!=all_weights_forCombineV.end(); it++) {
                     if (it==beg) {
                         printf("%lf", *it);
                     } else {
@@ -452,166 +508,117 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 }
                 printf(" = %lf\n", sum);
             }
-            printf(" weights : \n");
-            for (UInt_t i=0; i<5; i++) {
-                sum = 0.;
-                printf("  Process %d : ", i);
-                std::vector<Double_t>::const_iterator beg = weights[i].begin();
-                for (std::vector<Double_t>::const_iterator it = beg; it!=weights[i].end(); it++) {
-                    if (it==beg) {
-                        printf("%lf", *it);
-                    } else {
-                        printf(" + %lf", *it);
-                    }
-                    sum += *it ;
-                }
-                printf(" = %lf\n", sum);
-            }
-            sum = 0.;
-            printf(" all_passed : \n  ");
-            std::vector<Double_t>::const_iterator beg = all_passed.begin();
-            for (std::vector<Double_t>::const_iterator it = beg; it!=all_passed.end(); it++) {
-                if (it==beg) {
-                    printf("%lf", *it);
-                } else {
-                    printf(" + %lf", *it);
-                }
-                sum += *it ;
-            }
-            printf(" = %lf\n", sum);
-            
-            sum = 0.;
-            printf(" all_weights : \n  ");
-            beg = all_weights.begin();
-            for (std::vector<Double_t>::const_iterator it = beg; it!=all_weights.end(); it++) {
-                if (it==beg) {
-                    printf("%lf", *it);
-                } else {
-                    printf(" + %lf", *it);
-                }
-                sum += *it ;
-            }
-            printf(" = %lf\n", sum);
-            
-            sum = 0.;
-            printf(" all_weights_forCombineV : \n  ");
-            beg = all_weights_forCombineV.begin();
-            for (std::vector<Double_t>::const_iterator it = beg; it!=all_weights_forCombineV.end(); it++) {
-                if (it==beg) {
-                    printf("%lf", *it);
-                } else {
-                    printf(" + %lf", *it);
-                }
-                sum += *it ;
-            }
-            printf(" = %lf\n", sum);
             
             // Printing results for pure MC (non reweighted)
-            printf("\n\nPrinting results for pure MC (non reweighted) : \n");
-            for (UInt_t i=0; i<5; i++) {
-                printf("Process %d : %s : ", i, BckgdNames[i].c_str());
-                Double_t sum = 0.;
-                for (UInt_t m=0; m<inputfiles[i].size(); m++) {
-                    if (bJetMult[i][m] == NULL) {
-                        continue ;
+            {
+                printf("\n\nPrinting results for pure MC (non reweighted) : \n");
+                for (UInt_t i=0; i<5; i++) {
+                    printf("Process %d : %s : ", i, BckgdNames[i].c_str());
+                    Double_t sum = 0.;
+                    for (UInt_t m=0; m<inputfiles[i].size(); m++) {
+                        if (bJetMult[i][m] == NULL) {
+                            continue ;
+                        }
+                        Double_t bBinFrac = bJetMult[i][m]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult[i][m]->Integral(0,-1);
+                        if (m==0) {
+                            printf(" %lf", bBinFrac * passed[i][m]);
+                        } else {
+                            printf(" + %lf", bBinFrac * passed[i][m]);
+                        }
+                        sum += bBinFrac * passed[i][m] ;
                     }
-                    Double_t bBinFrac = bJetMult[i][m]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult[i][m]->Integral(0,-1);
-                    if (m==0) {
-                        printf(" %lf", bBinFrac * passed[i][m]);
-                    } else {
-                        printf(" + %lf", bBinFrac * passed[i][m]);
-                    }
-                    sum += bBinFrac * passed[i][m] ;
+                    printf(" = %lf\n", sum);
                 }
-                printf(" = %lf\n", sum);
             }
             /**
              Estimated with V+jets on data (and R_X from MC)
              */
-            Double_t ntt=0., ntt_err=0., nv=0., nv_err=0. ;
-            if (j==0) {
-                ntt     = vj.Ntt_0bjet(nbOfEvents[3], nbOfEvents[15], nbOfEvents[17], 4);
-                ntt_err = vj.Ntt_err_0bjet(nbOfEvents[3], statUncert[3], nbOfEvents[15], statUncert[15], nbOfEvents[17], statUncert[17], 4);
-                nv      = vj.Nv_0bjet(nbOfEvents[6], nbOfEvents[16], 4);
-                nv_err  = vj.Nv_err_0bjet(nbOfEvents[6], statUncert[6], nbOfEvents[16], statUncert[16], 4);
-            } else if (j==1) {
-                ntt     = vj.Ntt_2bjets(nbOfEvents[3], nbOfEvents[15], nbOfEvents[17], 4);
-                ntt_err = vj.Ntt_err_2bjets(nbOfEvents[3], statUncert[3], nbOfEvents[15],  statUncert[15], nbOfEvents[17], statUncert[17], 4);
-                nv      = vj.Nv_2bjets(nbOfEvents[6], nbOfEvents[16], 4);
-                nv_err  = vj.Nv_err_2bjets(nbOfEvents[6], statUncert[6], nbOfEvents[16], statUncert[16], 4);
-            }
-            printf("\n\nPrinting results for the estimated channels : \n");
-            Doublt_t y = 0., ytemp=0., yerr=0.;
-            tg[1]->GetPoint(bin, NULL,y);
-            yerr = tg[1]->GetErrorYlow(bin);
-            ytemp = tg[1]->GetErrorYhigh(bin);
-            if (ytemp>yerr) {
-                yerr = ytemp;
-            }
-            printf("  Ntt = ( %lf \\pm %lf ) * %lf = %lf \n", ntt, ntt_err, y, yerr, ntt*y);
-            tg[2]->GetPoint(bin, NULL,y);
-            yerr = tg[2]->GetErrorYlow(bin);
-            ytemp = tg[2]->GetErrorYhigh(bin);
-            if (ytemp>yerr) {
-                yerr = ytemp;
-            }
-            printf("  Nv = ( %lf \\pm %lf ) * %lf = %lf \n", nv, nv_err);
-            for (UInt_t i=0; i<5; i++) {
-                printf("Process %d : %s : ", i, BckgdNames[i].c_str());
-                Double_t sum = 0.;
-
-                tg[2]->GetPoint(bin, NULL,y);
-                yerr = tg[2]->GetErrorYlow(bin);
-                ytemp = tg[2]->GetErrorYhigh(bin);
+            {
+                Double_t ntt=0., ntt_err=0., nv=0., nv_err=0. ;
+                if (j==0) {
+                    ntt     = vj.Ntt_0bjet(nbOfEvents[3], nbOfEvents[15], nbOfEvents[17], 4);
+                    ntt_err = vj.Ntt_err_0bjet(nbOfEvents[3], statUncert[3], nbOfEvents[15], statUncert[15], nbOfEvents[17], statUncert[17], 4);
+                    nv      = vj.Nv_0bjet(nbOfEvents[6], nbOfEvents[16], 4);
+                    nv_err  = vj.Nv_err_0bjet(nbOfEvents[6], statUncert[6], nbOfEvents[16], statUncert[16], 4);
+                } else if (j==1) {
+                    ntt     = vj.Ntt_2bjets(nbOfEvents[3], nbOfEvents[15], nbOfEvents[17], 4);
+                    ntt_err = vj.Ntt_err_2bjets(nbOfEvents[3], statUncert[3], nbOfEvents[15],  statUncert[15], nbOfEvents[17], statUncert[17], 4);
+                    nv      = vj.Nv_2bjets(nbOfEvents[6], nbOfEvents[16], 4);
+                    nv_err  = vj.Nv_err_2bjets(nbOfEvents[6], statUncert[6], nbOfEvents[16], statUncert[16], 4);
+                }
+                printf("\n\nPrinting results for the estimated channels : \n");
+                Double_t y = 0., ytemp=0., yerr=0., dummy;
+                tg_categ[1]->GetPoint(bin, dummy,y);
+                yerr = tg_categ[1]->GetErrorYlow(bin);
+                ytemp = tg_categ[1]->GetErrorYhigh(bin);
                 if (ytemp>yerr) {
                     yerr = ytemp;
                 }
-
-                if (bJetMult_Avg[i] == NULL) {
-                    printf("\n");
-                    continue ;
+                printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", ntt, ntt_err, y, yerr, ntt*y, (ntt_err/ntt + yerr/y) *ntt*y);
+                tg_categ[2]->GetPoint(bin, dummy,y);
+                yerr = tg_categ[2]->GetErrorYlow(bin);
+                ytemp = tg_categ[2]->GetErrorYhigh(bin);
+                if (ytemp>yerr) {
+                    yerr = ytemp;
                 }
-                Double_t bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
-                sum += bBinFrac * nbOfEvents[i] ;
-                printf(" %lf \\pm %lf \n", sum, bBinFrac*y*sum * (statUncert[i]/nbOfEvents[i] + yerr/y) );
+                printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", nv, nv_err, y, yerr, nv*y, (nv_err/nv + yerr/y) *nv*y);
+                for (UInt_t i=0; i<5; i++) {
+                    printf("Process %d : %s : ", i, BckgdNames[i].c_str());
+                    Double_t sum = 0.;
+                    
+                    tg_categ[i]->GetPoint(bin, dummy,y);
+                    yerr = tg_categ[i]->GetErrorYlow(bin);
+                    ytemp = tg_categ[i]->GetErrorYhigh(bin);
+                    if (ytemp>yerr) {
+                        yerr = ytemp;
+                    }
+                    
+                    if (bJetMult_Avg[i] == NULL) {
+                        printf("\n");
+                        continue ;
+                    }
+                    Double_t bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
+                    sum += bBinFrac * nbOfEvents[i] ;
+                    printf(" %lf \\pm %lf \n", sum, bBinFrac*y*sum * (statUncert[i]/nbOfEvents[i] + yerr/y) );
+                }
             }
-            
             /**
              Observed in data (only totals ...)
              */
-            printf("\n\nPrinting results for pure data (total numbers only ...) : \n");
-            Double_t sum = 0.;
-            printf("  From B_Jet_Multiplicities \n");
-            for (UInt_t i=0; i<datafiles.size(); i++) {
-                std::string fichName = datafiles[i]->GetName() ;
-                std::string chan = ( fichName.find("_mu.root")==fichName.size()-8 ? "Mu" : ( fichName.find("_el.root")==fichName.size()-8 ? "El" : "" ) );
-                TH1D* histo = (TH1D*) datafiles[i]->Get((std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
-                if (histo==NULL) {
-                    continue;
+            {
+                printf("\n\nPrinting results for pure data (total numbers only ...) : \n");
+                Double_t sum = 0.;
+                printf("  From B_Jet_Multiplicities \n");
+                for (UInt_t i=0; i<datafiles.size(); i++) {
+                    std::string fichName = datafiles[i]->GetName() ;
+                    std::string chan = ( fichName.find("_mu.root")==fichName.size()-8 ? "Mu" : ( fichName.find("_el.root")==fichName.size()-8 ? "El" : "" ) );
+                    TH1D* histo = (TH1D*) datafiles[i]->Get((std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
+                    if (histo==NULL) {
+                        continue;
+                    }
+                    Double_t bBinFrac = histo->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0)));
+                    if (i==0) {
+                        printf(" %lf", bBinFrac );
+                    } else {
+                        printf(" + %lf", bBinFrac);
+                    }
+                    sum += bBinFrac ;
                 }
-                Double_t bBinFrac = histo->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0)));
-                if (i==0) {
-                    printf(" %lf", bBinFrac );
-                } else {
-                    printf(" + %lf", bBinFrac);
+                printf(" = %lf\n", sum);
+                printf("  From TEfficiencies \n");
+                sum=0.;
+                for (UInt_t i=0; i<datafiles.size(); i++) {
+                    TEfficiency *teff = (TEfficiency*) datafiles[i]->Get(teffname.c_str());
+                    Double_t bBinFrac = teff->GetPassedHistogram()->GetBinContent(1+bin);
+                    if (i==0) {
+                        printf(" %lf", bBinFrac );
+                    } else {
+                        printf(" + %lf", bBinFrac);
+                    }
+                    sum += bBinFrac ;
                 }
-                sum += bBinFrac ;
+                printf(" = %lf\n", sum);
             }
-            printf(" = %lf\n", sum);
-            printf("  From TEfficiencies \n");
-            sum=0.;
-            for (UInt_t i=0; i<datafiles.size(); i++) {
-                TEfficiency *teff = (TEfficiency*) datafiles[i]->Get(teffname.c_str());
-                Double_t bBinFrac = teff->GetPassedHistogram()->GetBinContent(1+bin);
-                if (i==0) {
-                    printf(" %lf", bBinFrac );
-                } else {
-                    printf(" + %lf", bBinFrac);
-                }
-                sum += bBinFrac ;
-            }
-            printf(" = %lf\n", sum);
-            
         }
     }
     //   }
