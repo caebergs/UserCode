@@ -332,15 +332,15 @@ void TotalEstimatedNumbers_Errors_IndivChannel(string filename, int UseCase, int
   yerr_high_ttlike           = yerr_high[0];
 
   double RTT_syst_err_up[4];
-  RTT_syst_err_up[0]  = (channel==0 ? 0.000652 : 0.000936);
-  RTT_syst_err_up[1]  = (channel==0 ? 0.000615 : 0.000648);
-  RTT_syst_err_up[2]  = (channel==0 ? 0.000803 : 0.000923);
-  RTT_syst_err_up[3]  = (channel==0 ? 0.000797 : 0.001488);
+  RTT_syst_err_up[0]  = (channel==0 ? 999999.9 : 999999.9);
+  RTT_syst_err_up[1]  = (channel==0 ? 999999.9 : 999999.9);
+  RTT_syst_err_up[2]  = (channel==0 ? 999999.9 : 999999.9);
+  RTT_syst_err_up[3]  = (channel==0 ? 999999.9 : 999999.9);
   double RTT_syst_err_low[4];
-  RTT_syst_err_low[0] = (channel==0 ? 0.000825 : 0.001018);
-  RTT_syst_err_low[1] = (channel==0 ? 0.000543 : 0.000657);
-  RTT_syst_err_low[2] = (channel==0 ? 0.001207 : 0.001459);
-  RTT_syst_err_low[3] = (channel==0 ? 0.001030 : 0.001045);
+  RTT_syst_err_low[0] = (channel==0 ? 999999.9 : 999999.9);
+  RTT_syst_err_low[1] = (channel==0 ? 999999.9 : 999999.9);
+  RTT_syst_err_low[2] = (channel==0 ? 999999.9 : 999999.9);
+  RTT_syst_err_low[3] = (channel==0 ? 999999.9 : 999999.9);
 
   cout<<std::fixed<<setprecision(2);
   cout<<"R_{TT} = ("<<y_ttlike*1000<<"^{+"<<yerr_high_ttlike*1000<<"}_{-"<<yerr_low_ttlike*1000<<"}^{+"<<RTT_syst_err_up[UseCase]*1000<<"}_{-"<<RTT_syst_err_low[UseCase]*1000<<"})\\cdot 10^{-3}"<<endl;
@@ -383,8 +383,8 @@ void TotalEstimatedNumbers_Errors_IndivChannel(string filename, int UseCase, int
 //  double RV_syst_err_up[4]  = {0.000087,0.000083,0.000150,0.000307}; // Up
 //  double RV_syst_err_low[4] = {0.000171,0.000140,0.000054,0.000000}; // Down
 
-  double RV_syst_err_up[4]  = {0.0482035*y_vjets,0.0226508*y_vjets,0.0233062*y_vjets,0.0149049*y_vjets}; // Up
-  double RV_syst_err_low[4] = {0.2622430*y_vjets,0.3797950*y_vjets,0.3956500*y_vjets,0.4722110*y_vjets}; // Down
+  double RV_syst_err_up[4]  = {999999.9*y_vjets,999999.9*y_vjets,999999.9*y_vjets,999999.9*y_vjets}; // Up
+  double RV_syst_err_low[4] = {999999.9*y_vjets,999999.9*y_vjets,999999.9*y_vjets,999999.9*y_vjets}; // Down
 
   cout<<"R_{V} = ("<<y_vjets*1000<<"^{+"<<yerr_high_vjets*1000<<"}_{-"<<yerr_low_vjets*1000<<"}^{+"<<RV_syst_err_up[UseCase]*1000<<"}_{-"<<RV_syst_err_low[UseCase]*1000<<"})\\cdot 10^{-3}"<<endl;
 

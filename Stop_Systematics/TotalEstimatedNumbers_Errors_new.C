@@ -366,8 +366,8 @@ void TotalEstimatedNumbers_Errors_new(string filename, int UseCase, int bin,bool
 */
   pList->Clear();
 
-  double RTT_syst_err_up[4]  = {0.000742,0.000565,0.000727,0.001017}; // Up
-  double RTT_syst_err_low[4] = {0.000892,0.000581,0.001316,0.001055}; // Down
+  double RTT_syst_err_up[4]  = {999999.9,999999.9,999999.9,999999.9}; // Up
+  double RTT_syst_err_low[4] = {999999.9,999999.9,999999.9,999999.9}; // Down
   cout<<std::fixed<<setprecision(2);
   cout<<"R_{TT} = ("<<y_ttlike*1000<<"^{+"<<yerr_high_ttlike*1000<<"}_{-"<<yerr_low_ttlike*1000<<"}^{+"<<RTT_syst_err_up[UseCase]*1000<<"}_{-"<<RTT_syst_err_low[UseCase]*1000<<"})\\cdot 10^{-3}"<<endl;
 
@@ -433,8 +433,8 @@ void TotalEstimatedNumbers_Errors_new(string filename, int UseCase, int bin,bool
 //  double RV_syst_err_up[4]  = {0.000087,0.000083,0.000150,0.000307}; // Up
 //  double RV_syst_err_low[4] = {0.000171,0.000140,0.000054,0.000000}; // Down
 
-  double RV_syst_err_up[4]  = {0.0482035*y_vjets,0.0226508*y_vjets,0.0233062*y_vjets,0.0149049*y_vjets}; // Up
-  double RV_syst_err_low[4] = {0.2622430*y_vjets,0.3797950*y_vjets,0.3956500*y_vjets,0.4722110*y_vjets}; // Down
+  double RV_syst_err_up[4]  = {999999.9*y_vjets,999999.9*y_vjets,999999.9*y_vjets,999999.9*y_vjets}; // Up
+  double RV_syst_err_low[4] = {999999.9*y_vjets,999999.9*y_vjets,999999.9*y_vjets,999999.9*y_vjets}; // Down
 
   cout<<"R_{V} = ("<<y_vjets*1000<<"^{+"<<yerr_high_vjets*1000<<"}_{-"<<yerr_low_vjets*1000<<"}^{+"<<RV_syst_err_up[UseCase]*1000<<"}_{-"<<RV_syst_err_low[UseCase]*1000<<"})\\cdot 10^{-3}"<<endl;
 
