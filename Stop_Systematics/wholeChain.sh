@@ -3,7 +3,8 @@
 outputFromVJetsEstimation="/user/caebergs/VJetEstimation/nominal_STbar017/stdout_err_w.txt" ;
 #nomDir="/user/caebergs/Leg3_WnJets_DataMC/miguelf/" ;
 nomDir="/user/caebergs/Leg3/Leg3Output_5Dreweigh/" ;
-systDir="/user/caebergs/VJetEstimation/testChain/samplesSyst/" ;
+#systDir="/user/caebergs/VJetEstimation/testChain/samplesSyst/" ;
+systDir="/user/caebergs/Leg3/Leg3_Bxl_Systematics/" ;
 #controlRegionsDir="/user/caebergs/Leg3/Leg3NewTEff/" ;
 controlRegionsDir="/user/caebergs/Leg3/Leg3_newTEff/" ;
 extrapolatedRV="false" ;
