@@ -206,8 +206,8 @@ cat ../TotalEstimatedNumbers_Errors_IndivChannel.C \
 mv tmp.txt TotalEstimatedNumbers_Errors_IndivChannel.C ;
 for useCase in 0 1 2 3 ; do
     cat TotalEstimatedNumbers_Errors_IndivChannel.C \
-	| sed -e  "s/\( RTT_syst_err_up[${useCase}]  = (channel==0 ? \)[0-9\.]* : [0-9\.]*);/ \1${RTT_relP[1*${nbOfUseCase}+${useCase}]} : ${RTT_relP[2*${nbOfUseCase}+${useCase}]});/" \
-	| sed -e  "s/\( RTT_syst_err_low[${useCase}] = (channel==0 ? \)[0-9\.]* : [0-9\.]*);/ \1${RTT_relP[1*${nbOfUseCase}+${useCase}]} : ${RTT_relP[2*${nbOfUseCase}+${useCase}]});/" \
+	| sed -e  "s/\( RTT_syst_err_up\[${useCase}\]  = (channel==0 ? \)[0-9\.]* : [0-9\.]*);/ \1${RTT_relP[1*${nbOfUseCase}+${useCase}]} : ${RTT_relP[2*${nbOfUseCase}+${useCase}]});/" \
+	| sed -e  "s/\( RTT_syst_err_low\[${useCase}\] = (channel==0 ? \)[0-9\.]* : [0-9\.]*);/ \1${RTT_relP[1*${nbOfUseCase}+${useCase}]} : ${RTT_relP[2*${nbOfUseCase}+${useCase}]});/" \
 	| sed -e "s/\( double RV_syst_err_up\[4\]  = \){[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets}; /\1{${RVrelP[3*${nbOfUseCase}+0]} *y_vjets,${RVrelP[3*${nbOfUseCase}+1]} *y_vjets,${RVrelP[3*${nbOfUseCase}+2]} *y_vjets,${RVrelP[3*${nbOfUseCase}+3]} *y_vjets}; /" \
 	| sed -e "s/\( double RV_syst_err_low\[4\] = \){[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets}; /\1{${RVrelM[3*${nbOfUseCase}+0]}*y_vjets,${RVrelM[3*${nbOfUseCase}+1]}*y_vjets,${RVrelM[3*${nbOfUseCase}+2]}*y_vjets,${RVrelM[3*${nbOfUseCase}+3]}*y_vjets}; /" \
 	> tmp.txt ;
