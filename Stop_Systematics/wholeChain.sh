@@ -4,7 +4,8 @@ outputFromVJetsEstimation="/user/caebergs/VJetEstimation/nominal_STbar017/stdout
 #nomDir="/user/caebergs/Leg3_WnJets_DataMC/miguelf/" ;
 nomDir="/user/caebergs/Leg3/Leg3Output_5Dreweigh/" ;
 #systDir="/user/caebergs/VJetEstimation/testChain/samplesSyst/" ;
-systDir="/user/caebergs/Leg3/Leg3_Bxl_Systematics/" ;
+#systDir="/user/caebergs/Leg3/Leg3_Bxl_Systematics/" ;
+systDir="/user/caebergs/VJetEstimation/Stop_Systematics/samplesSyst/" ;
 #controlRegionsDir="/user/caebergs/Leg3/Leg3NewTEff/" ;
 controlRegionsDir="/user/caebergs/Leg3/Leg3_newTEff/" ;
 extrapolatedRV="false" ;
@@ -249,7 +250,7 @@ for channel in 1 2 3 ; do
 	    echo -n "errP=$errP   "
 	    errM=$( echo "${errMinus}" | sed -e "s/e/\*10\^/" | sed -e "s/\+//g" ) ;
 	    echo -n "errM=$errM   "
-	    err=$( echo "scale=90; if ( ${errP} + ( -1 * ${errM} ) > 0 ) ${errP} else ( -1 * ${errM} ) " | tee test.txt| bc | sed -e 's/\\//' | tr -d '\n' | sed -e "s/[0]*$//" ) ;
+	    err=$( echo "scale=90; if ( ${errP} + ( ${errM} ) > 0 ) ${errP} else ( -1 * ${errM} ) " | tee test.txt| bc | sed -e 's/\\//' | tr -d '\n' | sed -e "s/[0]*$//" ) ;
 #cat test.txt
 	    echo -e -n "err=$err\n"
 #systUncert : eXbq sur VJets method ????
