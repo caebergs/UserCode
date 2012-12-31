@@ -548,29 +548,37 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 }
                 printf("\n\nPrinting results for the estimated channels : \n");
                 Double_t y = 0., ytemp=0., yerr=0., dummy;
-                tg_categ[1]->GetPoint(bin, dummy,y);
-                yerr = tg_categ[1]->GetErrorYlow(bin);
-                ytemp = tg_categ[1]->GetErrorYhigh(bin);
-                if (ytemp>yerr) {
-                    yerr = ytemp;
+                if (tg_categ[1] != NULL) {
+                    tg_categ[1]->GetPoint(bin, dummy,y);
+                    yerr = tg_categ[1]->GetErrorYlow(bin);
+                    ytemp = tg_categ[1]->GetErrorYhigh(bin);
+                    if (ytemp>yerr) {
+                        yerr = ytemp;
+                    }
                 }
                 printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", ntt, ntt_err, y, yerr, ntt*y, (ntt_err/ntt + yerr/y) *ntt*y);
-                tg_categ[2]->GetPoint(bin, dummy,y);
-                yerr = tg_categ[2]->GetErrorYlow(bin);
-                ytemp = tg_categ[2]->GetErrorYhigh(bin);
-                if (ytemp>yerr) {
-                    yerr = ytemp;
+                y = 0.; ytemp=0.; yerr=0.;
+                if (tg_categ[2] != NULL) {
+                    tg_categ[2]->GetPoint(bin, dummy,y);
+                    yerr = tg_categ[2]->GetErrorYlow(bin);
+                    ytemp = tg_categ[2]->GetErrorYhigh(bin);
+                    if (ytemp>yerr) {
+                        yerr = ytemp;
+                    }
                 }
                 printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", nv, nv_err, y, yerr, nv*y, (nv_err/nv + yerr/y) *nv*y);
                 for (UInt_t i=0; i<5; i++) {
                     printf("Process %d : %s : ", i, BckgdNames[i].c_str());
                     Double_t sum = 0.;
                     
-                    tg_categ[i]->GetPoint(bin, dummy,y);
-                    yerr = tg_categ[i]->GetErrorYlow(bin);
-                    ytemp = tg_categ[i]->GetErrorYhigh(bin);
-                    if (ytemp>yerr) {
-                        yerr = ytemp;
+                    y = 0.; ytemp=0.; yerr=0.;
+                    if (tg_categ[i] != NULL) {
+                        tg_categ[i]->GetPoint(bin, dummy,y);   
+                        yerr = tg_categ[i]->GetErrorYlow(bin);
+                        ytemp = tg_categ[i]->GetErrorYhigh(bin);
+                        if (ytemp>yerr) {
+                            yerr = ytemp;
+                        }
                     }
                     
                     if (bJetMult_Avg[i] == NULL) {
