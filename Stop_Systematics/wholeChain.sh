@@ -140,7 +140,9 @@ declare -a RVnomTrend ;
 for channel in 1 2 3 ; do
     for useCase in 0 1 2 3 ; do
 	RTTrelP[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (+) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (+) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
+echo "${RTTrelP[${channel}*${nbOfUseCase}+${useCase}]}"
 	RTTrelM[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (-) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (-) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
+echo "${RTTrelM[${channel}*${nbOfUseCase}+${useCase}]}"
 	RTTnom[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "\\$R_{TT}\\$ & \$[0-9]*\.[0-9]*\\\pm[0-9]*\.[0-9]*^{+[0-9]*\.[0-9]*}_{-[0-9]*\.[0-9]*}\\$" | head -n 1 | sed -e "s/\\\$R_{TT}\\\$ \& \\\$\([0-9\.]*\)\\\\pm[0-9\.]*^{+[0-9\.]*}_{-[0-9\.]*}\\\$/\1/")
 	RVrelP[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (+) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (+) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
 	RVrelM[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (-) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (-) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
@@ -206,26 +208,30 @@ cat ../TotalEstimatedNumbers_Errors_IndivChannel.C \
 mv tmp.txt TotalEstimatedNumbers_Errors_IndivChannel.C ;
 for useCase in 0 1 2 3 ; do
     cat TotalEstimatedNumbers_Errors_IndivChannel.C \
-	| sed -e  "s/\( RTT_syst_err_up\[${useCase}\]  = (channel==0 ? \)[0-9\.]* : [0-9\.]*);/ \1${RTT_relP[1*${nbOfUseCase}+${useCase}]} : ${RTT_relP[2*${nbOfUseCase}+${useCase}]});/" \
-	| sed -e  "s/\( RTT_syst_err_low\[${useCase}\] = (channel==0 ? \)[0-9\.]* : [0-9\.]*);/ \1${RTT_relP[1*${nbOfUseCase}+${useCase}]} : ${RTT_relP[2*${nbOfUseCase}+${useCase}]});/" \
+	| sed -e  "s/\( RTT_syst_err_up\[${useCase}\]  = (channel==0 ? \)[0-9\.]* : [0-9\.]*);/ \1${RTTrelP[1*${nbOfUseCase}+${useCase}]} : ${RTTrelP[2*${nbOfUseCase}+${useCase}]});/" \
+	| sed -e  "s/\( RTT_syst_err_low\[${useCase}\] = (channel==0 ? \)[0-9\.]* : [0-9\.]*);/ \1${RTTrelM[1*${nbOfUseCase}+${useCase}]} : ${RTTrelM[2*${nbOfUseCase}+${useCase}]});/" \
 	| sed -e "s/\( double RV_syst_err_up\[4\]  = \){[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets}; /\1{${RVrelP[3*${nbOfUseCase}+0]} *y_vjets,${RVrelP[3*${nbOfUseCase}+1]} *y_vjets,${RVrelP[3*${nbOfUseCase}+2]} *y_vjets,${RVrelP[3*${nbOfUseCase}+3]} *y_vjets}; /" \
 	| sed -e "s/\( double RV_syst_err_low\[4\] = \){[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets}; /\1{${RVrelM[3*${nbOfUseCase}+0]}*y_vjets,${RVrelM[3*${nbOfUseCase}+1]}*y_vjets,${RVrelM[3*${nbOfUseCase}+2]}*y_vjets,${RVrelM[3*${nbOfUseCase}+3]}*y_vjets}; /" \
 	> tmp.txt ;
     mv tmp.txt TotalEstimatedNumbers_Errors_IndivChannel.C ;
+echo ""
+grep -H "RTT_syst_err_up"  TotalEstimatedNumbers_Errors_IndivChannel.C ;
+grep -H "RTT_syst_err_low"  TotalEstimatedNumbers_Errors_IndivChannel.C ;
+grep -H "RV_syst_err_up" TotalEstimatedNumbers_Errors_IndivChannel.C ;
 done
 echo "Groupe"
 cat ../TotalEstimatedNumbers_Errors_new.C \
     | sed -e "s#\(^[ ]*std::string path = \"\)\(.*\)\(\"[ ]*;\)#\1${nomDir}\3#" \
     | sed -e "s/\( double RTT_syst_err_up\[4\]  = \){[0-9\.]*,[0-9\.]*,[0-9\.]*,[0-9\.]*}; /\1{${RTTrelP[3*${nbOfUseCase}+0]}*y_ttlike,${RTTrelP[3*${nbOfUseCase}+1]}*y_ttlike,${RTTrelP[3*${nbOfUseCase}+2]}*y_ttlike,${RTTrelP[3*${nbOfUseCase}+3]}*y_ttlike}; /" \
     | sed -e "s/\( double RTT_syst_err_low\[4\] = \){[0-9\.]*,[0-9\.]*,[0-9\.]*,[0-9\.]*}; /\1{${RTTrelM[3*${nbOfUseCase}+0]}*y_ttlike,${RTTrelM[3*${nbOfUseCase}+1]}*y_ttlike,${RTTrelM[3*${nbOfUseCase}+2]}*y_ttlike,${RTTrelM[3*${nbOfUseCase}+3]}*y_ttlike}; /" \
-    | sed -e "s/\( double RV_syst_err_up\[4\]  = \){[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets}; /\1{${RVrelP[3*${nbOfUseCase}+0]} *y_vjets,${RVrelP[3*${nbOfUseCase}+1]} *y_vjets,${RVrelP[3*${nbOfUseCase}+2]} *y_vjets,${RVrelP[3*${nbOfUseCase}+3]} *y_vjets}; /" \
+    | sed -e "s/\( double RV_syst_err_up\[4\]  = \){[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets}; /\1{${RVrelP[3*${nbOfUseCase}+0]}*y_vjets,${RVrelP[3*${nbOfUseCase}+1]}*y_vjets,${RVrelP[3*${nbOfUseCase}+2]}*y_vjets,${RVrelP[3*${nbOfUseCase}+3]}*y_vjets}; /" \
     | sed -e "s/\( double RV_syst_err_low\[4\] = \){[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets,[0-9\.]*\*y_vjets}; /\1{${RVrelM[3*${nbOfUseCase}+0]}*y_vjets,${RVrelM[3*${nbOfUseCase}+1]}*y_vjets,${RVrelM[3*${nbOfUseCase}+2]}*y_vjets,${RVrelM[3*${nbOfUseCase}+3]}*y_vjets}; /" \
     > tmp.txt ;
 mv tmp.txt TotalEstimatedNumbers_Errors_new.C
 
 cat ../ControlRegions.C \
-| sed -e "s#\(^[ ]*std::string path = \"\)\(.*\)\(\"[ ]*;\)#\1${controlRegionsDir}\3#" \
-> tmp.txt
+    | sed -e "s#\(^[ ]*std::string path = \"\)\(.*\)\(\"[ ]*;\)#\1${controlRegionsDir}\3#" \
+    > tmp.txt
 mv tmp.txt ControlRegions.C ;
 
 
@@ -254,28 +260,28 @@ for channel in 1 2 3 ; do
 #cat test.txt
 	    echo -e -n "err=$err\n"
 #systUncert : eXbq sur VJets method ????
-cat ControlRegions_${channel}.C \
-| sed -e "s/^[ ]*nbOfEvents\[[ ]*${idx}[ ]*\] =[ ]*\([0-9\.]*\);/  nbOfEvents[${idx}] = ${estimation} ; \/\/ ${varName} \/\/ /" \
-| sed -e "s/^[ ]*statUncert\[[ ]*${idx}[ ]*\] =[ ]*\([0-9\.]*\);/  statUncert[${idx}] = ${err} ; \/\/ ${varName} \/\/ /" \
-> tmp.txt
-mv tmp.txt ControlRegions_${channel}.C
+	    cat ControlRegions_${channel}.C \
+		| sed -e "s/^[ ]*nbOfEvents\[[ ]*${idx}[ ]*\] =[ ]*\([0-9eE\.+\-]*\)[ ]*;/  nbOfEvents[${idx}] = ${estimation} ; \/\/ ${varName} \/\/ /" \
+		| sed -e "s/^[ ]*statUncert\[[ ]*${idx}[ ]*\] =[ ]*\([0-9eE\.+\-]*\)[ ]*;/  statUncert[${idx}] = ${err} ; \/\/ ${varName} \/\/ /" \
+		> tmp.txt
+	    mv tmp.txt ControlRegions_${channel}.C
 
 	    if [ "${channel}" = "3" ]; then 
 		cat TotalEstimatedNumbers_Errors_new.C \
-		    | sed -e "s/^  nbOfEvents\[[ ]*${idx}[ ]*\] =[ ]*\([0-9]*\);/  nbOfEvents[${idx}] = ${estimation} ; \/\/ ${varName} \/\/ /" \
-		    | sed -e "s/^  statUncert\[[ ]*${idx}[ ]*\] =[ ]*\([0-9]*\);/  statUncert[${idx}] = ${err} ; \/\/ ${varName} \/\/ /" \
+		    | sed -e "s/^  nbOfEvents\[[ ]*${idx}[ ]*\] =[ ]*\([0-9eE\.+\-]*\)[ ]*;/  nbOfEvents[${idx}] = ${estimation} ; \/\/ ${varName} \/\/ /" \
+		    | sed -e "s/^  statUncert\[[ ]*${idx}[ ]*\] =[ ]*\([0-9eE\.+\-]*\)[ ]*;/  statUncert[${idx}] = ${err} ; \/\/ ${varName} \/\/ /" \
 		    > tmp.txt
 		mv tmp.txt TotalEstimatedNumbers_Errors_new.C #TotalEstimatedNumbers_Errors_new_${channel}.C ;
 	    elif [ "${channel}" = "1" ]; then
 		cat  TotalEstimatedNumbers_Errors_IndivChannel.C \
-		    | sed -e "s/^  nbOfEvents\[[ ]*${idx}[ ]*\] = (channel==0 ?[ ]*\([0-9]*\)[ ]*:[ ]*\([0-9]*\)[ ]*);/  nbOfEvents[${idx}] = (channel==0 ? ${estimation} : \2 ) ; \/\/ ${varName} \/\/ /" \
-		    | sed -e "s/^  statUncert\[[ ]*${idx}[ ]*\] = (channel==0 ?[ ]*\([0-9]*\)[ ]*:[ ]*\([0-9]*\)[ ]*);/  statUncert[${idx}] = (channel==0 ? ${err} : \2 ); \/\/ ${varName} \/\/ /" \
+		    | sed -e "s/^  nbOfEvents\[[ ]*${idx}[ ]*\] = (channel==0 ?[ ]*\([0-9eE\.+\-]*\)[ ]*:[ ]*\([0-9eE\.+\-]*\)[ ]*)[ ]*;/  nbOfEvents[${idx}] = (channel==0 ? ${estimation} : \2 ) ; \/\/ ${varName} \/\/ /" \
+		    | sed -e "s/^  statUncert\[[ ]*${idx}[ ]*\] = (channel==0 ?[ ]*\([0-9eE\.+\-]*\)[ ]*:[ ]*\([0-9eE\.+\-]*\)[ ]*)[ ]*;/  statUncert[${idx}] = (channel==0 ? ${err} : \2 ); \/\/ ${varName} \/\/ /" \
 		    > tmp.txt
 		mv tmp.txt TotalEstimatedNumbers_Errors_IndivChannel.C
-	    elif [ "${channel}" = "1" ]; then
+	    elif [ "${channel}" = "2" ]; then
 		cat  TotalEstimatedNumbers_Errors_IndivChannel.C \
-		    | sed -e "s/^  nbOfEvents\[[ ]*${idx}[ ]*\] = (channel==0 ?[ ]*\([0-9]*\)[ ]*:[ ]*\([0-9]*\)[ ]*);/  nbOfEvents[${idx}] = (channel==0 ? \1 : ${estimation} ) ; \/\/ ${varName} \/\/ /" \
-		    | sed -e "s/^  statUncert\[[ ]*${idx}[ ]*\] = (channel==0 ?[ ]*\([0-9]*\)[ ]*:[ ]*\([0-9]*\)[ ]*);/  statUncert[${idx}] = (channel==0 ? \1 : ${err} ); \/\/ ${varName} \/\/ /" \
+		    | sed -e "s/^  nbOfEvents\[[ ]*${idx}[ ]*\] = (channel==0 ?[ ]*\([0-9eE\.+\-]*\)[ ]*:[ ]*\([0-9eE\.+\-]*\)[ ]*)[ ]*;/  nbOfEvents[${idx}] = (channel==0 ? \1 : ${estimation} ) ; \/\/ ${varName} \/\/ /" \
+		    | sed -e "s/^  statUncert\[[ ]*${idx}[ ]*\] = (channel==0 ?[ ]*\([0-9eE\.+\-]*\)[ ]*:[ ]*\([0-9eE\.+\-]*\)[ ]*)[ ]*;/  statUncert[${idx}] = (channel==0 ? \1 : ${err} ); \/\/ ${varName} \/\/ /" \
 		    > tmp.txt
 		mv tmp.txt TotalEstimatedNumbers_Errors_IndivChannel.C
 	    fi
