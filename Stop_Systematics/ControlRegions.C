@@ -438,9 +438,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                     if (bJetDistr!=NULL) {
                         if (bJetMult_Avg[i]==NULL) {
                             bJetMult_Avg[i] = (TH1D*) bJetDistr->Clone();
-                            bJetMult_Avg[i]->Scale( weight_onMC[i][m] /((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2) );
+                            bJetMult_Avg[i]->Scale( weight_onMC[i][m] /*/((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2)*/ );
                         } else {
-                            bJetMult_Avg[i]->Add(bJetDistr, weight_onMC[i][m] /((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2) );
+                          bJetMult_Avg[i]->Add(bJetDistr, weight_onMC[i][m] /*/((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2)*/ );
                         }
                     }
                     Double_t w = weight_onMC[i][m]*teff->GetTotalHistogram()->GetBinContent(1+bin) ;
@@ -575,15 +575,15 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             {
                 Double_t ntt=0., ntt_err=0., nv=0., nv_err=0. ;
                 if (j==0) {
-                    ntt     = vj.Ntt_0bjet(nbOfEvents[3], nbOfEvents[15], nbOfEvents[17], 4);
-                    ntt_err = vj.Ntt_err_0bjet(nbOfEvents[3], statUncert[3], nbOfEvents[15], statUncert[15], nbOfEvents[17], statUncert[17], 4);
-                    nv      = vj.Nv_0bjet(nbOfEvents[6], nbOfEvents[16], 4);
-                    nv_err  = vj.Nv_err_0bjet(nbOfEvents[6], statUncert[6], nbOfEvents[16], statUncert[16], 4);
+                    ntt     = vj.Ntt_0bjet(nbOfEvents[3*1+njets], nbOfEvents[nrpoints+0], nbOfEvents[nrpoints+2], 4+njets);
+                    ntt_err = vj.Ntt_err_0bjet(nbOfEvents[3*1+njets], statUncert[3*1+njets], nbOfEvents[nrpoints+0], statUncert[nrpoints+0], nbOfEvents[nrpoints+2], statUncert[nrpoints+2], 4+njets);
+                    nv      = vj.Nv_0bjet(nbOfEvents[3*2+njets], nbOfEvents[nrpoints+1], 4+njets);
+                    nv_err  = vj.Nv_err_0bjet(nbOfEvents[3*2+njets], statUncert[3*2+njets], nbOfEvents[nrpoints+1], statUncert[nrpoints+1], 4+njets);
                 } else if (j==1) {
-                    ntt     = vj.Ntt_2bjets(nbOfEvents[3], nbOfEvents[15], nbOfEvents[17], 4);
-                    ntt_err = vj.Ntt_err_2bjets(nbOfEvents[3], statUncert[3], nbOfEvents[15],  statUncert[15], nbOfEvents[17], statUncert[17], 4);
-                    nv      = vj.Nv_2bjets(nbOfEvents[6], nbOfEvents[16], 4);
-                    nv_err  = vj.Nv_err_2bjets(nbOfEvents[6], statUncert[6], nbOfEvents[16], statUncert[16], 4);
+                    ntt     = vj.Ntt_2bjets(nbOfEvents[3*1+njets], nbOfEvents[nrpoints+0], nbOfEvents[nrpoints+2], 4+njets);
+                    ntt_err = vj.Ntt_err_2bjets(nbOfEvents[3*1+njets], statUncert[3*1+njets], nbOfEvents[nrpoints+0],  statUncert[nrpoints+0], nbOfEvents[nrpoints+2], statUncert[nrpoints+2], 4+njets);
+                    nv      = vj.Nv_2bjets(nbOfEvents[3*2+njets], nbOfEvents[nrpoints+1], 4+njets);
+                    nv_err  = vj.Nv_err_2bjets(nbOfEvents[3*2+njets], statUncert[3*2+njets], nbOfEvents[nrpoints+1], statUncert[nrpoints+1], 4+njets);
                 }
                 printf("\n\nPrinting results for the estimated channels : \n");
                 Double_t y = 0., ytemp=0., yerr=0., dummy;
@@ -595,7 +595,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                         yerr = ytemp;
                     }
                 }
-                printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", ntt, ntt_err, y, yerr, ntt*y, (ntt_err/ntt + yerr/y) *ntt*y);
+                printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, y, yerr, ntt*y, (ntt_err/ntt + yerr/y) *ntt*y   , nbOfEvents[3*1+njets]);
                 y = 0.; ytemp=0.; yerr=0.;
                 if (tg_categ[2] != NULL) {
                     tg_categ[2]->GetPoint(bin, dummy,y);
@@ -605,7 +605,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                         yerr = ytemp;
                     }
                 }
-                printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", nv, nv_err, y, yerr, nv*y, (nv_err/nv + yerr/y) *nv*y);
+                printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, y, yerr, nv*y, (nv_err/nv + yerr/y) *nv*y   , nbOfEvents[3*2+njets]);
                 for (UInt_t i=0; i<5; i++) {
                     printf("Process %d : %s : ", i, BckgdNames[i].c_str());
                     Double_t sum = 0.;
@@ -625,10 +625,21 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                         continue ;
                     }
                     Double_t bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
-                    sum += bBinFrac * nbOfEvents[i] ;
-                    printf(" %lf \\pm %lf \n", sum, bBinFrac*y*sum * (statUncert[i]/nbOfEvents[i] + yerr/y) );
+                    sum += bBinFrac * nbOfEvents[3*i+njets] ;
+                    printf(" %lf * %lf = %lf \\pm %lf \n", bBinFrac, nbOfEvents[3*i+njets], sum, bBinFrac*y*sum * (statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y) );
+                    printf("bJetMult_Avg[%d] : { ", i);
+                    for (int kkk=1; kkk<=bJetMult_Avg[i]->GetNbinsX() ; kkk++) {
+                      if (kkk==1) {
+                        printf("%lf", bJetMult_Avg[i]->GetBinContent(kkk));
+                      } else {
+                        printf(" ; %lf", bJetMult_Avg[i]->GetBinContent(kkk));
+                      }
+                    }
+                    printf(" } --> Integral : %lf \n",  bJetMult_Avg[i]->Integral(0,-1)) ;
                 }
+                
             }
+            
             /**
              Observed in data (only totals ...)
              */
@@ -653,6 +664,20 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 }
                 printf(" = %lf\n", sum);
                 printf("  From TEfficiencies \n");
+                printf("   total : \n");
+                sum=0.;
+                for (UInt_t i=0; i<datafiles.size(); i++) {
+                    TEfficiency *teff = (TEfficiency*) datafiles[i]->Get(teffname.c_str());
+                    Double_t bBinFrac = teff->GetTotalHistogram()->GetBinContent(1+bin);
+                    if (i==0) {
+                        printf(" %lf", bBinFrac );
+                    } else {
+                        printf(" + %lf", bBinFrac);
+                    }
+                    sum += bBinFrac ;
+                }
+                printf(" = %lf\n", sum);
+                printf("   passed : \n");
                 sum=0.;
                 for (UInt_t i=0; i<datafiles.size(); i++) {
                     TEfficiency *teff = (TEfficiency*) datafiles[i]->Get(teffname.c_str());
