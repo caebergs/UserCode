@@ -201,7 +201,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         listNames[1].push_back("ttbar"+CChannel[channel]);
         inputfiles[1].push_back(TFile::Open((path+"TTbar"+CChannel[channel]+".root").c_str()));
         weight_onMC[1].push_back(165. *(((channel+1)&1)!=0 ? ilmu/((TH1D*) (* inputfiles[1].rbegin())->Get("Entries"))->GetBinContent(2) : 0.) + (((channel+1)&2)!=0 ? ilel/((TH1D*) (* inputfiles[1].rbegin())->Get("Entries"))->GetBinContent(2) : 0.) ); //TTbar
-        weight_VJet[1].push_back( nbOfEvents[3*1+njets] ); //W2jets
+        weight_VJet[1].push_back( nbOfEvents[3*1+njets] ); //TTbar
         
         BckgdNames[2] = "V-like";
         
@@ -319,17 +319,17 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         inputfiles[4].push_back(TFile::Open((path+"WW"+CChannel[channel]+".root").c_str()));
         listNames[4].push_back("WW"+CChannel[channel]);
         weight_onMC[4].push_back(43. *(((channel+1)&1)!=0 ? ilmu/((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2) : 0.) + (((channel+1)&2)!=0 ? ilel/((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2) : 0.) ); //WW
-        weight_VJet[4].push_back( nbOfEvents[3*0+njets] ); //WW
+        weight_VJet[4].push_back( nbOfEvents[3*4+njets] ); //WW
         //  BckgdNames[3] = "WZ+jets";
         inputfiles[4].push_back(TFile::Open((path+"WZ"+CChannel[channel]+".root").c_str()));
         listNames[4].push_back("WZ"+CChannel[channel]);
         weight_onMC[4].push_back(18.2 *(((channel+1)&1)!=0 ? ilmu/((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2) : 0.) + (((channel+1)&2)!=0 ? ilel/((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2) : 0.) ); //WZ
-        weight_VJet[4].push_back( nbOfEvents[3*0+njets] ); //WZ
+        weight_VJet[4].push_back( nbOfEvents[3*4+njets] ); //WZ
         //  BckgdNames[11] = "ZZ+jets";
         inputfiles[4].push_back(TFile::Open((path+"ZZ"+CChannel[channel]+".root").c_str()));
         listNames[4].push_back("ZZ"+CChannel[channel]);
         weight_onMC[4].push_back(5.9 *(((channel+1)&1)!=0 ? ilmu/((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2) : 0.) + (((channel+1)&2)!=0 ? ilel/((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2) : 0.) ); //ZZ
-        weight_VJet[4].push_back( nbOfEvents[3*0+njets] ); //ZZ
+        weight_VJet[4].push_back( nbOfEvents[3*4+njets] ); //ZZ
         
         
         
