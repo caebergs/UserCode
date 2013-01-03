@@ -363,6 +363,43 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         
     }
     
+    // Printing input info (independent of the Control Regions looked at)
+    {
+        printf("Printing input info (independent of the Control Regions looked at)\n");
+        Double_t sum;
+        printf(" weight_onMC : \n");
+        for (UInt_t i=0; i<5; i++) {
+            sum = 0.;
+            printf("  Process %d : ", i);
+            std::vector<Double_t>::const_iterator beg = weight_onMC[i].begin();
+            for (std::vector<Double_t>::const_iterator it = beg; it!=weight_onMC[i].end(); it++) {
+                if (it==beg) {
+                    printf("%lf", *it);
+                } else {
+                    printf(" ; %lf", *it);
+                }
+                sum += *it ;
+            }
+            printf(" = %lf\n", sum);
+        }
+        printf(" weight_VJet : \n");
+        for (UInt_t i=0; i<5; i++) {
+            sum = 0.;
+            printf("  Process %d : ", i);
+            std::vector<Double_t>::const_iterator beg = weight_VJet[i].begin();
+            for (std::vector<Double_t>::const_iterator it = beg; it!=weight_VJet[i].end(); it++) {
+                if (it==beg) {
+                    printf("%lf", *it);
+                } else {
+                    printf(" ; %lf", *it);
+                }
+                sum += *it ;
+            }
+            printf(" = %lf\n", sum);
+        }
+    }
+    
+    
     //    for (UInt_t l=0; l<NbOfUseCase; l++) {
     for (UInt_t j=0; j<NbOfControlRegions; j++) {
         for (UInt_t k=0; k<NbOfMVARegions; k++) {
