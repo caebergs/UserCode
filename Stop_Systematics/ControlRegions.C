@@ -370,7 +370,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         printf(" weight_onMC : \n");
         for (UInt_t i=0; i<5; i++) {
             sum = 0.;
-            printf("  Process %d : ", i);
+            printf("  Process %d : %s : ", i, BckgdNames[i].c_str());
             std::vector<Double_t>::const_iterator beg = weight_onMC[i].begin();
             for (std::vector<Double_t>::const_iterator it = beg; it!=weight_onMC[i].end(); it++) {
                 if (it==beg) {
@@ -378,14 +378,14 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 } else {
                     printf(" ; %lf", *it);
                 }
-                sum += *it ;
+//                sum += *it ;
             }
-            printf(" = %lf\n", sum);
+//            printf(" = %lf\n", sum);
         }
         printf(" weight_VJet : \n");
         for (UInt_t i=0; i<5; i++) {
             sum = 0.;
-            printf("  Process %d : ", i);
+            printf("  Process %d : %s : ", i, BckgdNames[i].c_str());
             std::vector<Double_t>::const_iterator beg = weight_VJet[i].begin();
             for (std::vector<Double_t>::const_iterator it = beg; it!=weight_VJet[i].end(); it++) {
                 if (it==beg) {
@@ -393,9 +393,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 } else {
                     printf(" ; %lf", *it);
                 }
-                sum += *it ;
+//                sum += *it ;
             }
-            printf(" = %lf\n", sum);
+//            printf(" = %lf\n", sum);
         }
     }
     
@@ -479,7 +479,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 printf(" passed : \n");
                 for (UInt_t i=0; i<5; i++) {
                     sum = 0.;
-                    printf("  Process %d : ", i);
+                    printf("  Process %d : %s : ", i, BckgdNames[i].c_str());
                     std::vector<Double_t>::const_iterator beg = passed[i].begin();
                     for (std::vector<Double_t>::const_iterator it = beg; it!=passed[i].end(); it++) {
                         if (it==beg) {
@@ -494,7 +494,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 printf(" weights : \n");
                 for (UInt_t i=0; i<5; i++) {
                     sum = 0.;
-                    printf("  Process %d : ", i);
+                    printf("  Process %d : %s : ", i, BckgdNames[i].c_str());
                     std::vector<Double_t>::const_iterator beg = weights[i].begin();
                     for (std::vector<Double_t>::const_iterator it = beg; it!=weights[i].end(); it++) {
                         if (it==beg) {
