@@ -378,9 +378,10 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 } else {
                     printf(" ; %lf", *it);
                 }
-//                sum += *it ;
+                //                sum += *it ;
             }
-//            printf(" = %lf\n", sum);
+            //            printf(" = %lf\n", sum);
+            printf("\n");
         }
         printf(" weight_VJet : \n");
         for (UInt_t i=0; i<5; i++) {
@@ -393,9 +394,10 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                 } else {
                     printf(" ; %lf", *it);
                 }
-//                sum += *it ;
+                //                sum += *it ;
             }
-//            printf(" = %lf\n", sum);
+            //            printf(" = %lf\n", sum);
+            printf("\n");
         }
     }
     
