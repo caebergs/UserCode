@@ -625,8 +625,8 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                         continue ;
                     }
                     Double_t bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
-                    sum += bBinFrac * nbOfEvents[3*i+njets] ;
-                    printf(" %lf * %lf = %lf \\pm %lf \n", bBinFrac, nbOfEvents[3*i+njets], sum, bBinFrac*y*sum * (statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y) );
+                    sum = y * bBinFrac * nbOfEvents[3*i+njets] ;
+                    printf("%lf * %lf * %lf = %lf \\pm %lf \n", y, bBinFrac, nbOfEvents[3*i+njets], sum, sum * (statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y) );
                     printf("bJetMult_Avg[%d] : { ", i);
                     for (int kkk=1; kkk<=bJetMult_Avg[i]->GetNbinsX() ; kkk++) {
                       if (kkk==1) {
