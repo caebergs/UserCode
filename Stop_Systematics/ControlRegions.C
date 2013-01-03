@@ -438,9 +438,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
                     if (bJetDistr!=NULL) {
                         if (bJetMult_Avg[i]==NULL) {
                             bJetMult_Avg[i] = (TH1D*) bJetDistr->Clone();
-                            bJetMult_Avg[i]->Scale( weight_onMC[i][m] /*1./((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2)*/ );
+                            bJetMult_Avg[i]->Scale( weight_onMC[i][m] /((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2) );
                         } else {
-                            bJetMult_Avg[i]->Add(bJetDistr, weight_onMC[i][m] /*1./((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2)*/ );
+                            bJetMult_Avg[i]->Add(bJetDistr, weight_onMC[i][m] /((TH1D*) inputfiles[i][m]->Get("Entries"))->GetBinContent(2) );
                         }
                     }
                     Double_t w = weight_onMC[i][m]*teff->GetTotalHistogram()->GetBinContent(1+bin) ;
