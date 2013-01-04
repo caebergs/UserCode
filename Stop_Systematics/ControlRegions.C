@@ -570,6 +570,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         printf(" = %lf\n", sum);
 
         for (UInt_t i=0; i<5; i++) {
+          if (bJetMult_Avg[i]==NULL) {
+            continue;
+          }
           printf(" bJetMult_Avg[%d] : { ", i);
           for (int kkk=1; kkk<=bJetMult_Avg[i]->GetNbinsX() ; kkk++) {
             if (kkk==1) {
