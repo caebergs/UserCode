@@ -207,3 +207,111 @@ Double_t VJetEstimation::Nv_err_3bjets(Double_t Nv, Double_t Nv_err, Double_t eu
   + pow(Nv_3bjets(Nv,euds,n)*Nv_err/Nv,2);
 	return (Nv_err_3bjets_ < 0 ? 0 : sqrt(Nv_err_3bjets_));
 }
+
+
+
+
+
+
+
+
+
+
+
+
+Double_t VJetEstimation::probElemWbb(Double_t e_b, Double_t e_uds, Int_t Nbtags, Int_t n) {
+    Double_t sum = 0.;
+    for (Int_t k=0 ; k<=Nbtags ; k++) {
+        for (Int_t L=k ; L<=n ; L++) {
+            Double_t biComb = VJetEstimation::biComb(k, L, Nbtags-k, n-L);
+            if (biComb == -1.) {
+                biComb = VJetEstimation::biCombD(k, L, Nbtags-k, n-L);
+            }
+            sum += pow(e_b,k) * pow(1.-e_b,L-k) * biComb * pow(e_uds,Nbtags-k) * pow(1.-e_uds,n-L+Nbtags-k) ;
+        }
+    }
+    return sum;
+}
+
+Double_t VJetEstimation::probElemWbb(Double_t e_b, Double_t e_uds, Int_t Nb, Int_t Nbtags, Int_t n) {
+    Double_t sum = 0.;
+    for (Int_t k=0 ; k<=Nbtags ; k++) {
+        Int_t L = Nb;
+        if (k<=L && L<=n) {
+            Double_t biComb = VJetEstimation::biComb(k, L, Nbtags-k, n-L);
+            if (biComb == -1.) {
+                biComb = VJetEstimation::biCombD(k, L, Nbtags-k, n-L);
+            }
+            sum += pow(e_b,k) * pow(1.-e_b,L-k) * biComb * pow(e_uds,Nbtags-k) * pow(1.-e_uds,n-L+Nbtags-k) ;
+        }
+    }
+    return sum;
+}
+
+Double_t VJetEstimation::biComb(UInt_t in1, UInt_t outof1, UInt_t in2, UInt_t outof2) {
+    if (in1>outof1 || in2>outof2) {
+        return -1.;
+    }
+    ULong_t iMax1 = in1;
+    if (iMax1>(outof1/2)) {
+        iMax1 = outof1-in1;
+    }
+    ULong_t iMax2 = in2;
+    if (iMax2>(outof2/2)) {
+        iMax2 = outof2-in2;
+    }
+    ULong_t tempNum = 1;
+    ULong_t tempDen = 1;
+    ULong_t numerator = 1;
+    ULong_t denominator = 1;
+    for (UInt_t i=1 ; i<=iMax1 ; i++) {
+        tempNum = numerator ;
+        tempDen = denominator ;
+        numerator *= (outof1-i)+1 ;
+        denominator *=i ;
+        if ((numerator/((outof1-i)+1) != tempNum) || (denominator/i != tempDen)) {
+            return -1.;
+        }
+    }
+    for (UInt_t i=1 ; i<=iMax2 ; i++) {
+        tempNum = numerator ;
+        tempDen = denominator ;
+        numerator *= (outof2-i)+1 ;
+        denominator *= i ;
+        if ((numerator/((outof2-i)+1) != tempNum) || (denominator/i != tempDen)) {
+            return -1.;
+        }
+    }
+    return ((Double_t)numerator)/((Double_t)denominator);
+}
+
+Double_t VJetEstimation::biCombD(UInt_t in1, UInt_t outof1, UInt_t in2, UInt_t outof2) {
+    if (in1>outof1 || in2>outof2) {
+        return -1.;
+    }
+    Double_t iMax1 = in1;
+    if (iMax1>(outof1/2)) {
+        iMax1 = outof1-in1;
+    }
+    Double_t iMax2 = in2;
+    if (iMax2>(outof2/2)) {
+        iMax2 = outof2-in2;
+    }
+    Double_t tempNum = 1;
+    Double_t tempDen = 1;
+    Double_t numerator = 1;
+    Double_t denominator = 1;
+    for (UInt_t i=1 ; i<=iMax1 ; i++) {
+        tempNum = numerator ;
+        tempDen = denominator ;
+        numerator *= (outof1-i)+1 ;
+        denominator *=i ;
+    }
+    for (UInt_t i=1 ; i<=iMax2 ; i++) {
+        tempNum = numerator ;
+        tempDen = denominator ;
+        numerator *= (outof2-i)+1 ;
+        denominator *= i ;
+    }
+    return numerator/denominator;
+} 

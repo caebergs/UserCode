@@ -127,6 +127,13 @@ public:
   Double_t Ntt_err_3bjets(const Double_t Ntt, const Double_t Ntt_err, const Double_t eb,   Double_t eb_err, const Double_t eudsc, const Double_t eudsc_err, Int_t n);
   static Double_t Nv_err_3bjets (const Double_t Nv,  Double_t Nv_err,  Double_t euds, const Double_t euds_err, Int_t n);
 
+  
+  static Double_t probElemWbb(Double_t e_b, Double_t e_uds, Int_t Nbtags, Int_t n);
+  static Double_t probElemWbb(Double_t e_b, Double_t e_uds, Int_t Nb, Int_t Nbtags, Int_t n);
+  static Double_t biComb(UInt_t in1, UInt_t outof1, UInt_t in2, UInt_t outof2);
+  static Double_t biCombD(UInt_t in1, UInt_t outof1, UInt_t in2, UInt_t outof2);
+
+  
   void SetTTEffbq(std::vector<Double_t> Eff0bq, std::vector<Double_t> Eff1bq, std::vector<Double_t> Eff2bq);
 
   Double_t GetTTEff0bq(Int_t n) { return Eff0bq_[n]; };
