@@ -676,7 +676,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             }
           }
           
-          if (bJetMult_Avg[i] == NULL) {
+          if (bJetMult_Avg[i] == NULL && i!=3) {
             printf("\n");
             continue ;
           }
@@ -702,6 +702,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
              */
             vlike_plus_bb += sum ;
             printf("[factWbb:est(%lf) Vest(%lf) VjetsMethods(%lf)]\t\t\t", factWbbEff, bBinFrac, wbb_bJetMult_hist->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / wbb_bJetMult_hist->Integral(0,-1));
+            tot += sum ;
           }
           printf("%lf * %lf * %lf = %lf \\pm %lf \n", y, bBinFrac, nbOfEvents[3*i+njets], sum, sum * (statUncert[3*i+njets]/nbOfEvents[3*i+njets] + (i==3?yverr/yv:yerr/y)) );
           
