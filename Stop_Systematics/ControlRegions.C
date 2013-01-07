@@ -680,12 +680,12 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             printf("\n");
             continue ;
           }
-          Double_t bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
-          sum = y * bBinFrac * nbOfEvents[3*i+njets] ;
+          Double_t bBinFrac = -1.;
           if (i!=1 && i!=2 && i!=3) {
+            bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
+            sum = y * bBinFrac * nbOfEvents[3*i+njets] ;
             tot += sum;
-          }
-          if (i==3) {
+          } else if (i==3) {
             // Same factors as V-like
             bBinFrac = bJetMult_Avg[2]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[2]->Integral(0,-1);
             sum = yv * bBinFrac * nbOfEvents[3*3+njets];
