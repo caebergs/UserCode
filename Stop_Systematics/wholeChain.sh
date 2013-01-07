@@ -1,6 +1,7 @@
 #!/bin/bash
 
 outputFromVJetsEstimation="/user/caebergs/VJetEstimation/nominal_STbar017/stdout_err_w.txt" ;
+outputHistFromVJetsEstimation="/user/caebergs/VJetEstimation/nominal_STbar017/StopSearches_VJetsBckgdEst_w_SemiMuonSemiElectron_Constants_euds.root" ;
 #nomDir="/user/caebergs/Leg3_WnJets_DataMC/miguelf/" ;
 nomDir="/user/caebergs/Leg3/Leg3Output_5Dreweigh/" ;
 #systDir="/user/caebergs/VJetEstimation/testChain/samplesSyst/" ;
@@ -231,6 +232,7 @@ mv tmp.txt TotalEstimatedNumbers_Errors_new.C
 
 cat ../ControlRegions.C \
     | sed -e "s#\(^[ ]*std::string path = \"\)\(.*\)\(\"[ ]*;\)#\1${controlRegionsDir}\3#" \
+    | sed -e "s#\(^[ ]*std::string wbb_bJetMult_filename = \"\)\(.*\)\(\"[ ]*;\)#\1${outputHistFromVJetsEstimation}\3#" \
     > tmp.txt
 mv tmp.txt ControlRegions.C ;
 

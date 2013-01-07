@@ -425,6 +425,11 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
   
   //    for (UInt_t l=0; l<NbOfUseCase; l++) {
   for (UInt_t j=0; j<NbOfControlRegions; j++) {
+    std::string wbb_bJetMult_filename = "" ;
+    TFile *wbb_bJetMult_file = TFile::Open(wbb_bJetMult_filename.c_str()) ;
+    std::string wbbSuff[3] = { "4jets" , "5jets" , "geq6jets" } ;
+    TH1F* wbb_bJetMult_hist = (TH1F*) wbb_bJetMult_file->Get((std::string()+"hNbtaggedJets_wjets_Wbb_SemiElectron_"+wbbSuff[0]+"_WP0").c_str()) ;
+
     for (UInt_t k=0; k<NbOfMVARegions; k++) {
       std::string teffname = "Eff_" + MVA[UseCase] + "_" + controlRegions[j] + MVAcut[k] ;
       printf("\n\n\nInvestigated TEfficiency name : %s     ... gives your info on the Control Region ...\n", teffname.c_str());
@@ -696,7 +701,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
              }
              */
             vlike_plus_bb += sum ;
-            printf("[factWbb:%lf]\t\t\t", factWbbEff);
+            printf("[factWbb:est(%lf) Vest(%lf) VjetsMethods(%lf)]\t\t\t", factWbbEff, bBinFrac, wbb_bJetMult_hist->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / wbb_bJetMult_hist->Integral(0,-1));
           }
           printf("%lf * %lf * %lf = %lf \\pm %lf \n", y, bBinFrac, nbOfEvents[3*i+njets], sum, sum * (statUncert[3*i+njets]/nbOfEvents[3*i+njets] + (i==3?yverr/yv:yerr/y)) );
           
@@ -757,11 +762,16 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         printf(" = %lf\n", sum);
       }
     }
+    wbb_bJetMult_file->Close();
   }
   //   }
   
   
-  
+  for (std::vector<std::vector<TFile*> >::iterator it = inputfiles.begin() ; it != inputfiles.end() ; it++ ) {
+    for (std::vector<TFile*>::iterator it2 = it->begin() ; it2 != it->end() ; it2++ ) {
+      (*it2)->Close();
+    }
+  }
   
   printf(" --> End of the program.\n") ;    
 }
