@@ -429,7 +429,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
     TFile *wbb_bJetMult_file = TFile::Open(wbb_bJetMult_filename.c_str()) ;
     std::string wbbSuff[3] = { "4jets" , "5jets" , "geq6jets" } ;
     TH1F* wbb_bJetMult_hist = (TH1F*) wbb_bJetMult_file->Get((std::string()+"hNbtaggedJets_wjets_Wbb_SemiElectron_"+wbbSuff[0]+"_WP0").c_str()) ;
-
+    
     for (UInt_t k=0; k<NbOfMVARegions; k++) {
       std::string teffname = "Eff_" + MVA[UseCase] + "_" + controlRegions[j] + MVAcut[k] ;
       printf("\n\n\nInvestigated TEfficiency name : %s     ... gives your info on the Control Region ...\n", teffname.c_str());
@@ -573,7 +573,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
           sum += *it ;
         }
         printf(" = %lf\n", sum);
-
+        
         for (UInt_t i=0; i<5; i++) {
           if (bJetMult_Avg[i]==NULL) {
             continue;
@@ -681,10 +681,12 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             continue ;
           }
           Double_t bBinFrac = -1.;
-          if (i!=1 && i!=2 && i!=3) {
+          if (i!=3) {
             bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
             sum = y * bBinFrac * nbOfEvents[3*i+njets] ;
-            tot += sum;
+            if (i!=1 && i!=2) {
+              tot += sum;
+            }
           } else if (i==3) {
             // Same factors as V-like
             bBinFrac = bJetMult_Avg[2]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[2]->Integral(0,-1);
