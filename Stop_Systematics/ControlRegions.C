@@ -633,8 +633,8 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
        Estimated with V+jets on data (and R_X from MC)
        */
       {
-        Double_t tot=0.;
-        Double_t vlike_plus_bb = 0.;
+        Double_t tot=0., bTot=0.;
+        Double_t vlike_plus_bb = 0., bVlike_plus_bb=0.;
         Double_t ntt=0., ntt_err=0., nv=0., nv_err=0. ;
         if (j==0) {
           ntt     = vj.Ntt_0bjet(nbOfEvents[3*1+njets], nbOfEvents[nrpoints+0], nbOfEvents[nrpoints+2], 4+njets);
@@ -658,7 +658,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
           }
         }
         tot += ntt*ytt ;
+        bTot += nbOfEvents[3*1+njets]*ytt ;
         printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, (ntt_err/ntt + ytterr/ytt) *ntt*ytt   , nbOfEvents[3*1+njets]);
+        printf("b Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", nbOfEvents[3*1+njets], statUncert[3*1+njets], ytt, ytterr, nbOfEvents[3*1+njets]*ytt, (statUncert[3*1+njets]/nbOfEvents[3*1+njets] + ytterr/ytt) *nbOfEvents[3*1+njets]*ytt   , nbOfEvents[3*1+njets]);
         ytemp=0.;
         Double_t yv = 0., yverr=0.;
         if (tg_categ[2] != NULL) {
@@ -670,8 +672,11 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
           }
         }
         tot += nv*yv ;
+        bTot += nbOfEvents[3*2+njets]*yv ;
         vlike_plus_bb += nv*yv;
+        bVlike_plus_bb += nbOfEvents[3*2+njets]*yv;
         printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, (nv_err/nv + yverr/yv) *nv*yv   , nbOfEvents[3*2+njets]);
+        printf("b Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nbOfEvents[3*2+njets], statUncert[3*2+njets], yv, yverr, nbOfEvents[3*2+njets]*yv, (statUncert[3*2+njets]/nbOfEvents[3*2+njets] + yverr/yv) *nbOfEvents[3*2+njets]*yv   , nbOfEvents[3*2+njets]);
         for (UInt_t i=0; i<5; i++) {
           printf("  Process %d : %s : ", i, BckgdNames[i].c_str());
           Double_t sum = 0.;
@@ -696,9 +701,12 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             sum = y * bBinFrac * nbOfEvents[3*i+njets] ;
             if (i!=1 && i!=2) {
               tot += sum;
+              bTot += y * nbOfEvents[3*i+njets] ;
             }
           } else if (i==3) {
             // Same factors as V-like
+            y = yv ;
+            yerr = yverr ;
             bBinFrac = bJetMult_Avg[2]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[2]->Integral(0,-1);
             sum = yv * bBinFrac * nbOfEvents[3*3+njets];
             
@@ -715,12 +723,16 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             vlike_plus_bb += sum ;
             printf("[factWbb:est(%lf) Vest(%lf) VjetsMethods(%lf)]\t\t\t", factWbbEff, bBinFrac, wbb_bJetMult_hist->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / wbb_bJetMult_hist->Integral(0,-1));
             tot += sum ;
+            bTot += yv * nbOfEvents[3*3+njets] ;
+            bVlike_plus_bb += yv * nbOfEvents[3*3+njets] ;
           }
-          printf("%lf * %lf * %lf = %lf \\pm %lf \n", y, bBinFrac, nbOfEvents[3*i+njets], sum, sum * (statUncert[3*i+njets]/nbOfEvents[3*i+njets] + (i==3?yverr/yv:yerr/y)) );
+          printf("%lf * %lf * %lf = %lf(bF) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", y, bBinFrac, nbOfEvents[3*i+njets], bBinFrac, y*nbOfEvents[3*i+njets], y*nbOfEvents[3*i+njets]*(statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y), sum, sum * (statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y) );
           
         }
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
+        printf("b V-like + Wbb category (sum) : %lf\n", bVlike_plus_bb);
         printf("  Total : %lf\n", tot);
+        printf("b Total : %lf\n", bTot);
       }
       
       /**
