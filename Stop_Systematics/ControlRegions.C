@@ -151,7 +151,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
   
   std::string MVA[NbOfUseCase] = { "LowDM" , "IntDM1", "IntDM2" , "HighDM" };
   std::string controlRegions[NbOfControlRegions] = { "4jExc_0b", "4jExc_2b" } ;
-  std::string MVAcut[NbOfMVARegions] = { "_00MVA05" , "_05MVA08" } ;
+  std::string MVAcut[NbOfMVARegions+1] = { "_00MVA05" , "_05MVA08" , "" } ;
   
   
   
@@ -440,9 +440,13 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
     }
     printf(" } --> Integral : %lf \n",  wbb_bJetMult_hist->Integral(0,-1)) ;
 
-    for (UInt_t k=0; k<NbOfMVARegions; k++) {
-      std::string teffname = "Eff_" + MVA[UseCase] + "_" + controlRegions[j] + MVAcut[k] ;
-      printf("\n\n\nInvestigated TEfficiency name : %s     ... gives your info on the Control Region ...\n", teffname.c_str());
+    for (UInt_t k=0; k<=NbOfMVARegions; k++) {
+      std::string teffname = "Eff_" + MVA[UseCase] + "_" + controlRegions[j] + MVAcut[(k==NbOfMVARegions?0:k)] ;
+      if (k==NbOfMVARegions) {
+        printf("\n\n\nNo TEfficiency applied (info from %s)     ... gives your info on the Control Region ...\n", teffname.c_str());
+      } else {
+        printf("\n\n\nInvestigated TEfficiency name : %s     ... gives your info on the Control Region ...\n", teffname.c_str());
+      }
       /**
        Pure MC and extracting numbers from the files for the efficiencies
        */
@@ -462,7 +466,14 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         Double_t sumw = 0.;
         Double_t sumwMC = 0.;
         for (UInt_t m=0; m<inputfiles[i].size(); m++) {
-          TEfficiency *teff = (TEfficiency*) inputfiles[i][m]->Get(teffname.c_str());
+          TEfficiency *teff = NULL;
+          if (k==NbOfMVARegions) {
+            teff = new TEfficiency("", "", bin, 0, 1);
+            teff->SetTotalEvents(bin, (((UInt_t) 0)-1)/2);
+            teff->SetPassedEvents(bin, (((UInt_t) 0)-1)/2);
+          } else {
+            teff = (TEfficiency*) inputfiles[i][m]->Get(teffname.c_str());
+          }
           //if (teff==NULL) {
           //continue ;
           //}
