@@ -467,12 +467,17 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         Double_t sumwMC = 0.;
         for (UInt_t m=0; m<inputfiles[i].size(); m++) {
           TEfficiency *teff = NULL;
+          teff = (TEfficiency*) inputfiles[i][m]->Get(teffname.c_str());
           if (k==NbOfMVARegions) {
+            TEfficiency *teff2 = teff;
             teff = new TEfficiency("", "", bin, 0, 1);
-            teff->SetTotalEvents(bin, (((UInt_t) 0)-1)/2);
-            teff->SetPassedEvents(bin, (((UInt_t) 0)-1)/2);
+            teff->SetTotalEvents(bin, teff2->GetTotalHistogram()->GetBinContent(1+bin));
+            teff->SetPassedEvents(bin, teff2->GetTotalHistogram()->GetBinContent(1+bin));
+            /*
+            teff->SetTotalEvents(bin, (((UInt_t) 0)-((UInt_t)1))/2);
+            teff->SetPassedEvents(bin, (((UInt_t) 0)-((UInt_t)1))/2);
+             */
           } else {
-            teff = (TEfficiency*) inputfiles[i][m]->Get(teffname.c_str());
           }
           //if (teff==NULL) {
           //continue ;
@@ -668,6 +673,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             ytterr = ytemp;
           }
         }
+        if (k==NbOfMVARegions) {
+          ytt = 1. ; ytterr = 0. ;
+        }
         tot += ntt*ytt ;
         bTot += nbOfEvents[3*1+njets]*ytt ;
         printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, (ntt_err/ntt + ytterr/ytt) *ntt*ytt   , nbOfEvents[3*1+njets]);
@@ -681,6 +689,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
           if (ytemp>yverr) {
             yverr = ytemp;
           }
+        }
+        if (k==NbOfMVARegions) {
+          yv = 1. ; yverr = 0. ;
         }
         tot += nv*yv ;
         bTot += nbOfEvents[3*2+njets]*yv ;
@@ -701,7 +712,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
               yerr = ytemp;
             }
           }
-          
+          if (k==NbOfMVARegions) {
+            y = 1. ; yerr = 0. ;
+          }
           if (bJetMult_Avg[i] == NULL && i!=3) {
             printf("\n");
             continue ;
@@ -718,6 +731,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             // Same factors as V-like
             y = yv ;
             yerr = yverr ;
+            if (k==NbOfMVARegions) {
+              y = 1. ; yerr = 0. ;
+            }
             bBinFrac = bJetMult_Avg[2]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[2]->Integral(0,-1);
             sum = yv * bBinFrac * nbOfEvents[3*3+njets];
             
