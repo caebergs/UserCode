@@ -471,13 +471,12 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
           if (k==NbOfMVARegions) {
             TEfficiency *teff2 = teff;
             teff = new TEfficiency("", "", bin, 0, 1);
-            teff->SetTotalEvents(bin, teff2->GetTotalHistogram()->GetBinContent(1+bin));
-            teff->SetPassedEvents(bin, teff2->GetTotalHistogram()->GetBinContent(1+bin));
+            teff->SetTotalEvents(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
+            teff->SetPassedEvents(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
             /*
             teff->SetTotalEvents(bin, (((UInt_t) 0)-((UInt_t)1))/2);
             teff->SetPassedEvents(bin, (((UInt_t) 0)-((UInt_t)1))/2);
              */
-          } else {
           }
           //if (teff==NULL) {
           //continue ;
