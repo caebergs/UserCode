@@ -313,7 +313,9 @@ Int_t bin = (${useCase}==0?18:19)*0
 bin
 Bool_t UseWNJets = kFALSE
 UseWNJets
-ControlRegions("corrMatr_${channel}.txt", ${useCase}, bin, UseWNJets, ${channel}-1)
+ControlRegions("corrMatr_${channel}.txt", ${useCase}, bin, UseWNJets, ${channel}-1, 0)
+ControlRegions("corrMatr_${channel}.txt", ${useCase}, bin, UseWNJets, ${channel}-1, 1)
+ControlRegions("corrMatr_${channel}.txt", ${useCase}, bin, UseWNJets, ${channel}-1, 2)
 .q
 EOD
 	if [ "${channel}" == "3" ] ; then

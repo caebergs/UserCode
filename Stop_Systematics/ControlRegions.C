@@ -7,19 +7,18 @@
 
 #include "VJetEstimation.h"
 
-void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, int channelConf) {
+void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJets, Int_t channelConf, Int_t njets) {
   
   std::ifstream file;
   
   const UInt_t nrpoints = 15;
   const UInt_t nreffs = 3;
   const UInt_t NbOfUseCase = 4;
-  const UInt_t NbOfControlRegions = 2;
+  const UInt_t NbOfControlRegions = 3;
   const UInt_t NbOfMVARegions = 2; 
   Double_t ilel = 5050.821;
   Double_t ilmu = 5049.92;
   Double_t Wn_SF = 1.34;
-  Int_t njets = 0 ; // 0 for 4jExc, 1 for 5jExc , 2 for 6jInc
   double **corrMatrix = new double*[nrpoints+nreffs];
   double *statUncert = new double[nrpoints+nreffs];
   //    double *systUncert = new double[nrpoints+nreffs];
@@ -150,7 +149,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
    */
   
   std::string MVA[NbOfUseCase] = { "LowDM" , "IntDM1", "IntDM2" , "HighDM" };
-  std::string controlRegions[NbOfControlRegions] = { "4jExc_0b", "4jExc_2b" } ;
+  //Int_t njets = 0 ; // 0 for 4jExc, 1 for 5jExc , 2 for 6jInc
+  std::string jetBin[3] = { "4jExc" , "5jExc" , "6jInc" };
+  std::string controlRegions[NbOfControlRegions] = { jetBin[njets]+"_0b", jetBin[njets]+"_1b", jetBin[njets]+"_2b" } ;
   std::string MVAcut[NbOfMVARegions+1] = { "_00MVA05" , "_05MVA08" , "" } ;
   
   
@@ -429,7 +430,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
     TFile *wbb_bJetMult_file = TFile::Open(wbb_bJetMult_filename.c_str()) ;
     std::string wbbSuff[3] = { "4jets" , "5jets" , "geq6jets" } ;
     std::string channelS[3] = { "SemiMuon" , "SemiElectron" , "SemiMuonSemiElectron" };
-    TH1F* wbb_bJetMult_hist = (TH1F*) wbb_bJetMult_file->Get((std::string()+"hNbtaggedJets_wjets_Wbb_"+channelS[channelConf]+"_"+wbbSuff[0]+"_WP0").c_str()) ;
+    TH1F* wbb_bJetMult_hist = (TH1F*) wbb_bJetMult_file->Get((std::string()+"hNbtaggedJets_wjets_Wbb_"+channelS[channelConf]+"_"+wbbSuff[njets]+"_WP0").c_str()) ;
     printf(" %s : { ", wbb_bJetMult_hist->GetName());
     for (int kkk=1; kkk<=wbb_bJetMult_hist->GetNbinsX() ; kkk++) {
       if (kkk==1) {
@@ -651,6 +652,7 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         Double_t tot=0., bTot=0.;
         Double_t vlike_plus_bb = 0., bVlike_plus_bb=0.;
         Double_t ntt=0., ntt_err=0., nv=0., nv_err=0. ;
+        Double_t tmp_err=0., tot_SqSumErr=0. ;
         if (j==0) {
           ntt     = vj.Ntt_0bjet(nbOfEvents[3*1+njets], nbOfEvents[nrpoints+0], nbOfEvents[nrpoints+2], 4+njets);
           ntt_err = vj.Ntt_err_0bjet(nbOfEvents[3*1+njets], statUncert[3*1+njets], nbOfEvents[nrpoints+0], statUncert[nrpoints+0], nbOfEvents[nrpoints+2], statUncert[nrpoints+2], 4+njets);
@@ -677,7 +679,9 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         }
         tot += ntt*ytt ;
         bTot += nbOfEvents[3*1+njets]*ytt ;
-        printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, (ntt_err/ntt + ytterr/ytt) *ntt*ytt   , nbOfEvents[3*1+njets]);
+        tmp_err = (ntt_err/ntt + ytterr/ytt) *ntt*ytt ;
+        tot_SqSumErr += tmp_err*tmp_err ;
+        printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, tmp_err   , nbOfEvents[3*1+njets]);
         printf("b Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", nbOfEvents[3*1+njets], statUncert[3*1+njets], ytt, ytterr, nbOfEvents[3*1+njets]*ytt, (statUncert[3*1+njets]/nbOfEvents[3*1+njets] + ytterr/ytt) *nbOfEvents[3*1+njets]*ytt   , nbOfEvents[3*1+njets]);
         ytemp=0.;
         Double_t yv = 0., yverr=0.;
@@ -694,9 +698,11 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
         }
         tot += nv*yv ;
         bTot += nbOfEvents[3*2+njets]*yv ;
+        tmp_err = (nv_err/nv + yverr/yv) *nv*yv ;
+        tot_SqSumErr += tmp_err*tmp_err ;
         vlike_plus_bb += nv*yv;
         bVlike_plus_bb += nbOfEvents[3*2+njets]*yv;
-        printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, (nv_err/nv + yverr/yv) *nv*yv   , nbOfEvents[3*2+njets]);
+        printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, tmp_err   , nbOfEvents[3*2+njets]);
         printf("b Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nbOfEvents[3*2+njets], statUncert[3*2+njets], yv, yverr, nbOfEvents[3*2+njets]*yv, (statUncert[3*2+njets]/nbOfEvents[3*2+njets] + yverr/yv) *nbOfEvents[3*2+njets]*yv   , nbOfEvents[3*2+njets]);
         for (UInt_t i=0; i<5; i++) {
           printf("  Process %d : %s : ", i, BckgdNames[i].c_str());
@@ -752,12 +758,14 @@ void ControlRegions(std::string filename, int UseCase, int bin, bool UseWNJets, 
             bTot += yv * nbOfEvents[3*3+njets] ;
             bVlike_plus_bb += yv * nbOfEvents[3*3+njets] ;
           }
-          printf("%lf * %lf * %lf = %lf(bF) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", y, bBinFrac, nbOfEvents[3*i+njets], bBinFrac, y*nbOfEvents[3*i+njets], y*nbOfEvents[3*i+njets]*(statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y), sum, sum * (statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y) );
+          tmp_err = sum * (statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y) ;
+          tot_SqSumErr += tmp_err;
+          printf("%lf * %lf * %lf = %lf(bF) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", y, bBinFrac, nbOfEvents[3*i+njets], bBinFrac, y*nbOfEvents[3*i+njets], y*nbOfEvents[3*i+njets]*(statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y), sum, tmp_err );
           
         }
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("b V-like + Wbb category (sum) : %lf\n", bVlike_plus_bb);
-        printf("  Total : %lf\n", tot);
+        printf("  Total : %lf \\pm %lf \n", tot, sqrt(tot_SqSumErr));
         printf("b Total : %lf\n", bTot);
       }
       
