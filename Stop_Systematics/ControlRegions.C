@@ -202,6 +202,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     listNames[1].push_back("ttbar"+CChannel[channel]);
     inputfiles[1].push_back(TFile::Open((path+"TTbar"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[1].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[1].rbegin())->GetName(), ((TH1D*) (* inputfiles[1].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[1].push_back(165. *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //TTbar
     weight_VJet[1].push_back( nbOfEvents[3*1+njets] ); //TTbar
     
@@ -214,6 +215,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       listNames[2].push_back("W2Jets"+CChannel[channel]);
       inputfiles[2].push_back(TFile::Open((path+"W2Jets"+CChannel[channel]+".root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+      printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       //  BckgdNames[1] = "W3+jets";
       weight_onMC[2].push_back(Wn_SF*1435. *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //W2jets
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //W2jets
@@ -221,6 +223,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       listNames[2].push_back("W3Jets"+CChannel[channel]);
       inputfiles[2].push_back(TFile::Open((path+"W3Jets"+CChannel[channel]+".root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+      printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       //  BckgdNames[1] = "W4+jets";
       weight_onMC[2].push_back(Wn_SF*304.2 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //W3jets
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //W3jets
@@ -228,6 +231,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       listNames[2].push_back("W4Jets"+CChannel[channel]);
       inputfiles[2].push_back(TFile::Open((path+"W4Jets"+CChannel[channel]+".root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+      printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       weight_onMC[2].push_back(Wn_SF*172.6 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //W4jets
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //W4jets
     } else {
@@ -235,6 +239,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       listNames[2].push_back("Wjets"+CChannel[channel]);
       inputfiles[2].push_back(TFile::Open((path+"Wjets"+CChannel[channel]+".root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+      printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       weight_onMC[2].push_back(31314. *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //Wjets
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //Wjets
     }
@@ -244,6 +249,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     listNames[2].push_back("Zjets"+CChannel[channel]);
     inputfiles[2].push_back(TFile::Open((path+"Zjets"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[2].push_back(3048. *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //Zjets
     weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //Zjets
                                                        // multi-jets
@@ -252,6 +258,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       listNames[2].push_back("QCDmu20");
       inputfiles[2].push_back(TFile::Open((path+"QCDmu20_mu.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+      printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       weight_onMC[2].push_back(2.966E8*2.855E-4 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDmu_20
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDmu_20
     }
@@ -260,30 +267,35 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       listNames[2].push_back("QCDel30to80");
       inputfiles[2].push_back(TFile::Open((path+"QCDel30to80_el.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+      printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       weight_onMC[2].push_back(5.944E7*0.061 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDel_30_80
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDel_30_80
                                                          //  BckgdNames[2] = "QCDel80to170";
       listNames[2].push_back("QCDel80to170");
       inputfiles[2].push_back(TFile::Open((path+"QCDel80to170_el.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+      printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       weight_onMC[2].push_back(898200*0.159 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDel_80_170
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDel_80_170
                                                          //  BckgdNames[3] = "QCDel170to250";
       listNames[2].push_back("QCDel170to250");
       inputfiles[2].push_back(TFile::Open((path+"QCDel170to250_el.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+      printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       weight_onMC[2].push_back(22140*0.1474 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDel_170_250
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDel_170_250
                                                          //  BckgdNames[4] = "QCDel250to35";
       listNames[2].push_back("QCDel250to350");
       inputfiles[2].push_back(TFile::Open((path+"QCDel250to350_el.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+      printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       weight_onMC[2].push_back(2900*0.1269 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDel_250_350
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDel_250_350
                                                          //  BckgdNames[5] = "QCDel350";
       listNames[2].push_back("QCDel350");
       inputfiles[2].push_back(TFile::Open((path+"QCDel350_el.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
+      printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       weight_onMC[2].push_back(520*0.1058 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDel_350
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDel_350
     }
@@ -295,6 +307,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     listNames[0].push_back("TopS"+CChannel[channel]);
     inputfiles[0].push_back(TFile::Open((path+"TopS"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[0].push_back(3.19 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //ST_s
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //ST_s
     
@@ -302,6 +315,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     listNames[0].push_back("TopbarS"+CChannel[channel]);
     inputfiles[0].push_back(TFile::Open((path+"TopbarS"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[0].push_back(1.44 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //STbar_s
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //STbar_s
     
@@ -309,6 +323,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     listNames[0].push_back("TopT"+CChannel[channel]);
     inputfiles[0].push_back(TFile::Open((path+"TopT"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[0].push_back(41.92 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //ST_t
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //ST_t
     
@@ -316,6 +331,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     listNames[0].push_back("TopbarT"+CChannel[channel]);
     inputfiles[0].push_back(TFile::Open((path+"TopbarT"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[0].push_back(22.65 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //STbar_t
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //STbar_t
     
@@ -323,6 +339,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     listNames[0].push_back("ToptW"+CChannel[channel]);
     inputfiles[0].push_back(TFile::Open((path+"TopTW"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[0].push_back(7.87 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //ST_tW
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //ST_tW
     
@@ -330,6 +347,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     listNames[0].push_back("TopbarTW"+CChannel[channel]);
     inputfiles[0].push_back(TFile::Open((path+"TopTW"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[0].push_back(7.87 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //ST_tW
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //ST_tW
     
@@ -338,18 +356,21 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     listNames[4].push_back("WW"+CChannel[channel]);
     inputfiles[4].push_back(TFile::Open((path+"WW"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[4].rbegin())->GetName(), ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[4].push_back(43. *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //WW
     weight_VJet[4].push_back( nbOfEvents[3*4+njets] ); //WW
                                                        //  BckgdNames[3] = "WZ+jets";
     listNames[4].push_back("WZ"+CChannel[channel]);
     inputfiles[4].push_back(TFile::Open((path+"WZ"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[4].rbegin())->GetName(), ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[4].push_back(18.2 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //WZ
     weight_VJet[4].push_back( nbOfEvents[3*4+njets] ); //WZ
                                                        //  BckgdNames[11] = "ZZ+jets";
     listNames[4].push_back("ZZ"+CChannel[channel]);
     inputfiles[4].push_back(TFile::Open((path+"ZZ"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2);
+    printf("Entries (%s) : %lf\n", (* inputfiles[4].rbegin())->GetName(), ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2));
     weight_onMC[4].push_back(5.9 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //ZZ
     weight_VJet[4].push_back( nbOfEvents[3*4+njets] ); //ZZ
     
@@ -440,7 +461,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       }
     }
     printf(" } --> Integral : %lf \n",  wbb_bJetMult_hist->Integral(0,-1)) ;
-
+    
     for (UInt_t k=0; k<=NbOfMVARegions; k++) {
       std::string teffname = "Eff_" + MVA[UseCase] + "_" + controlRegions[j] + MVAcut[(k==NbOfMVARegions?0:k)] ;
       if (k==NbOfMVARegions) {
@@ -475,8 +496,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             teff->SetTotalEvents(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
             teff->SetPassedEvents(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
             /*
-            teff->SetTotalEvents(bin, (((UInt_t) 0)-((UInt_t)1))/2);
-            teff->SetPassedEvents(bin, (((UInt_t) 0)-((UInt_t)1))/2);
+             teff->SetTotalEvents(bin, (((UInt_t) 0)-((UInt_t)1))/2);
+             teff->SetPassedEvents(bin, (((UInt_t) 0)-((UInt_t)1))/2);
              */
           }
           //if (teff==NULL) {
@@ -628,7 +649,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             if (bJetMult[i][m] == NULL) {
               continue ;
             }
-            Double_t bBinFrac = bJetMult[i][m]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult[i][m]->Integral(0,-1);
+            Double_t bBinFrac = bJetMult[i][m]->GetBinContent(j+1 /*!!!*/) / bJetMult[i][m]->Integral(0,-1);
             if (m==0) {
               printf(" %lf", bBinFrac * passed[i][m]);
             } else {
@@ -653,12 +674,17 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         Double_t vlike_plus_bb = 0., bVlike_plus_bb=0.;
         Double_t ntt=0., ntt_err=0., nv=0., nv_err=0. ;
         Double_t tmp_err=0., tot_SqSumErr=0. ;
-        if (j==0) {
+        if (j==0) /*!!!*/ {
           ntt     = vj.Ntt_0bjet(nbOfEvents[3*1+njets], nbOfEvents[nrpoints+0], nbOfEvents[nrpoints+2], 4+njets);
           ntt_err = vj.Ntt_err_0bjet(nbOfEvents[3*1+njets], statUncert[3*1+njets], nbOfEvents[nrpoints+0], statUncert[nrpoints+0], nbOfEvents[nrpoints+2], statUncert[nrpoints+2], 4+njets);
           nv      = vj.Nv_0bjet(nbOfEvents[3*2+njets], nbOfEvents[nrpoints+1], 4+njets);
           nv_err  = vj.Nv_err_0bjet(nbOfEvents[3*2+njets], statUncert[3*2+njets], nbOfEvents[nrpoints+1], statUncert[nrpoints+1], 4+njets);
         } else if (j==1) {
+          ntt     = vj.Ntt_1bjet(nbOfEvents[3*1+njets], nbOfEvents[nrpoints+0], nbOfEvents[nrpoints+2], 4+njets);
+          ntt_err = vj.Ntt_err_1bjet(nbOfEvents[3*1+njets], statUncert[3*1+njets], nbOfEvents[nrpoints+0],  statUncert[nrpoints+0], nbOfEvents[nrpoints+2], statUncert[nrpoints+2], 4+njets);
+          nv      = vj.Nv_1bjet(nbOfEvents[3*2+njets], nbOfEvents[nrpoints+1], 4+njets);
+          nv_err  = vj.Nv_err_1bjet(nbOfEvents[3*2+njets], statUncert[3*2+njets], nbOfEvents[nrpoints+1], statUncert[nrpoints+1], 4+njets);
+        } else if (j==2) {
           ntt     = vj.Ntt_2bjets(nbOfEvents[3*1+njets], nbOfEvents[nrpoints+0], nbOfEvents[nrpoints+2], 4+njets);
           ntt_err = vj.Ntt_err_2bjets(nbOfEvents[3*1+njets], statUncert[3*1+njets], nbOfEvents[nrpoints+0],  statUncert[nrpoints+0], nbOfEvents[nrpoints+2], statUncert[nrpoints+2], 4+njets);
           nv      = vj.Nv_2bjets(nbOfEvents[3*2+njets], nbOfEvents[nrpoints+1], 4+njets);
@@ -726,7 +752,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }
           Double_t bBinFrac = -1.;
           if (i!=3) {
-            bBinFrac = bJetMult_Avg[i]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[i]->Integral(0,-1);
+            bBinFrac = bJetMult_Avg[i]->GetBinContent(j+1/*!!!*/) / bJetMult_Avg[i]->Integral(0,-1);
             sum = y * bBinFrac * nbOfEvents[3*i+njets] ;
             if (i!=1 && i!=2) {
               tot += sum;
@@ -739,11 +765,11 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             if (k==NbOfMVARegions) {
               y = 1. ; yerr = 0. ;
             }
-            bBinFrac = bJetMult_Avg[2]->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / bJetMult_Avg[2]->Integral(0,-1);
+            bBinFrac = bJetMult_Avg[2]->GetBinContent(j+1/*!!!*/) / bJetMult_Avg[2]->Integral(0,-1);
             sum = yv * bBinFrac * nbOfEvents[3*3+njets];
             
-            Double_t factWbbEff = VJetEstimation::probElemWbb(nbOfEvents[nrpoints], nbOfEvents[nrpoints+1], (j==1 ? 2 : 0), 4+njets)
-            - VJetEstimation::probElemWbb(nbOfEvents[nrpoints], nbOfEvents[nrpoints+1], 0, (j==1 ? 2 : 0), 4+njets) ;
+            Double_t factWbbEff = VJetEstimation::probElemWbb(nbOfEvents[nrpoints], nbOfEvents[nrpoints+1], j/*!!!*/, 4+njets)
+            - VJetEstimation::probElemWbb(nbOfEvents[nrpoints], nbOfEvents[nrpoints+1], 0, j/*!!!*/, 4+njets) ;
             /*
              Double_t factWbbEff = 0.; // Taken from model
              if (j==0) {
@@ -753,7 +779,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
              }
              */
             vlike_plus_bb += sum ;
-            printf("[factWbb:est(%lf) Vest(%lf) VjetsMethods(%lf)]\t\t\t", factWbbEff, bBinFrac, wbb_bJetMult_hist->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0))) / wbb_bJetMult_hist->Integral(0,-1));
+            printf("[factWbb:est(%lf) Vest(%lf) VjetsMethods(%lf)]\t\t\t", factWbbEff, bBinFrac, wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1));
             tot += sum ;
             bTot += yv * nbOfEvents[3*3+njets] ;
             bVlike_plus_bb += yv * nbOfEvents[3*3+njets] ;
@@ -783,7 +809,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           if (histo==NULL) {
             continue;
           }
-          Double_t bBinFrac = histo->GetBinContent((j==0 ? 1 : (j==1 ? 3 : 0)));
+          Double_t bBinFrac = histo->GetBinContent(j+1/*!!!*/);
           if (i==0) {
             printf(" %lf", bBinFrac );
           } else {
@@ -807,16 +833,18 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         }
         printf(" = %lf\n", sum);
         printf("   passed : \n");
-        sum=0.;
-        for (UInt_t i=0; i<datafiles.size(); i++) {
-          TEfficiency *teff = (TEfficiency*) datafiles[i]->Get(teffname.c_str());
-          Double_t bBinFrac = teff->GetPassedHistogram()->GetBinContent(1+bin);
-          if (i==0) {
-            printf(" %lf", bBinFrac );
-          } else {
-            printf(" + %lf", bBinFrac);
+        if (k!=NbOfMVARegions) {
+          sum=0.;
+          for (UInt_t i=0; i<datafiles.size(); i++) {
+            TEfficiency *teff = (TEfficiency*) datafiles[i]->Get(teffname.c_str());
+            Double_t bBinFrac = teff->GetPassedHistogram()->GetBinContent(1+bin);
+            if (i==0) {
+              printf(" %lf", bBinFrac );
+            } else {
+              printf(" + %lf", bBinFrac);
+            }
+            sum += bBinFrac ;
           }
-          sum += bBinFrac ;
         }
         printf(" = %lf\n", sum);
       }
