@@ -493,8 +493,12 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           if (k==NbOfMVARegions) {
             TEfficiency *teff2 = teff;
             teff = new TEfficiency("", "", bin, 0, 1);
+            teff->GetTotalHistogram()->SetBinContent(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
+            teff->GetPassedHistogram()->SetBinContent(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
+/*
             teff->SetTotalEvents(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
             teff->SetPassedEvents(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
+ */
             /*
              teff->SetTotalEvents(bin, (((UInt_t) 0)-((UInt_t)1))/2);
              teff->SetPassedEvents(bin, (((UInt_t) 0)-((UInt_t)1))/2);
@@ -505,7 +509,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           //}
           std::string fichName = inputfiles[i][m]->GetName() ;
           std::string chan = ( fichName.find("_mu.root")==fichName.size()-8 ? "Mu" : ( fichName.find("_el.root")==fichName.size()-8 ? "El" : "" ) );
-          printf("%s\n", (std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
+          printf("%s : %lf / %lf            %s\n", (std::string()+(k==NbOfMVARegions?"Full : ":"")+teffname).c_str(), teff->GetPassedHistogram()->GetBinContent(1+bin), teff->GetTotalHistogram()->GetBinContent(1+bin), (std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
           TH1D* bJetDistr = (TH1D*) inputfiles[i][m]->Get((std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
           bJetMult[i].push_back(bJetDistr);
           if (bJetDistr!=NULL) {
