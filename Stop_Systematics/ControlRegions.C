@@ -493,8 +493,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           if (k==NbOfMVARegions) {
             TEfficiency *teff2 = teff;
             teff = new TEfficiency("", "", bin, 0, 1);
-            teff->GetTotalHistogram()->SetBinContent(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
-            teff->GetPassedHistogram()->SetBinContent(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
+            ((TH1*) teff->GetTotalHistogram())->SetBinContent(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
+            ((TH1*) teff->GetPassedHistogram())->SetBinContent(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
 /*
             teff->SetTotalEvents(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
             teff->SetPassedEvents(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
