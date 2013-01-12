@@ -1,6 +1,6 @@
 #!/bin/bash
 
-outputFromVJetsEstimation="/user/caebergs/VJetEstimation/nominal_STbar017/stdout_err_w.txt" ;
+outputFromVJetsEstimation="/user/caebergs/VJetEstimation/nominal_STbar017/stdout_err_x.txt" ;
 outputHistFromVJetsEstimation="/user/caebergs/VJetEstimation/nominal_STbar017/StopSearches_VJetsBckgdEst_w_SemiMuonSemiElectron_Constants_euds.root" ;
 #nomDir="/user/caebergs/Leg3_WnJets_DataMC/miguelf/" ;
 nomDir="/user/caebergs/Leg3/Leg3Output_5Dreweigh/" ;

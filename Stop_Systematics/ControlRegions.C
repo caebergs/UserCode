@@ -473,7 +473,9 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
        Pure MC and extracting numbers from the files for the efficiencies
        */
       TGraphAsymmErrors **tg_categ = new TGraphAsymmErrors*[5];
+      TGraphAsymmErrors **tgV_categ = new TGraphAsymmErrors*[5];
       TGraphAsymmErrors *tg_tot = NULL;
+      std::vector<std::vector<Double_t> > weights_VMC(5, std::vector<Double_t>()) ;
       std::vector<std::vector<Double_t> > weights(5, std::vector<Double_t>()) ;
       std::vector<std::vector<Double_t> > passed(5, std::vector<Double_t>()) ;
       std::vector<Double_t> all_weights, all_weights_forCombineV ;
@@ -483,6 +485,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       TList *tlist_tot = new TList();
       for (UInt_t i=0; i<5; i++) { //Number of categories for V+jets method
         tg_categ[i] = NULL ;
+        tgV_categ[i] = NULL ;
         TList *tlist = new TList();
         Double_t sumppp = 0.;
         Double_t sumw = 0.;
@@ -509,8 +512,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           //}
           std::string fichName = inputfiles[i][m]->GetName() ;
           std::string chan = ( fichName.find("_mu.root")==fichName.size()-8 ? "Mu" : ( fichName.find("_el.root")==fichName.size()-8 ? "El" : "" ) );
-          printf("%s : %lf / %lf            %s\n", (std::string()+(k==NbOfMVARegions?"Full : ":"")+teffname).c_str(), teff->GetPassedHistogram()->GetBinContent(1+bin), teff->GetTotalHistogram()->GetBinContent(1+bin), (std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
-          TH1D* bJetDistr = (TH1D*) inputfiles[i][m]->Get((std::string()+"B_Jet_Multiplicity_"+chan+"_4jExc").c_str());
+          printf("%s : %lf / %lf            %s\n", (std::string()+(k==NbOfMVARegions?"Full : ":"")+teffname).c_str(), teff->GetPassedHistogram()->GetBinContent(1+bin), teff->GetTotalHistogram()->GetBinContent(1+bin), (std::string()+"B_Jet_Multiplicity_"+chan+"_"+jetBin[njets]).c_str());
+          TH1D* bJetDistr = (TH1D*) inputfiles[i][m]->Get((std::string()+"B_Jet_Multiplicity_"+chan+"_"+jetBin[njets]).c_str());
           bJetMult[i].push_back(bJetDistr);
           if (bJetDistr!=NULL) {
             if (bJetMult_Avg[i]==NULL) {
@@ -541,8 +544,12 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           all_weights_forCombineV[kk] /= sumwMC;
         }
         if (weight_onMC[i].size()!=0) { 
+          for (UInt_t m=0; m<weights.size(); m++) {
+          weights_VMC[i].push_back((weights[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ / ((TEfficiency*) tlist->At(i))->GetTotalHistogram()->GetBinContent(1+bin)) ;
+          }
           cerr << "Category combination"<< endl;
           tg_categ[i] = TEfficiency::Combine(tlist, "mode", weight_onMC[i].size(), & weight_onMC[i][0]);
+          tgV_categ[i]= TEfficiency::Combine(tlist, "mode", weights_VMC[i].size(),  & weights_VMC[i][0] );
         }
         tlist->Clear();
       }
@@ -674,10 +681,10 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
        Estimated with V+jets on data (and R_X from MC)
        */
       {
-        Double_t tot=0., bTot=0.;
+        Double_t tot=0., vtot=0., bTot=0.;
         Double_t vlike_plus_bb = 0., bVlike_plus_bb=0.;
         Double_t ntt=0., ntt_err=0., nv=0., nv_err=0. ;
-        Double_t tmp_err=0., tot_SqSumErr=0. ;
+        Double_t tmp_err=0., tot_SqSumErr=0., vtmp_err=0., vtot_SqSumErr=0. ;
         if (j==0) /*!!!*/ {
           ntt     = vj.Ntt_0bjet(nbOfEvents[3*1+njets], nbOfEvents[nrpoints+0], nbOfEvents[nrpoints+2], 4+njets);
           ntt_err = vj.Ntt_err_0bjet(nbOfEvents[3*1+njets], statUncert[3*1+njets], nbOfEvents[nrpoints+0], statUncert[nrpoints+0], nbOfEvents[nrpoints+2], statUncert[nrpoints+2], 4+njets);
@@ -696,6 +703,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         }
         printf("\n\nPrinting results for the estimated channels : \n");
         Double_t ytt = 0., ytemp=0., ytterr=0., dummy;
+        Double_t ytt_= 0., ytterr_=0.;
         if (tg_categ[1] != NULL) {
           tg_categ[1]->GetPoint(bin, dummy,ytt);
           ytterr = tg_categ[1]->GetErrorYlow(bin);
@@ -707,14 +715,30 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         if (k==NbOfMVARegions) {
           ytt = 1. ; ytterr = 0. ;
         }
+        if (tgV_categ[1] != NULL) {
+          tgV_categ[1]->GetPoint(bin, dummy,ytt_);
+          ytterr_ = tgV_categ[1]->GetErrorYlow(bin);
+          ytemp  = tgV_categ[1]->GetErrorYhigh(bin);
+          if (ytemp>ytterr_) {
+            ytterr_ = ytemp;
+          }
+        }
+        if (k==NbOfMVARegions) {
+          ytt_ = 1. ; ytterr_ = 0. ;
+        }
         tot += ntt*ytt ;
+        vtot += ntt*ytt_ ;
         bTot += nbOfEvents[3*1+njets]*ytt ;
-        tmp_err = (ntt_err/ntt + ytterr/ytt) *ntt*ytt ;
-        tot_SqSumErr += tmp_err*tmp_err ;
-        printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, tmp_err   , nbOfEvents[3*1+njets]);
-        printf("b Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", nbOfEvents[3*1+njets], statUncert[3*1+njets], ytt, ytterr, nbOfEvents[3*1+njets]*ytt, (statUncert[3*1+njets]/nbOfEvents[3*1+njets] + ytterr/ytt) *nbOfEvents[3*1+njets]*ytt   , nbOfEvents[3*1+njets]);
+        tmp_err = ((ntt_err/ntt)*(ntt_err/ntt) + (ytterr/ytt)*(ytterr/ytt)) * ntt*ntt * ytt*ytt ;
+        tot_SqSumErr += tmp_err ;
+        vtmp_err = ((ntt_err/ntt)*(ntt_err/ntt) + (ytterr_/ytt_)*(ytterr_/ytt_)) * ntt*ntt*ytt_*ytt_ ;
+        vtot_SqSumErr += vtmp_err ;
+        printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, sqrt(tmp_err)   , nbOfEvents[3*1+njets]);
+        printf("v Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt_, ytterr_, ntt*ytt_, sqrt(vtmp_err)   , nbOfEvents[3*1+njets]);
+        printf("b Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", nbOfEvents[3*1+njets], statUncert[3*1+njets], ytt, ytterr, nbOfEvents[3*1+njets]*ytt, sqrt((statUncert[3*1+njets]/nbOfEvents[3*1+njets])*(statUncert[3*1+njets]/nbOfEvents[3*1+njets]) + (ytterr/ytt)*(ytterr/ytt)) *nbOfEvents[3*1+njets]*ytt   , nbOfEvents[3*1+njets]);
         ytemp=0.;
         Double_t yv = 0., yverr=0.;
+        Double_t yv_= 0., yverr_=0.;
         if (tg_categ[2] != NULL) {
           tg_categ[2]->GetPoint(bin, dummy,yv);
           yverr = tg_categ[2]->GetErrorYlow(bin);
@@ -726,18 +750,34 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         if (k==NbOfMVARegions) {
           yv = 1. ; yverr = 0. ;
         }
+        if (tgV_categ[2] != NULL) {
+          tgV_categ[2]->GetPoint(bin, dummy,yv_);
+          yverr_ = tgV_categ[2]->GetErrorYlow(bin);
+          ytemp  = tgV_categ[2]->GetErrorYhigh(bin);
+          if (ytemp>yverr_) {
+            yverr_ = ytemp;
+          }
+        }
+        if (k==NbOfMVARegions) {
+          yv_ = 1. ; yverr_ = 0. ;
+        }
         tot += nv*yv ;
+        vtot+= nv*yv_;
         bTot += nbOfEvents[3*2+njets]*yv ;
-        tmp_err = (nv_err/nv + yverr/yv) *nv*yv ;
-        tot_SqSumErr += tmp_err*tmp_err ;
+        tmp_err = ((nv_err/nv)*(nv_err/nv) + (yverr/yv)*(yverr/yv)) * nv*nv * yv*yv ;
+        vtmp_err = ((nv_err/nv)*(nv_err/nv) + (yverr_/yv_)*(yverr_/yv_)) *nv*nv * yv_*yv_ ;
+        tot_SqSumErr += tmp_err ;
+        vtot_SqSumErr+= vtmp_err ;
         vlike_plus_bb += nv*yv;
         bVlike_plus_bb += nbOfEvents[3*2+njets]*yv;
-        printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, tmp_err   , nbOfEvents[3*2+njets]);
+        printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, sqrt(tmp_err)   , nbOfEvents[3*2+njets]);
+        printf("v Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv_, yverr_, nv*yv_, sqrt(vtmp_err)   , nbOfEvents[3*2+njets]);
         printf("b Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nbOfEvents[3*2+njets], statUncert[3*2+njets], yv, yverr, nbOfEvents[3*2+njets]*yv, (statUncert[3*2+njets]/nbOfEvents[3*2+njets] + yverr/yv) *nbOfEvents[3*2+njets]*yv   , nbOfEvents[3*2+njets]);
         for (UInt_t i=0; i<5; i++) {
           printf("  Process %d : %s : ", i, BckgdNames[i].c_str());
-          Double_t sum = 0.;
+          Double_t sum = 0., vsum = 0.;
           Double_t y = 0., yerr=0.;
+          Double_t y_= 0., yerr_=0.;
           ytemp=0.;
           if (tg_categ[i] != NULL) {
             tg_categ[i]->GetPoint(bin, dummy,y);   
@@ -750,6 +790,17 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           if (k==NbOfMVARegions) {
             y = 1. ; yerr = 0. ;
           }
+          if (tgV_categ[i] != NULL) {
+            tgV_categ[i]->GetPoint(bin, dummy,y_);   
+            yerr_ = tgV_categ[i]->GetErrorYlow(bin);
+            ytemp = tgV_categ[i]->GetErrorYhigh(bin);
+            if (ytemp>yerr_) {
+              yerr_ = ytemp;
+            }
+          }
+          if (k==NbOfMVARegions) {
+            y_ = 1. ; yerr_ = 0. ;
+          }
           if (bJetMult_Avg[i] == NULL && i!=3) {
             printf("\n");
             continue ;
@@ -758,19 +809,25 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           if (i!=3) {
             bBinFrac = bJetMult_Avg[i]->GetBinContent(j+1/*!!!*/) / bJetMult_Avg[i]->Integral(0,-1);
             sum = y * bBinFrac * nbOfEvents[3*i+njets] ;
+            vsum= y_* bBinFrac * nbOfEvents[3*i+njets] ;
             if (i!=1 && i!=2) {
               tot += sum;
+              vtot+= vsum;
               bTot += y * nbOfEvents[3*i+njets] ;
             }
           } else if (i==3) {
             // Same factors as V-like
             y = yv ;
+            y_ = yv_ ;
             yerr = yverr ;
+            yerr_ = yverr_ ;
             if (k==NbOfMVARegions) {
               y = 1. ; yerr = 0. ;
+              y_= 1. ; yerr_= 0. ;
             }
             bBinFrac = bJetMult_Avg[2]->GetBinContent(j+1/*!!!*/) / bJetMult_Avg[2]->Integral(0,-1);
             sum = yv * bBinFrac * nbOfEvents[3*3+njets];
+            vsum= yv_* bBinFrac * nbOfEvents[3*3+njets];
             
             Double_t factWbbEff = VJetEstimation::probElemWbb(nbOfEvents[nrpoints], nbOfEvents[nrpoints+1], j/*!!!*/, 4+njets)
             - VJetEstimation::probElemWbb(nbOfEvents[nrpoints], nbOfEvents[nrpoints+1], 0, j/*!!!*/, 4+njets) ;
@@ -785,17 +842,22 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             vlike_plus_bb += sum ;
             printf("[factWbb:est(%lf) Vest(%lf) VjetsMethods(%lf)]\t\t\t", factWbbEff, bBinFrac, wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1));
             tot += sum ;
+            vtot+= vsum;
             bTot += yv * nbOfEvents[3*3+njets] ;
             bVlike_plus_bb += yv * nbOfEvents[3*3+njets] ;
           }
-          tmp_err = sum * (statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y) ;
+          tmp_err = sum*sum * ((statUncert[3*i+njets]/nbOfEvents[3*i+njets])*(statUncert[3*i+njets]/nbOfEvents[3*i+njets]) + (yerr/y)*(yerr/y)) ;
+          vtmp_err = vsum*vsum * ((statUncert[3*i+njets]/nbOfEvents[3*i+njets])*(statUncert[3*i+njets]/nbOfEvents[3*i+njets]) + (yerr_/y_)*(yerr_/y_)) ;
           tot_SqSumErr += tmp_err;
-          printf("%lf * %lf * %lf = %lf(bF) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", y, bBinFrac, nbOfEvents[3*i+njets], bBinFrac, y*nbOfEvents[3*i+njets], y*nbOfEvents[3*i+njets]*(statUncert[3*i+njets]/nbOfEvents[3*i+njets] + yerr/y), sum, tmp_err );
+          vtot_SqSumErr += vtmp_err;
+          printf("%lf * %lf * %lf = %lf(bF) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", y, bBinFrac, nbOfEvents[3*i+njets], bBinFrac, y*nbOfEvents[3*i+njets], y*nbOfEvents[3*i+njets]*sqrt((statUncert[3*i+njets]/nbOfEvents[3*i+njets])*(statUncert[3*i+njets]/nbOfEvents[3*i+njets]) + (yerr/y)*(yerr/y)), sum, sqrt(tmp_err) );
+          printf("v\t\t%lf * %lf * %lf = %lf(bF) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", y_, bBinFrac, nbOfEvents[3*i+njets], bBinFrac, y_*nbOfEvents[3*i+njets], y_*nbOfEvents[3*i+njets]*sqrt((statUncert[3*i+njets]/nbOfEvents[3*i+njets])*(statUncert[3*i+njets]/nbOfEvents[3*i+njets]) + (yerr_/y_)*(yerr_/y_)), vsum, sqrt(tmp_err) );
           
         }
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("b V-like + Wbb category (sum) : %lf\n", bVlike_plus_bb);
         printf("  Total : %lf \\pm %lf \n", tot, sqrt(tot_SqSumErr));
+        printf("v Total : %lf \\pm %lf \n", vtot, sqrt(vtot_SqSumErr));
         printf("b Total : %lf\n", bTot);
       }
       
