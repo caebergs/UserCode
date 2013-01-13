@@ -545,10 +545,14 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         }
         if (weight_onMC[i].size()!=0) { 
           for (UInt_t m=0; m<weights[i].size(); m++) {
-            if (sumw==0. || bJetMult[i][m]==NULL || tlist->At(i)==NULL) {
+            if (sumw==0. || bJetMult[i][m]==NULL || tlist->At(i)==NULL || bJetMult[i][m]->Integral(0,-1)==0.) {
               weights_VMC[i].push_back(0.) ;
             } else {
-              weights_VMC[i].push_back((weights[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ / ((TEfficiency*) tlist->At(i))->GetTotalHistogram()->GetBinContent(1+bin)) ;
+              if (((TEfficiency*) tlist->At(i))->GetTotalHistogram()->GetBinContent(1+bin)==0.) {
+                weights_VMC[i].push_back(0.) ;
+              } else {
+                weights_VMC[i].push_back((weights[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ / ((TEfficiency*) tlist->At(i))->GetTotalHistogram()->GetBinContent(1+bin)) ;
+              }
             }
           }
           cerr << "Category combination"<< endl;
