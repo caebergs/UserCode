@@ -544,7 +544,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           all_weights_forCombineV[kk] /= sumwMC;
         }
         if (weight_onMC[i].size()!=0) { 
-          for (UInt_t m=0; m<weights.size(); m++) {
+          for (UInt_t m=0; m<weights[i].size(); m++) {
             if (sumw==0. || bJetMult[i][m]==NULL || tlist->At(i)==NULL) {
               weights_VMC[i].push_back(0.) ;
             } else {
