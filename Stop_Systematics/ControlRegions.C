@@ -670,9 +670,15 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           printf(" } --> Integral : %lf \n",  bJetMult_Avg[i]->Integral(0,-1)) ;
         }
       }
-      
+      Double_t Total_ = 0.;
+      Double_t Total_MC = 0.;
+      Double_t Total_data = 0.;
+      Double_t Total_V = 0.;
+
       // Printing results for pure MC (non reweighted)
       {
+        Double_t totTT=0.;
+        Double_t totV=0.;
         Double_t tot = 0.;
         Double_t vlike_plus_bb = 0.;
         printf("\n\nPrinting results for pure MC (non reweighted) : \n");
@@ -693,6 +699,12 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
               printf(" + %lf", /* bBinFrac * */ passed[i][m]);
             }
             sum += /* bBinFrac * */ passed[i][m] ;
+            if (i==1) { totTT+=passed[i][m]; }
+            if (i==2&& ( listNames[i][m].find("Wjets")==0
+                        || listNames[i][m].find("Zjets")==0
+                        || listNames[i][m].find("W2Jets")==0
+                        || listNames[i][m].find("W3Jets")==0
+                        || listNames[i][m].find("W4Jets")==0 ) ) { totV+=passed[i][m]; }
           }
           printf(" = %lf\n", sum);
           if (i==2/* || i==3*/) {
@@ -700,8 +712,11 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }
           tot += sum ;
         }
+        printf("  TT fraction : %lf / %lf = %lf \n", totTT, tot, totTT/tot);
+        printf("  V fraction : %lf / %lf = %lf\n", totV, tot, totV/tot);
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("  Total : %lf\n", tot);
+        Total_MC = tot;
       }
       /**
        Estimated with V+jets on data (and R_X from MC ; weights from MC)
@@ -891,9 +906,12 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         }
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("b V-like + Wbb category (sum) : %lf\n", bVlike_plus_bb);
+        printf("  TT fraction : %lf / %lf = %lf \n", ntt*ytt, tot, ntt*ytt/tot);
+        printf("  V fraction : %lf / %lf = %lf\n", nv*yv, tot, nv*yv/tot);
         printf("  Total : %lf \\pm %lf \n", tot, sqrt(tot_SqSumErr));
         printf("v Total : %lf \\pm %lf \n", vtot, sqrt(vtot_SqSumErr));
         printf("b Total : %lf\n", bTot);
+        Total_ = tot;
         //}
         /**
          Estimated with V+jets on data (and R_X from MC ; weights from V+jets)
@@ -1029,9 +1047,10 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             printf("( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", y, yerr, sum_V[i], sqrt(s_err)*sum_V[i], sum, sqrt(tmp_err) );
             
           }
-          
+          printf("V  TT fraction : %lf / %lf = %lf \n", ntt*ytt, tot, ntt*ytt/tot);
+          printf("V  V fraction : %lf / %lf = %lf\n", nv*yv, tot, nv*yv/tot);
           printf("V  Total : %lf \\pm %lf \n", tot, sqrt(tot_SqSumErr));
-          
+          Total_V = tot;
         }
       }
       /**
@@ -1086,7 +1105,11 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }
         }
         printf(" = %lf\n", sum);
+        Total_data = sum;
       }
+      printf("  Relative Bias (MC): %lf\n", (Total_data-Total_MC)/Total_data );
+      printf("  Relative Bias (V-MC weights): %lf\n", (Total_data-Total_)/Total_data );
+      printf("  Relative Bias (V-V weights): %lf\n", (Total_data-Total_V)/Total_data );
     }
     wbb_bJetMult_file->Close();
   }
