@@ -906,6 +906,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           std::vector<Double_t> sum_V(5, 0.);
           for (UInt_t i=0 ; i<5 ; i++) {
             ttl[i] = new TList();
+          }
+          for (UInt_t i=0 ; i<5 ; i++) {
             Double_t sumw = 0.;
             for (UInt_t m=0; m<weights[i].size(); m++) {
               sumw += weights[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1));
