@@ -923,7 +923,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
                   weights_V[2].push_back(1.);
                   sum_V[2] += 0. ; 
                 } else {
-                  weights_V[2].push_back((nbOfEvents[2*3+njets]+nbOfEvents[3*3+njets]-nTotQCD_MC) * (weight_onMC[i][m] *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/sumWZ) );
+                  weights_V[2].push_back((nbOfEvents[2*3+njets]+nbOfEvents[3*3+njets]-nTotQCD_MC) * (weight_onMC[i][m]/sumWZ) *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))) / ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin) );
+                  //                  weights_V[2].push_back((nbOfEvents[2*3+njets]+nbOfEvents[3*3+njets]-nTotQCD_MC) * (weight_onMC[i][m] *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/sumWZ) );
                   sum_V[2] += (* weights_V[2].rbegin()) * ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin) ; 
                 }
                 ttl[2]->Add(((TEfficiency*) tlist[i]->At(m)));
@@ -933,7 +934,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
                   weights_V[3].push_back(1.);
                   sum_V[3] += 0. ; 
                 } else {
-                  weights_V[3].push_back(weight_onMC[i][m] *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/*/nTotQCD_MC*/);
+                  weights_V[3].push_back(weight_onMC[i][m] /* *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))*/ /*/nTotQCD_MC*/);
                   sum_V[3] += (* weights_V[3].rbegin()) * ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin) ; 
                 }
                 ttl[3]->Add(((TEfficiency*) tlist[i]->At(m)));
@@ -942,7 +943,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
                   weights_V[i].push_back(1.);
                   sum_V[i] += 0. ; 
                 } else {
-                  weights_V[i].push_back((weight_onMC[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ /*/ ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)*/) ;
+                  weights_V[i].push_back((weight_onMC[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ / ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)) ;
+                  //                  weights_V[i].push_back((weight_onMC[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ /*/ ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)*/) ;
                   sum_V[i] += (* weights_V[i].rbegin()) * ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin) ; 
                 }
                 ttl[i]->Add(((TEfficiency*) tlist[i]->At(m)));
@@ -996,7 +998,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           
           
           for (UInt_t i=0; i<5; i++) {
-            printf("  Process %d : %s : ", i, (i==2?"V+jets":(i==3?"Multijets":BckgdNames[i])).c_str());
+            printf("V Process %d : %s : ", i, (i==2?"V+jets":(i==3?"Multijets":BckgdNames[i])).c_str());
             Double_t sum = 0.;
             Double_t y = 0., yerr=0.;
             ytemp=0.;
