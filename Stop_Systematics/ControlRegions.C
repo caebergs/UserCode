@@ -482,11 +482,14 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       std::vector<Double_t> all_passed ;
       std::vector<std::vector<TH1D*> > bJetMult(5, std::vector<TH1D*>() );
       std::vector<TH1D*> bJetMult_Avg(5, NULL); //Average b-jet mult on the different sub-processes
+      TList **tlist = new TList*[5];
       TList *tlist_tot = new TList();
+      Double_t sumWZ = 0.;
+      Double_t nTotQCD_MC = 0.;
       for (UInt_t i=0; i<5; i++) { //Number of categories for V+jets method
         tg_categ[i] = NULL ;
         tgV_categ[i] = NULL ;
-        TList *tlist = new TList();
+        tlist[i] = new TList();
         Double_t sumppp = 0.;
         Double_t sumw = 0.;
         Double_t sumwMC = 0.;
@@ -525,6 +528,15 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }
           Double_t w = weight_onMC[i][m]*teff->GetTotalHistogram()->GetBinContent(1+bin) ;
           Double_t ppp = weight_onMC[i][m]*teff->GetPassedHistogram()->GetBinContent(1+bin) ;
+          if (i==2 && ( listNames[i][m].find("Wjets")==0
+                       || listNames[i][m].find("Zjets")==0
+                       || listNames[i][m].find("W2Jets")==0
+                       || listNames[i][m].find("W3Jets")==0
+                       || listNames[i][m].find("W4Jets")==0 ) ) {
+            sumWZ += w * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1));
+          } else if (i==2 && listNames[i][m].find("QCD")==0) {
+            nTotQCD_MC += w /* * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)) */;
+          }
           sumw += w;
           sumppp += ppp;
           sumwMC += weight_onMC[i][m];
@@ -536,7 +548,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           passed[i].push_back((weight_VJet[i][m]==0. ? 0. : ppp));
           all_passed.push_back(ppp * weight_VJet[i][m]); //number of passed element
           if (teff==NULL) { printf("NULL TEfficiency\n"); }
-          tlist->Add(teff);
+          tlist[i]->Add(teff);
           tlist_tot->Add(teff);                        
         }
         for (UInt_t kk=all_passed.size()-passed.size(); kk<all_passed.size(); kk++) {
@@ -547,22 +559,22 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         }
         if (weight_onMC[i].size()!=0) { 
           for (UInt_t m=0; m<weights[i].size(); m++) {
-            if (sumw==0. || bJetMult[i][m]==NULL || tlist->At(m)==NULL) {
+            if (sumw==0. || bJetMult[i][m]==NULL || tlist[i]->At(m)==NULL) {
               weights_VMC[i].push_back(0.) ;
-            } else if (((TEfficiency*) tlist->At(m))->GetTotalHistogram()->GetBinContent(1+bin)==0.) {
+            } else if (((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)==0.) {
               weights_VMC[i].push_back(1.) ;
             } else if (bJetMult[i][m]->Integral(0,-1)==0.) {
               weights_VMC[i].push_back(0.) ;
             } else {
-              weights_VMC[i].push_back((weights[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ / ((TEfficiency*) tlist->At(m))->GetTotalHistogram()->GetBinContent(1+bin)) ;
+              weights_VMC[i].push_back((weights[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ / ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)) ;
             }
             fprintf(stderr," w%lf \n", weights_VMC[i][m]);
           }
           cerr << "Category combination"<< endl;
-          tg_categ[i] = TEfficiency::Combine(tlist, "mode", weight_onMC[i].size(), & weight_onMC[i][0]);
-          tgV_categ[i]= TEfficiency::Combine(tlist, "mode", weights_VMC[i].size(),  & weights_VMC[i][0] );
+          tg_categ[i] = TEfficiency::Combine(tlist[i], "mode", weight_onMC[i].size(), & weight_onMC[i][0]);
+          tgV_categ[i]= TEfficiency::Combine(tlist[i], "mode", weights_VMC[i].size(),  & weights_VMC[i][0] );
         }
-        tlist->Clear();
+        //tlist->Clear();
       }
       if (all_weights_forCombineV.size()!=0) {
         cerr << "Whole combination" << endl;
@@ -692,13 +704,16 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         printf("  Total : %lf\n", tot);
       }
       /**
-       Estimated with V+jets on data (and R_X from MC)
+       Estimated with V+jets on data (and R_X from MC ; weights from MC)
        */
       {
         Double_t tot=0., vtot=0., bTot=0.;
         Double_t vlike_plus_bb = 0., bVlike_plus_bb=0.;
         Double_t ntt=0., ntt_err=0., nv=0., nv_err=0. ;
         Double_t tmp_err=0., tot_SqSumErr=0., vtmp_err=0., vtot_SqSumErr=0. ;
+        
+        
+        
         if (j==0) /*!!!*/ {
           ntt     = vj.Ntt_0bjet(nbOfEvents[3*1+njets], nbOfEvents[nrpoints+0], nbOfEvents[nrpoints+2], 4+njets);
           ntt_err = vj.Ntt_err_0bjet(nbOfEvents[3*1+njets], statUncert[3*1+njets], nbOfEvents[nrpoints+0], statUncert[nrpoints+0], nbOfEvents[nrpoints+2], statUncert[nrpoints+2], 4+njets);
@@ -879,8 +894,142 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         printf("  Total : %lf \\pm %lf \n", tot, sqrt(tot_SqSumErr));
         printf("v Total : %lf \\pm %lf \n", vtot, sqrt(vtot_SqSumErr));
         printf("b Total : %lf\n", bTot);
+        //}
+        /**
+         Estimated with V+jets on data (and R_X from MC ; weights from V+jets)
+         */
+        {
+          
+          std::vector<std::vector<Double_t> > weights_V(5, std::vector<Double_t>()) ;
+          TList **ttl = new TList*[5]; //QCD[3] V+jets[2]
+          TGraphAsymmErrors **tg = new TGraphAsymmErrors*[5];
+          std::vector<Double_t> sum_V(5, 0.);
+          for (UInt_t i=0 ; i<5 ; i++) {
+            ttl[i] = new TList();
+            Double_t sumw = 0.;
+            for (UInt_t m=0; m<weights[i].size(); m++) {
+              sumw += weights[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1));
+            }
+            for (UInt_t m=0; m<weights[i].size(); m++) {
+              if (i==2 && ( listNames[i][m].find("Wjets")==0
+                           || listNames[i][m].find("Zjets")==0
+                           || listNames[i][m].find("W2Jets")==0
+                           || listNames[i][m].find("W3Jets")==0
+                           || listNames[i][m].find("W4Jets")==0 ) ) {
+                //              sumWZ += weights[i][m];
+                if (bJetMult[i][m]->Integral(0,-1)==0. || sumWZ==0. || tlist[i]->At(m)==NULL) {
+                  weights_V[2].push_back(1.);
+                  sum_V[2] += 0. ; 
+                } else {
+                  weights_V[2].push_back((nbOfEvents[2*3+njets]+nbOfEvents[3*3+njets]-nTotQCD_MC) * (weight_onMC[i][m] *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/sumWZ) );
+                  sum_V[2] += (* weights_V[2].rbegin()) * ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin) ; 
+                }
+                ttl[2]->Add(((TEfficiency*) tlist[i]->At(m)));
+              } else if (i==2 && listNames[i][m].find("QCD")==0) {
+                //              nTotQCD_MC += weights[i][m];
+                if (bJetMult[i][m]->Integral(0,-1)==0. || sumWZ==0. || tlist[i]->At(m)==NULL) {
+                  weights_V[3].push_back(1.);
+                  sum_V[3] += 0. ; 
+                } else {
+                  weights_V[3].push_back(weight_onMC[i][m] *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/*/nTotQCD_MC*/);
+                  sum_V[3] += (* weights_V[3].rbegin()) * ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin) ; 
+                }
+                ttl[3]->Add(((TEfficiency*) tlist[i]->At(m)));
+              } else {
+                if (bJetMult[i][m]->Integral(0,-1)==0. || sumWZ==0. || tlist[i]->At(m)==NULL) {
+                  weights_V[i].push_back(1.);
+                  sum_V[i] += 0. ; 
+                } else {
+                  weights_V[i].push_back((weight_onMC[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ /*/ ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)*/) ;
+                  sum_V[i] += (* weights_V[i].rbegin()) * ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin) ; 
+                }
+                ttl[i]->Add(((TEfficiency*) tlist[i]->At(m)));
+              }
+              
+            }
+          }
+          
+          for (UInt_t i=0 ; i<5 ; i++) {
+            tg[i] = NULL;
+            tg[i] = TEfficiency::Combine(ttl[i], "mode", weights_V[i].size(),  & weights_V[i][0] );
+          }        
+          
+          tot=0.; tot_SqSumErr=0.;
+          tmp_err=0.;
+          ytt = 0.; ytemp=0.; ytterr=0.;
+          if (tg_categ[1] != NULL) {
+            tg[1]->GetPoint(bin, dummy,ytt);
+            ytterr = tg[1]->GetErrorYlow(bin);
+            ytemp = tg[1]->GetErrorYhigh(bin);
+            if (ytemp>ytterr) {
+              ytterr = ytemp;
+            }
+          }
+          if (k==NbOfMVARegions) {
+            ytt = 1. ; ytterr = 0. ;
+          }
+          tot += ntt*ytt ;
+          tmp_err = ((ntt_err/ntt)*(ntt_err/ntt) + (ytterr/ytt)*(ytterr/ytt)) * ntt*ntt * ytt*ytt ;
+          tot_SqSumErr += tmp_err ;
+          printf("V Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, sqrt(tmp_err)   , nbOfEvents[3*1+njets]);
+          ytemp=0.;
+          yv = 0.;
+          yverr=0.;
+          if (tg[2] != NULL) {
+            tg[2]->GetPoint(bin, dummy,yv);
+            yverr = tg[2]->GetErrorYlow(bin);
+            ytemp = tg[2]->GetErrorYhigh(bin);
+            if (ytemp>yverr) {
+              yverr = ytemp;
+            }
+          }
+          if (k==NbOfMVARegions) {
+            yv = 1. ; yverr = 0. ;
+          }
+          tot += nv*yv ;
+          tmp_err = ((nv_err/nv)*(nv_err/nv) + (yverr/yv)*(yverr/yv)) * nv*nv * yv*yv ;
+          tot_SqSumErr += tmp_err ;
+          vlike_plus_bb += nv*yv;
+          printf("V Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, sqrt(tmp_err)   , nbOfEvents[3*2+njets]);
+          
+          
+          for (UInt_t i=0; i<5; i++) {
+            printf("  Process %d : %s : ", i, (i==2?"V+jets":(i==3?"Multijets":BckgdNames[i])).c_str());
+            Double_t sum = 0.;
+            Double_t y = 0., yerr=0.;
+            ytemp=0.;
+            if (tg[i] != NULL) {
+              tg[i]->GetPoint(bin, dummy,y);   
+              yerr = tg[i]->GetErrorYlow(bin);
+              ytemp = tg[i]->GetErrorYhigh(bin);
+              if (ytemp>yerr) {
+                yerr = ytemp;
+              }
+            }
+            if (k==NbOfMVARegions) {
+              y = 1. ; yerr = 0. ;
+            }
+            sum = y * sum_V[i] ;
+            if (i!=1 && i!=2) {
+              tot += sum;
+            }
+            Double_t s_err = 0.;
+            if (i!=2 && i!=3) {
+              s_err = statUncert[3*i+njets]/nbOfEvents[3*i+njets] ;
+            } else if (i==2) {
+              s_err = (statUncert[3*2+njets]*statUncert[3*2+njets]+statUncert[3*3+njets]*statUncert[3*3+njets])
+              / (nbOfEvents[3*2+njets]*nbOfEvents[3*2+njets]+nbOfEvents[3*3+njets]*nbOfEvents[3*3+njets]) ;
+            }
+            tmp_err = sum*sum * (s_err + (yerr/y)*(yerr/y)) ;
+            tot_SqSumErr += tmp_err;
+            printf("( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", y, yerr, sum_V[i], sqrt(s_err)*sum_V[i], sum, sqrt(tmp_err) );
+            
+          }
+          
+          printf("V  Total : %lf \\pm %lf \n", tot, sqrt(tot_SqSumErr));
+          
+        }
       }
-      
       /**
        Observed in data (only totals ...)
        */
