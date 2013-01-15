@@ -203,7 +203,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     inputfiles[1].push_back(TFile::Open((path+"TTbar"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[1].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[1].rbegin())->GetName(), ((TH1D*) (* inputfiles[1].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[1].push_back(165. *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //TTbar
+    weight_onMC[1].push_back(165. *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //TTbar
     weight_VJet[1].push_back( nbOfEvents[3*1+njets] ); //TTbar
     
     BckgdNames[2] = "V-like";
@@ -217,7 +217,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
       printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       //  BckgdNames[1] = "W3+jets";
-      weight_onMC[2].push_back(Wn_SF*1435. *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //W2jets
+      weight_onMC[2].push_back(Wn_SF*1435. *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //W2jets
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //W2jets
       
       listNames[2].push_back("W3Jets"+CChannel[channel]);
@@ -225,14 +225,14 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
       printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
       //  BckgdNames[1] = "W4+jets";
-      weight_onMC[2].push_back(Wn_SF*304.2 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //W3jets
+      weight_onMC[2].push_back(Wn_SF*304.2 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //W3jets
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //W3jets
       
       listNames[2].push_back("W4Jets"+CChannel[channel]);
       inputfiles[2].push_back(TFile::Open((path+"W4Jets"+CChannel[channel]+".root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
       printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
-      weight_onMC[2].push_back(Wn_SF*172.6 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //W4jets
+      weight_onMC[2].push_back(Wn_SF*172.6 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //W4jets
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //W4jets
     } else {
       // W+jets
@@ -240,7 +240,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       inputfiles[2].push_back(TFile::Open((path+"Wjets"+CChannel[channel]+".root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
       printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
-      weight_onMC[2].push_back(31314. *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //Wjets
+      weight_onMC[2].push_back(31314. *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //Wjets
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //Wjets
     }
     
@@ -250,7 +250,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     inputfiles[2].push_back(TFile::Open((path+"Zjets"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[2].push_back(3048. *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //Zjets
+    weight_onMC[2].push_back(3048. *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //Zjets
     weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //Zjets
                                                        // multi-jets
     if (((channel+1)&1)!=0) {
@@ -259,7 +259,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       inputfiles[2].push_back(TFile::Open((path+"QCDmu20_mu.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
       printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
-      weight_onMC[2].push_back(2.966E8*2.855E-4 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDmu_20
+      weight_onMC[2].push_back(2.966E8*2.855E-4 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //QCDmu_20
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDmu_20
     }
     if (((channel+1)&2)!=0) {
@@ -268,35 +268,35 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       inputfiles[2].push_back(TFile::Open((path+"QCDel30to80_el.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
       printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
-      weight_onMC[2].push_back(5.944E7*0.061 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDel_30_80
+      weight_onMC[2].push_back(5.944E7*0.061 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //QCDel_30_80
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDel_30_80
                                                          //  BckgdNames[2] = "QCDel80to170";
       listNames[2].push_back("QCDel80to170");
       inputfiles[2].push_back(TFile::Open((path+"QCDel80to170_el.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
       printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
-      weight_onMC[2].push_back(898200*0.159 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDel_80_170
+      weight_onMC[2].push_back(898200*0.159 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //QCDel_80_170
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDel_80_170
                                                          //  BckgdNames[3] = "QCDel170to250";
       listNames[2].push_back("QCDel170to250");
       inputfiles[2].push_back(TFile::Open((path+"QCDel170to250_el.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
       printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
-      weight_onMC[2].push_back(22140*0.1474 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDel_170_250
+      weight_onMC[2].push_back(22140*0.1474 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //QCDel_170_250
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDel_170_250
                                                          //  BckgdNames[4] = "QCDel250to35";
       listNames[2].push_back("QCDel250to350");
       inputfiles[2].push_back(TFile::Open((path+"QCDel250to350_el.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
       printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
-      weight_onMC[2].push_back(2900*0.1269 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDel_250_350
+      weight_onMC[2].push_back(2900*0.1269 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //QCDel_250_350
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDel_250_350
                                                          //  BckgdNames[5] = "QCDel350";
       listNames[2].push_back("QCDel350");
       inputfiles[2].push_back(TFile::Open((path+"QCDel350_el.root").c_str()));
       entries = ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2);
       printf("Entries (%s) : %lf\n", (* inputfiles[2].rbegin())->GetName(), ((TH1D*) (* inputfiles[2].rbegin())->Get("Entries"))->GetBinContent(2));
-      weight_onMC[2].push_back(520*0.1058 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //QCDel_350
+      weight_onMC[2].push_back(520*0.1058 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //QCDel_350
       weight_VJet[2].push_back( nbOfEvents[3*2+njets] ); //QCDel_350
     }
     
@@ -308,7 +308,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     inputfiles[0].push_back(TFile::Open((path+"TopS"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[0].push_back(3.19 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //ST_s
+    weight_onMC[0].push_back(3.19 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //ST_s
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //ST_s
     
     //  BckgdNames[4] = "stbar+jets (s-ch)";
@@ -316,7 +316,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     inputfiles[0].push_back(TFile::Open((path+"TopbarS"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[0].push_back(1.44 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //STbar_s
+    weight_onMC[0].push_back(1.44 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //STbar_s
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //STbar_s
     
     //  BckgdNames[5] = "st+jets (t-ch)";
@@ -324,7 +324,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     inputfiles[0].push_back(TFile::Open((path+"TopT"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[0].push_back(41.92 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //ST_t
+    weight_onMC[0].push_back(41.92 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //ST_t
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //ST_t
     
     //  BckgdNames[6] = "stbar+jets (t-ch)";
@@ -332,7 +332,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     inputfiles[0].push_back(TFile::Open((path+"TopbarT"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[0].push_back(22.65 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //STbar_t
+    weight_onMC[0].push_back(22.65 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //STbar_t
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //STbar_t
     
     //  BckgdNames[7] = "st+jets (tW-ch)";
@@ -340,7 +340,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     inputfiles[0].push_back(TFile::Open((path+"TopTW"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[0].push_back(7.87 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //ST_tW
+    weight_onMC[0].push_back(7.87 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //ST_tW
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //ST_tW
     
     //  BckgdNames[8] = "stbar+jets (tW-ch)";
@@ -348,7 +348,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     inputfiles[0].push_back(TFile::Open((path+"TopTW"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[0].rbegin())->GetName(), ((TH1D*) (* inputfiles[0].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[0].push_back(7.87 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //ST_tW
+    weight_onMC[0].push_back(7.87 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //ST_tW
     weight_VJet[0].push_back( nbOfEvents[3*0+njets] ); //ST_tW
     
     // di-boson
@@ -357,21 +357,21 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
     inputfiles[4].push_back(TFile::Open((path+"WW"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[4].rbegin())->GetName(), ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[4].push_back(43. *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //WW
+    weight_onMC[4].push_back(43. *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //WW
     weight_VJet[4].push_back( nbOfEvents[3*4+njets] ); //WW
                                                        //  BckgdNames[3] = "WZ+jets";
     listNames[4].push_back("WZ"+CChannel[channel]);
     inputfiles[4].push_back(TFile::Open((path+"WZ"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[4].rbegin())->GetName(), ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[4].push_back(18.2 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //WZ
+    weight_onMC[4].push_back(18.2 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //WZ
     weight_VJet[4].push_back( nbOfEvents[3*4+njets] ); //WZ
                                                        //  BckgdNames[11] = "ZZ+jets";
     listNames[4].push_back("ZZ"+CChannel[channel]);
     inputfiles[4].push_back(TFile::Open((path+"ZZ"+CChannel[channel]+".root").c_str()));
     entries = ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2);
     printf("Entries (%s) : %lf\n", (* inputfiles[4].rbegin())->GetName(), ((TH1D*) (* inputfiles[4].rbegin())->Get("Entries"))->GetBinContent(2));
-    weight_onMC[4].push_back(5.9 *(((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.) ); //ZZ
+    weight_onMC[4].push_back(5.9 *((((channel+1)&1)!=0 ? (entries==0. ? 0. : ilmu/entries) : 0.) + (((channel+1)&2)!=0 ? (entries==0. ? 0. : ilel/entries) : 0.)) ); //ZZ
     weight_VJet[4].push_back( nbOfEvents[3*4+njets] ); //ZZ
     
     
@@ -493,7 +493,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         for (UInt_t m=0; m<inputfiles[i].size(); m++) {
           TEfficiency *teff = NULL;
           teff = (TEfficiency*) inputfiles[i][m]->Get(teffname.c_str());
-          if (k==NbOfMVARegions) {
+          if (k==NbOfMVARegions) { //Copy the total numbers (ie No NN cut applied) so that the TEff is OK.
             TEfficiency *teff2 = teff;
             teff = new TEfficiency("", "", bin, 0, 1);
             ((TH1*) teff->GetTotalHistogram())->SetBinContent(bin+1, teff2->GetTotalHistogram()->GetBinContent(1+bin));
