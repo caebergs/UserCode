@@ -676,11 +676,11 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
               bBinFrac = bJetMult[i][m]->GetBinContent(j+1 /*!!!*/) / bJetMult[i][m]->Integral(0,-1);
             }
             if (m==0) {
-              printf(" %lf", bBinFrac * passed[i][m]);
+              printf(" %lf", /* bBinFrac * */ passed[i][m]); //Commented because already in "passed" (because already in TEfficiency)
             } else {
-              printf(" + %lf", bBinFrac * passed[i][m]);
+              printf(" + %lf", /* bBinFrac * */ passed[i][m]);
             }
-            sum += bBinFrac * passed[i][m] ;
+            sum += /* bBinFrac * */ passed[i][m] ;
           }
           printf(" = %lf\n", sum);
           if (i==2/* || i==3*/) {
