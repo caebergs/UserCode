@@ -674,7 +674,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
       Double_t Total_MC = 0.;
       Double_t Total_data = 0.;
       Double_t Total_V = 0.;
-
+      
       // Printing results for pure MC (non reweighted)
       {
         Double_t totTT=0.;
@@ -712,8 +712,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }
           tot += sum ;
         }
-        printf("  TT fraction : %lf / %lf = %.0lf \%\n", totTT, tot, 100.*totTT/tot);
-        printf("  V fraction : %lf / %lf = %.0lf \%\n", totV, tot, 100.*totV/tot);
+        printf("  TT fraction : %lf / %lf = %.0lf %\n", totTT, tot, 100.*totTT/tot);
+        printf("  V fraction : %lf / %lf = %.0lf %\n", totV, tot, 100.*totV/tot);
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("  Total : %.0lf\n", tot);
         Total_MC = tot;
@@ -906,8 +906,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         }
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("b V-like + Wbb category (sum) : %lf\n", bVlike_plus_bb);
-        printf("  TT fraction : %lf / %lf = %.0lf \%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
-        printf("  V fraction : %lf / %lf = %.0lf \%\n", nv*yv, tot, 100.*nv*yv/tot);
+        printf("  TT fraction : %lf / %lf = %.0lf %\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
+        printf("  V fraction : %lf / %lf = %.0lf %\n", nv*yv, tot, 100.*nv*yv/tot);
         printf("  Total : %.0lf \\pm %.0lf \n", tot, sqrt(tot_SqSumErr));
         printf("v Total : %lf \\pm %lf \n", vtot, sqrt(vtot_SqSumErr));
         printf("b Total : %lf\n", bTot);
@@ -942,7 +942,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
                   sum_V[2] += 0. ; 
                 } else {
                   weights_V[2].push_back((nbOfEvents[2*3+njets]+nbOfEvents[3*3+njets]-nTotQCD_MC) * (weight_onMC[i][m]/sumWZ)/*frac process*/ *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/*b frac*/ /*/ ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)*/ ); //TEff : incorporé dans weight_onMC
-                  //                  weights_V[2].push_back((nbOfEvents[2*3+njets]+nbOfEvents[3*3+njets]-nTotQCD_MC) * (weight_onMC[i][m] *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/sumWZ) );
+                                                                                                                                                                                                                                                                                                                    //                  weights_V[2].push_back((nbOfEvents[2*3+njets]+nbOfEvents[3*3+njets]-nTotQCD_MC) * (weight_onMC[i][m] *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/sumWZ) );
                   sum_V[2] += (* weights_V[2].rbegin()) * ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin) ; 
                 }
                 ttl[2]->Add(((TEfficiency*) tlist[i]->At(m)));
@@ -962,7 +962,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
                   sum_V[i] += 0. ; 
                 } else {
                   weights_V[i].push_back((weight_onMC[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ /*/ ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)*/) ; //TEff : incorporé dans weight_onMC
-                  //                  weights_V[i].push_back((weight_onMC[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ /*/ ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)*/) ;
+                                                                                                                                                                                                                                                                           //                  weights_V[i].push_back((weight_onMC[i][m]/sumw)/*frac process*/ * weight_VJet[i][m] * (bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))/*b frac*/ /*/ ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)*/) ;
                   sum_V[i] += (* weights_V[i].rbegin()) * ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin) ; 
                 }
                 ttl[i]->Add(((TEfficiency*) tlist[i]->At(m)));
