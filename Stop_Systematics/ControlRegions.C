@@ -712,8 +712,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }
           tot += sum ;
         }
-        printf("  TT fraction : %lf / %lf = %.0lf %\n", totTT, tot, 100.*totTT/tot);
-        printf("  V fraction : %lf / %lf = %.0lf %\n", totV, tot, 100.*totV/tot);
+        printf("  TT fraction : %lf / %lf = %.0lf %%\n", totTT, tot, 100.*totTT/tot);
+        printf("  V fraction : %lf / %lf = %.0lf %%\n", totV, tot, 100.*totV/tot);
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("  Total : %.0lf\n", tot);
         Total_MC = tot;
@@ -906,8 +906,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         }
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("b V-like + Wbb category (sum) : %lf\n", bVlike_plus_bb);
-        printf("  TT fraction : %lf / %lf = %.0lf %\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
-        printf("  V fraction : %lf / %lf = %.0lf %\n", nv*yv, tot, 100.*nv*yv/tot);
+        printf("  TT fraction : %lf / %lf = %.0lf %%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
+        printf("  V fraction : %lf / %lf = %.0lf %%\n", nv*yv, tot, 100.*nv*yv/tot);
         printf("  Total : %.0lf \\pm %.0lf \n", tot, sqrt(tot_SqSumErr));
         printf("v Total : %lf \\pm %lf \n", vtot, sqrt(vtot_SqSumErr));
         printf("b Total : %lf\n", bTot);
