@@ -712,10 +712,10 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }
           tot += sum ;
         }
-        printf("  TT fraction : %lf / %lf = %lf \n", totTT, tot, totTT/tot);
-        printf("  V fraction : %lf / %lf = %lf\n", totV, tot, totV/tot);
+        printf("  TT fraction : %lf / %lf = %.0lf \%\n", totTT, tot, 100.*totTT/tot);
+        printf("  V fraction : %lf / %lf = %.0lf \%\n", totV, tot, 100.*totV/tot);
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
-        printf("  Total : %lf\n", tot);
+        printf("  Total : %.0lf\n", tot);
         Total_MC = tot;
       }
       /**
@@ -777,7 +777,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         tot_SqSumErr += tmp_err ;
         vtmp_err = ((ntt_err/ntt)*(ntt_err/ntt) + (ytterr_/ytt_)*(ytterr_/ytt_)) * ntt*ntt*ytt_*ytt_ ;
         vtot_SqSumErr += vtmp_err ;
-        printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, sqrt(tmp_err)   , nbOfEvents[3*1+njets]);
+        printf("  Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \\pm %.0lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, sqrt(tmp_err)   , nbOfEvents[3*1+njets]);
         printf("v Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt_, ytterr_, ntt*ytt_, sqrt(vtmp_err)   , nbOfEvents[3*1+njets]);
         printf("b Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", nbOfEvents[3*1+njets], statUncert[3*1+njets], ytt, ytterr, nbOfEvents[3*1+njets]*ytt, sqrt((statUncert[3*1+njets]/nbOfEvents[3*1+njets])*(statUncert[3*1+njets]/nbOfEvents[3*1+njets]) + (ytterr/ytt)*(ytterr/ytt)) *nbOfEvents[3*1+njets]*ytt   , nbOfEvents[3*1+njets]);
         ytemp=0.;
@@ -814,7 +814,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         vtot_SqSumErr+= vtmp_err ;
         vlike_plus_bb += nv*yv;
         bVlike_plus_bb += nbOfEvents[3*2+njets]*yv;
-        printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, sqrt(tmp_err)   , nbOfEvents[3*2+njets]);
+        printf("  Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \\pm %.0lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, sqrt(tmp_err)   , nbOfEvents[3*2+njets]);
         printf("v Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv_, yverr_, nv*yv_, sqrt(vtmp_err)   , nbOfEvents[3*2+njets]);
         printf("b Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nbOfEvents[3*2+njets], statUncert[3*2+njets], yv, yverr, nbOfEvents[3*2+njets]*yv, (statUncert[3*2+njets]/nbOfEvents[3*2+njets] + yverr/yv) *nbOfEvents[3*2+njets]*yv   , nbOfEvents[3*2+njets]);
         for (UInt_t i=0; i<5; i++) {
@@ -906,9 +906,9 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         }
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("b V-like + Wbb category (sum) : %lf\n", bVlike_plus_bb);
-        printf("  TT fraction : %lf / %lf = %lf \n", ntt*ytt, tot, ntt*ytt/tot);
-        printf("  V fraction : %lf / %lf = %lf\n", nv*yv, tot, nv*yv/tot);
-        printf("  Total : %lf \\pm %lf \n", tot, sqrt(tot_SqSumErr));
+        printf("  TT fraction : %lf / %lf = %.0lf \%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
+        printf("  V fraction : %lf / %lf = %.0lf \%\n", nv*yv, tot, 100.*nv*yv/tot);
+        printf("  Total : %.0lf \\pm %.0lf \n", tot, sqrt(tot_SqSumErr));
         printf("v Total : %lf \\pm %lf \n", vtot, sqrt(vtot_SqSumErr));
         printf("b Total : %lf\n", bTot);
         Total_ = tot;
@@ -993,7 +993,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           tot += ntt*ytt ;
           tmp_err = ((ntt_err/ntt)*(ntt_err/ntt) + (ytterr/ytt)*(ytterr/ytt)) * ntt*ntt * ytt*ytt ;
           tot_SqSumErr += tmp_err ;
-          printf("V Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, sqrt(tmp_err)   , nbOfEvents[3*1+njets]);
+          printf("V Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \\pm %.0lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, sqrt(tmp_err)   , nbOfEvents[3*1+njets]);
           ytemp=0.;
           yv = 0.;
           yverr=0.;
@@ -1012,7 +1012,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           tmp_err = ((nv_err/nv)*(nv_err/nv) + (yverr/yv)*(yverr/yv)) * nv*nv * yv*yv ;
           tot_SqSumErr += tmp_err ;
           vlike_plus_bb += nv*yv;
-          printf("V Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, sqrt(tmp_err)   , nbOfEvents[3*2+njets]);
+          printf("V Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \\pm %.0lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, sqrt(tmp_err)   , nbOfEvents[3*2+njets]);
           
           
           for (UInt_t i=0; i<5; i++) {
@@ -1044,12 +1044,12 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             }
             tmp_err = sum*sum * (s_err + (yerr/y)*(yerr/y)) ;
             tot_SqSumErr += tmp_err;
-            printf("( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %lf \\pm %lf \n", y, yerr, sum_V[i], sqrt(s_err)*sum_V[i], sum, sqrt(tmp_err) );
+            printf("( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \\pm %.0lf \n", y, yerr, sum_V[i], sqrt(s_err)*sum_V[i], sum, sqrt(tmp_err) );
             
           }
-          printf("V  TT fraction : %lf / %lf = %lf \n", ntt*ytt, tot, ntt*ytt/tot);
-          printf("V  V fraction : %lf / %lf = %lf\n", nv*yv, tot, nv*yv/tot);
-          printf("V  Total : %lf \\pm %lf \n", tot, sqrt(tot_SqSumErr));
+          printf("V  TT fraction : %lf / %lf = %.0lf \n", ntt*ytt, tot, ntt*ytt/tot);
+          printf("V  V fraction : %lf / %lf = %.0lf\n", nv*yv, tot, nv*yv/tot);
+          printf("V  Total : %.0lf \\pm %.0lf \n", tot, sqrt(tot_SqSumErr));
           Total_V = tot;
         }
       }
@@ -1089,7 +1089,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }
           sum += bBinFrac ;
         }
-        printf(" = %lf\n", sum);
+        printf(" = %.0lf\n", sum);
         printf("   passed : \n");
         if (k!=NbOfMVARegions) {
           sum=0.;
@@ -1104,12 +1104,12 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             sum += bBinFrac ;
           }
         }
-        printf(" = %lf\n", sum);
+        printf(" = %.0lf\n", sum);
         Total_data = sum;
       }
-      printf("  Relative Bias (MC): %lf\n", (Total_data-Total_MC)/Total_data );
-      printf("  Relative Bias (V-MC weights): %lf\n", (Total_data-Total_)/Total_data );
-      printf("  Relative Bias (V-V weights): %lf\n", (Total_data-Total_V)/Total_data );
+      printf("  Relative Bias (MC): %.0lf\n", 100.*(Total_data-Total_MC)/Total_data );
+      printf("  Relative Bias (V-MC weights): %.0lf\n", 100.*(Total_data-Total_)/Total_data );
+      printf("  Relative Bias (V-V weights): %.0lf\n", 100.*(Total_data-Total_V)/Total_data );
     }
     wbb_bJetMult_file->Close();
   }
