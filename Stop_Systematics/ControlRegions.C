@@ -1047,8 +1047,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             printf("( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \\pm %.0lf \n", y, yerr, sum_V[i], sqrt(s_err)*sum_V[i], sum, sqrt(tmp_err) );
             
           }
-          printf("V  TT fraction : %lf / %lf = %.0lf \n", ntt*ytt, tot, ntt*ytt/tot);
-          printf("V  V fraction : %lf / %lf = %.0lf\n", nv*yv, tot, nv*yv/tot);
+          printf("V  TT fraction : %lf / %lf = %.0lf %%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
+          printf("V  V fraction : %lf / %lf = %.0lf %%\n", nv*yv, tot, 100.*nv*yv/tot);
           printf("V  Total : %.0lf \\pm %.0lf \n", tot, sqrt(tot_SqSumErr));
           Total_V = tot;
         }
