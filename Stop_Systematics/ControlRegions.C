@@ -165,34 +165,20 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
   printf("UseWnJets : %d\n", UseWNJets);
   printf("NN UseCase : %d (%s)\n", UseCase, MVA[UseCase].c_str());
   cout<<"Lepton channel : "<<(channelConf==0 ? CChannel[0] : (channelConf==1?CChannel[1]:"_combined"))<<endl;
-  cerr<<"aerr"<< endl;
-  printf("a\n"); 
   std::string path = "$HOME/AnalysisCode/GentStopAnalysis/UGentCode/Leg3/v1/Samples_21102012/";
-  printf("b\n");
   std::vector<std::vector<TFile *> > inputfiles(5, std::vector<TFile*>(0, NULL));
-  printf("c\n");
   std::vector<std::vector<std::string> > listNames(5, std::vector<std::string>(0, ""));
-  printf("d\n");
   std::vector<std::vector<Double_t> > weight_onMC(5, std::vector<Double_t>(0, -1.));
-  printf("e\n");
   std::vector<std::vector<Double_t> > weight_VJet(5, std::vector<Double_t>(0, -1.));
-  printf("f\n");
   
   std::vector<TFile *> datafiles(0, NULL);
-  printf("g\n");
   std::vector<std::string> dataNames(0, "");
-  printf("h\n");
   std::vector<Double_t> weight_data(0, -1.);
-  printf("i\n");
   std::vector<Double_t> weight_data_est(0, -1.);
-  printf("j\n");
   
   for (int i=0; (1<<i)<=channelConf+1; i++) {
     Double_t entries = -1.;
-    cerr << "1err" <<endl; 
-    printf("1\n");
     Int_t channel=(1<<i)-1 ;
-    printf("2\n");
     if (((channel+1)&(channelConf+1))==0) {
       continue;
     }
@@ -670,10 +656,11 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           printf(" } --> Integral : %lf \n",  bJetMult_Avg[i]->Integral(0,-1)) ;
         }
       }
-      Double_t Total_ = 0.;
-      Double_t Total_MC = 0.;
-      Double_t Total_data = 0.;
-      Double_t Total_V = 0.;
+      Double_t Total_ = 0., Total__err = 0. ;
+      Double_t Total_MC = 0., Total_MC_err = 0. ;
+      Double_t Total_data = 0., Total_data_err = 0. ;
+      Double_t Total_V = 0., Total_V_err = 0. ;
+      Double_t Total_W = 0., Total_W_err = 0.;
       
       // Printing results for pure MC (non reweighted)
       {
@@ -712,8 +699,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }
           tot += sum ;
         }
-        printf("  TT fraction : %lf / %lf = %.0lf %%\n", totTT, tot, 100.*totTT/tot);
-        printf("  V fraction : %lf / %lf = %.0lf %%\n", totV, tot, 100.*totV/tot);
+        printf("  TT fraction : %lf / %lf = %.1lf %%\n", totTT, tot, 100.*totTT/tot);
+        printf("  V fraction : %lf / %lf = %.1lf %%\n", totV, tot, 100.*totV/tot);
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("  Total : %.0lf\n", tot);
         Total_MC = tot;
@@ -906,12 +893,13 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
         }
         printf("  V-like + Wbb category (sum) : %lf\n", vlike_plus_bb);
         printf("b V-like + Wbb category (sum) : %lf\n", bVlike_plus_bb);
-        printf("  TT fraction : %lf / %lf = %.0lf %%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
-        printf("  V fraction : %lf / %lf = %.0lf %%\n", nv*yv, tot, 100.*nv*yv/tot);
+        printf("  TT fraction : %lf / %lf = %.1lf %%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
+        printf("  V fraction : %lf / %lf = %.1lf %%\n", nv*yv, tot, 100.*nv*yv/tot);
         printf("  Total : %.0lf \\pm %.0lf \n", tot, sqrt(tot_SqSumErr));
         printf("v Total : %lf \\pm %lf \n", vtot, sqrt(vtot_SqSumErr));
         printf("b Total : %lf\n", bTot);
         Total_ = tot;
+        Total__err = sqrt(tot_SqSumErr);
         //}
         /**
          Estimated with V+jets on data (and R_X from MC ; weights from V+jets)
@@ -943,7 +931,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
                 } else {
                   //                  weights_V[2].push_back((nbOfEvents[2*3+njets]+nbOfEvents[3*3+njets]-nTotQCD_MC) * (weight_onMC[i][m]/sumWZ)/*frac process*/ *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/*b frac*/ /*/ ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)*/ ); //TEff : incorporé dans weight_onMC
                   weights_V[2].push_back((nv+ nbOfEvents[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1))
-                                          -nTotQCD_MC) * (weight_onMC[i][m]/sumWZ)/*frac process*/ *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/*b frac*/ /*/ ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)*/ ); //TEff : incorporé dans weight_onMC
+                                          -nTotQCD_MC) * (weight_onMC[i][m]/sumWZ)/*frac process*/ /* *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1))) *//*b frac*/ /*/ ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin)*/ ); //TEff : incorporé dans weight_onMC
          //                  weights_V[2].push_back((nbOfEvents[2*3+njets]+nbOfEvents[3*3+njets]-nTotQCD_MC) * (weight_onMC[i][m] *((bJetMult[i][m]->GetBinContent(j+1)/bJetMult[i][m]->Integral(0,-1)))/sumWZ) );
                   sum_V[2] += (* weights_V[2].rbegin()) * ((TEfficiency*) tlist[i]->At(m))->GetTotalHistogram()->GetBinContent(1+bin) ; 
                 }
@@ -979,7 +967,9 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }        
           
           tot=0.; tot_SqSumErr=0.;
+          Double_t wtot=0., wtot_SqSumErr=0.;
           tmp_err=0.;
+          Double_t tmp=0.;
           ytt = 0.; ytemp=0.; ytterr=0.;
           if (tg_categ[1] != NULL) {
             tg[1]->GetPoint(bin, dummy,ytt);
@@ -993,8 +983,10 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             ytt = 1. ; ytterr = 0. ;
           }
           tot += ntt*ytt ;
+          wtot += ntt*ytt ;
           tmp_err = ((ntt_err/ntt)*(ntt_err/ntt) + (ytterr/ytt)*(ytterr/ytt)) * ntt*ntt * ytt*ytt ;
           tot_SqSumErr += tmp_err ;
+          wtot_SqSumErr += tmp_err ;
           printf("V Ntt = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \\pm %.0lf \t\t\t\t //// Ntt tot. for jet mult. : %lf \n", ntt, ntt_err, ytt, ytterr, ntt*ytt, sqrt(tmp_err)   , nbOfEvents[3*1+njets]);
           ytemp=0.;
           yv = 0.;
@@ -1015,8 +1007,13 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           tot_SqSumErr += tmp_err ;
           vlike_plus_bb += nv*yv;
           printf("V Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \\pm %.0lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", nv, nv_err, yv, yverr, nv*yv, sqrt(tmp_err)   , nbOfEvents[3*2+njets]);
-          
-          
+          tmp = yv*(nv+ nbOfEvents[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1))-nTotQCD_MC);
+          tmp_err = ((nv_err*nv_err + pow(statUncert[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1)), 2.))/(nv*nv) + (yverr/yv)*(yverr/yv))* tmp*tmp ;
+          printf("W Nv = ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \\pm %.0lf \t\t\t\t //// Nv tot. for jet mult. : %lf \n", (nv+ nbOfEvents[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1))-nTotQCD_MC),
+                 sqrt(nv_err*nv_err + pow(statUncert[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1)), 2.) + nTotQCD_MC),
+                 yv, yverr, tmp, sqrt(tmp_err)   , nbOfEvents[3*2+njets]);
+          wtot += tmp ;
+          wtot_SqSumErr += tmp_err ;
           for (UInt_t i=0; i<5; i++) {
             printf("V Process %d : %s : ", i, (i==2?"V+jets":(i==3?"Multijets":BckgdNames[i])).c_str());
             Double_t sum = 0.;
@@ -1036,6 +1033,7 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             sum = y * sum_V[i] ;
             if (i!=1 && i!=2) {
               tot += sum;
+              wtot += sum ;
             }
             Double_t s_err = 0.;
             if (i!=2 && i!=3) {
@@ -1047,12 +1045,20 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             tmp_err = sum*sum * (s_err + (yerr/y)*(yerr/y)) ;
             tot_SqSumErr += tmp_err;
             printf("( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \\pm %.0lf \n", y, yerr, sum_V[i], sqrt(s_err)*sum_V[i], sum, sqrt(tmp_err) );
+            if (i==2) {
+              printf("V Process -> Wbb component (already in V+jets) : ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \n", y, yerr, nbOfEvents[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1)),
+                     sqrt(pow(statUncert[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1)), 2.)), y*nbOfEvents[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1)));
+            }
             
           }
-          printf("V  TT fraction : %lf / %lf = %.0lf %%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
-          printf("V  V fraction : %lf / %lf = %.0lf %%\n", nv*yv, tot, 100.*nv*yv/tot);
+          printf("V  TT fraction : %lf / %lf = %.1lf %%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
+          printf("V  V fraction : %lf / %lf = %.1lf %%\n", nv*yv, tot, 100.*nv*yv/tot);
           printf("V  Total : %.0lf \\pm %.0lf \n", tot, sqrt(tot_SqSumErr));
-          Total_V = tot;
+          printf("W  TT fraction : %lf / %lf = %.1lf %%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
+          printf("W  V fraction : %lf / %lf = %.1lf %%\n", tmp, tot, 100.*tmp/tot);
+          printf("W  Total : %.0lf \\pm %.0lf \n", wtot, sqrt(wtot_SqSumErr));
+          Total_V = tot, Total_V_err = sqrt(tot_SqSumErr) ;
+          Total_W = wtot; Total_W_err = sqrt(wtot_SqSumErr) ;
         }
       }
       /**
@@ -1107,11 +1113,13 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           }
         }
         printf(" = %.0lf\n", sum);
-        Total_data = sum;
+        Total_data = sum;   Total_data_err = sqrt(sum);
       }
-      printf("  Relative Bias (MC): %.0lf\n", 100.*(Total_data-Total_MC)/Total_data );
-      printf("  Relative Bias (V-MC weights): %.0lf\n", 100.*(Total_data-Total_)/Total_data );
-      printf("  Relative Bias (V-V weights): %.0lf\n", 100.*(Total_data-Total_V)/Total_data );
+      
+      printf("  Relative Bias (MC): %.1lf \\pm %.1lf\n", 100.*(Total_data-Total_MC)/Total_data ,         100.*(Total_MC/Total_data)*sqrt(1/Total_data)+pow((Total_MC_err/Total_MC),2.));
+      printf("  Relative Bias (V-MC weights): %.1lf \\pm %.1lf\n", 100.*(Total_data-Total_)/Total_data , 100.*(Total_/Total_data)*sqrt(1/Total_data)+pow((Total__err/Total_),2.));
+      printf("  Relative Bias (V-V weights): %.1lf \\pm %.1lf\n", 100.*(Total_data-Total_V)/Total_data , 100.*(Total_V/Total_data)*sqrt(1/Total_data)+pow((Total_V_err/Total_V),2.));
+      printf("  Relative Bias (V-W weights): %.1lf \\pm %.1lf\n", 100.*(Total_data-Total_W)/Total_data , 100.*(Total_W/Total_data)*sqrt(1/Total_data)+pow((Total_W_err/Total_W),2.));
     }
     wbb_bJetMult_file->Close();
   }
