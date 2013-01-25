@@ -1054,8 +1054,8 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
           printf("V  TT fraction : %lf / %lf = %.1lf %%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
           printf("V  V fraction : %lf / %lf = %.1lf %%\n", nv*yv, tot, 100.*nv*yv/tot);
           printf("V  Total : %.0lf \\pm %.0lf \n", tot, sqrt(tot_SqSumErr));
-          printf("W  TT fraction : %lf / %lf = %.1lf %%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
-          printf("W  V fraction : %lf / %lf = %.1lf %%\n", tmp, tot, 100.*tmp/tot);
+          printf("W  TT fraction : %lf / %lf = %.1lf %%\n", ntt*ytt, wtot, 100.*ntt*ytt/wtot);
+          printf("W  V fraction : %lf / %lf = %.1lf %%\n", tmp, wtot, 100.*tmp/wtot);
           printf("W  Total : %.0lf \\pm %.0lf \n", wtot, sqrt(wtot_SqSumErr));
           Total_V = tot, Total_V_err = sqrt(tot_SqSumErr) ;
           Total_W = wtot; Total_W_err = sqrt(wtot_SqSumErr) ;
