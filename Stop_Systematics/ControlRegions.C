@@ -965,12 +965,13 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
             tg[i] = NULL;
             tg[i] = TEfficiency::Combine(ttl[i], "mode", weights_V[i].size(),  & weights_V[i][0] );
           }        
-          
           tot=0.; tot_SqSumErr=0.;
           Double_t wtot=0., wtot_SqSumErr=0.;
           tmp_err=0.;
           Double_t tmp=0.;
           ytt = 0.; ytemp=0.; ytterr=0.;
+          Double_t nst_yst = 0.;
+          Double_t nvv_yvv = 0.;
           if (tg_categ[1] != NULL) {
             tg[1]->GetPoint(bin, dummy,ytt);
             ytterr = tg[1]->GetErrorYlow(bin);
@@ -1049,13 +1050,22 @@ void ControlRegions(std::string filename, Int_t UseCase, Int_t bin, bool UseWNJe
               printf("V Process -> Wbb component (already in V+jets) : ( %lf \\pm %lf ) * ( %lf \\pm %lf ) = %.0lf \n", y, yerr, nbOfEvents[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1)),
                      sqrt(pow(statUncert[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1)), 2.)), y*nbOfEvents[3*3+njets]*( wbb_bJetMult_hist->Integral(0,-1)==0. ? 0. : wbb_bJetMult_hist->GetBinContent(j+1/*!!!*/) / wbb_bJetMult_hist->Integral(0,-1)));
             }
-            
+            if (i==0) {
+              nst_yst = sum ;
+            }
+            if (i==4) {
+              nvv_yvv = sum ;
+            }
           }
           printf("V  TT fraction : %lf / %lf = %.1lf %%\n", ntt*ytt, tot, 100.*ntt*ytt/tot);
           printf("V  V fraction : %lf / %lf = %.1lf %%\n", nv*yv, tot, 100.*nv*yv/tot);
           printf("V  Total : %.0lf \\pm %.0lf \n", tot, sqrt(tot_SqSumErr));
           printf("W  TT fraction : %lf / %lf = %.1lf %%\n", ntt*ytt, wtot, 100.*ntt*ytt/wtot);
           printf("W  V fraction : %lf / %lf = %.1lf %%\n", tmp, wtot, 100.*tmp/wtot);
+
+          printf("W  ST fraction : %lf / %lf = %.1lf %%\n", nst_yst, wtot, 100.*nst_yst/wtot);
+          printf("W  VV fraction : %lf / %lf = %.1lf %%\n", nvv_yvv, wtot, 100.*nvv_yvv/wtot);
+
           printf("W  Total : %.0lf \\pm %.0lf \n", wtot, sqrt(wtot_SqSumErr));
           Total_V = tot, Total_V_err = sqrt(tot_SqSumErr) ;
           Total_W = wtot; Total_W_err = sqrt(wtot_SqSumErr) ;
