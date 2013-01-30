@@ -1,51 +1,51 @@
   // Systematic uncertainties
 
-  RTT_syst_uncert_rel[0][0][0][0]=; // low DM, jes -
-  RTT_syst_uncert_rel[0][0][1][0]=; // low DM, jes +
-  RTT_syst_uncert_rel[1][0][0][0]=; // int DM1, jes -
-  RTT_syst_uncert_rel[1][0][1][0]=; // int DM1, jes +
-  RTT_syst_uncert_rel[2][0][0][0]=; // int DM2, jes -
-  RTT_syst_uncert_rel[2][0][1][0]=; // int DM2, jes +
-  RTT_syst_uncert_rel[3][0][0][0]=; // high DM, jes -
-  RTT_syst_uncert_rel[3][0][1][0]=; // high DM, jes +
+  RTT_syst_uncert_rel[0][0][0][0]=999999999999.; // low DM, jes -
+  RTT_syst_uncert_rel[0][0][1][0]=999999999999.; // low DM, jes +
+  RTT_syst_uncert_rel[1][0][0][0]=999999999999.; // int DM1, jes -
+  RTT_syst_uncert_rel[1][0][1][0]=999999999999.; // int DM1, jes +
+  RTT_syst_uncert_rel[2][0][0][0]=999999999999.; // int DM2, jes -
+  RTT_syst_uncert_rel[2][0][1][0]=999999999999.; // int DM2, jes +
+  RTT_syst_uncert_rel[3][0][0][0]=999999999999.; // high DM, jes -
+  RTT_syst_uncert_rel[3][0][1][0]=999999999999.; // high DM, jes +
 
-  RTT_syst_uncert_rel[0][0][0][1]=; // low DM, jes -
-  RTT_syst_uncert_rel[0][0][1][1]=; // low DM, jes +
-  RTT_syst_uncert_rel[1][0][0][1]=; // int DM1, jes -
-  RTT_syst_uncert_rel[1][0][1][1]=; // int DM1, jes +
-  RTT_syst_uncert_rel[2][0][0][1]=; // int DM2, jes -
-  RTT_syst_uncert_rel[2][0][1][1]=; // int DM2, jes +
-  RTT_syst_uncert_rel[3][0][0][1]=; // high DM, jes -
-  RTT_syst_uncert_rel[3][0][1][1]=; // high DM, jes +
+  RTT_syst_uncert_rel[0][0][0][1]=999999999999.; // low DM, jes -
+  RTT_syst_uncert_rel[0][0][1][1]=999999999999.; // low DM, jes +
+  RTT_syst_uncert_rel[1][0][0][1]=999999999999.; // int DM1, jes -
+  RTT_syst_uncert_rel[1][0][1][1]=999999999999.; // int DM1, jes +
+  RTT_syst_uncert_rel[2][0][0][1]=999999999999.; // int DM2, jes -
+  RTT_syst_uncert_rel[2][0][1][1]=999999999999.; // int DM2, jes +
+  RTT_syst_uncert_rel[3][0][0][1]=999999999999.; // high DM, jes -
+  RTT_syst_uncert_rel[3][0][1][1]=999999999999.; // high DM, jes +
 
-  RTT_syst_uncert_rel[0][0][0][2]=; // low DM, jes -
-  RTT_syst_uncert_rel[0][0][1][2]=; // low DM, jes +
-  RTT_syst_uncert_rel[1][0][0][2]=; // int DM1, jes -
-  RTT_syst_uncert_rel[1][0][1][2]=; // int DM1, jes +
-  RTT_syst_uncert_rel[2][0][0][2]=; // int DM2, jes -
-  RTT_syst_uncert_rel[2][0][1][2]=; // int DM2, jes +
-  RTT_syst_uncert_rel[3][0][0][2]=; // high DM, jes -
-  RTT_syst_uncert_rel[3][0][1][2]=; // high DM, jes +
+  RTT_syst_uncert_rel[0][0][0][2]=999999999999.; // low DM, jes -
+  RTT_syst_uncert_rel[0][0][1][2]=999999999999.; // low DM, jes +
+  RTT_syst_uncert_rel[1][0][0][2]=999999999999.; // int DM1, jes -
+  RTT_syst_uncert_rel[1][0][1][2]=999999999999.; // int DM1, jes +
+  RTT_syst_uncert_rel[2][0][0][2]=999999999999.; // int DM2, jes -
+  RTT_syst_uncert_rel[2][0][1][2]=999999999999.; // int DM2, jes +
+  RTT_syst_uncert_rel[3][0][0][2]=999999999999.; // high DM, jes -
+  RTT_syst_uncert_rel[3][0][1][2]=999999999999.; // high DM, jes +
 
 
 
-  RTT_syst_uncert_rel[0][1][0]=; // low DM, matching -
-  RTT_syst_uncert_rel[0][1][1]=; // low DM, matching +
-  RTT_syst_uncert_rel[1][1][0]=; // int DM1, matching -
-  RTT_syst_uncert_rel[1][1][1]=; // int DM1, matching +
-  RTT_syst_uncert_rel[2][1][0]=; // int DM2, matching -
-  RTT_syst_uncert_rel[2][1][1]=; // int DM2, matching +
-  RTT_syst_uncert_rel[3][1][0]=; // high DM, matching -
-  RTT_syst_uncert_rel[3][1][1]=; // high DM, matching +
+  RTT_syst_uncert_rel[0][1][0]=999999999999.; // low DM, matching -
+  RTT_syst_uncert_rel[0][1][1]=999999999999.; // low DM, matching +
+  RTT_syst_uncert_rel[1][1][0]=999999999999.; // int DM1, matching -
+  RTT_syst_uncert_rel[1][1][1]=999999999999.; // int DM1, matching +
+  RTT_syst_uncert_rel[2][1][0]=999999999999.; // int DM2, matching -
+  RTT_syst_uncert_rel[2][1][1]=999999999999.; // int DM2, matching +
+  RTT_syst_uncert_rel[3][1][0]=999999999999.; // high DM, matching -
+  RTT_syst_uncert_rel[3][1][1]=999999999999.; // high DM, matching +
 
-  RTT_syst_uncert_rel[0][2][0]=; // low DM,  scale -
-  RTT_syst_uncert_rel[0][2][1]=; // low DM,  scale +
-  RTT_syst_uncert_rel[1][2][0]=; // int DM1, scale -
-  RTT_syst_uncert_rel[1][2][1]=; // int DM1, scale +
-  RTT_syst_uncert_rel[2][2][0]=; // int DM2, scale -
-  RTT_syst_uncert_rel[2][2][1]=; // int DM2, scale +
-  RTT_syst_uncert_rel[3][2][0]=; // high DM, scale -
-  RTT_syst_uncert_rel[3][2][1]=; // high DM, scale +
+  RTT_syst_uncert_rel[0][2][0]=999999999999.; // low DM,  scale -
+  RTT_syst_uncert_rel[0][2][1]=999999999999.; // low DM,  scale +
+  RTT_syst_uncert_rel[1][2][0]=999999999999.; // int DM1, scale -
+  RTT_syst_uncert_rel[1][2][1]=999999999999.; // int DM1, scale +
+  RTT_syst_uncert_rel[2][2][0]=999999999999.; // int DM2, scale -
+  RTT_syst_uncert_rel[2][2][1]=999999999999.; // int DM2, scale +
+  RTT_syst_uncert_rel[3][2][0]=999999999999.; // high DM, scale -
+  RTT_syst_uncert_rel[3][2][1]=999999999999.; // high DM, scale +
 
   RTT_syst_uncert_rel[0][3][0][0]=0.0212; // low DM,  5D Rew.
   RTT_syst_uncert_rel[0][3][1][0]=0.0212; // low DM,  5D Rew.
