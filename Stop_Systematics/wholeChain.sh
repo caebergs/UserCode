@@ -62,7 +62,7 @@ for channel in 1 2 3 ; do
 if [[ ( ( "${uncert}" = "3" ) || ( "${uncert}" = "3" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
 continue ;
 fi ;
-		iCont=$(cat default_input_values.txt | grep "RTT_syst_uncert_rel\[${useCase}\]\[${uncert}\]\[${fluctDirect}\]\[${channel}]=" | sed -e "s/RTT_syst_uncert_rel\[${useCase}\]\[${uncert}\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;/\1/") ;
+		iCont=$(cat default_input_values.txt | grep "RTT_syst_uncert_rel\[${useCase}\]\[${uncert}\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RTT_syst_uncert_rel\[${useCase}\]\[${uncert}\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
 		declare -i iBin ;
 		iBin=${uncert}*2+${fluctDirect} ;
 		if [ "${uncert}" = "323" ] ; then
@@ -188,9 +188,9 @@ EOD
 			mv tmp.C makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
 		    done ;
 		fi ;
-declare -i uncert ;
-for uncert in -1 0 1 2 3 ; do
-for fluctDirect in 0 1 ; do
+    declare -i uncert ;
+    for uncert in -1 0 1 2 3 ; do
+      for fluctDirect in 0 1 ; do
 if [[ ( "${uncert}" = "3" ) && ( "${fluctDirect}" = "1" ) ]] ; then 
 continue ;
 fi ;
@@ -221,7 +221,7 @@ declare -a RVnom ;
 declare -a RVnomTrend ;
 for channel in 1 2 3 ; do
     for useCase in 0 1 2 3 ; do
-	RTTrelP[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (+) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (+) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
+  RTTrelP[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (+) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (+) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
 echo "${RTTrelP[${channel}*${nbOfUseCase}+${useCase}]}"
 	RTTrelM[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (-) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (-) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
 echo "${RTTrelM[${channel}*${nbOfUseCase}+${useCase}]}"
@@ -420,7 +420,7 @@ TotalEstimatedNumbers_Errors_IndivChannel("corrMatr_${channel}.txt", ${useCase},
 .q
 EOD
 	fi;
-echo "NN : ${MVA[${useCase}]} , channel : ${channelLabel[${channel}]} : $(cat TotNumbers_channel_${channel}_${useCase}.txt | grep 'Ntotal = ')" ;
+      echo "NN : ${MVA[${useCase}]} , channel : ${channelLabel[${channel}]} : $(cat TotNumbers_channel_${channel}_${useCase}.txt | grep 'Ntotal = ')" ;
     done
 done
 
