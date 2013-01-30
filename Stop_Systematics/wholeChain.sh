@@ -43,12 +43,47 @@ cat ../makeSystUncertSummaryPlot_VJets.C \
     > makeSystUncertSummaryPlot_VJets.C ;
 for channel in 1 2 3 ; do
 # Actual computations of the uncertainties on RTT and RV
+    declare -i useCase ;
     for useCase in 0 1 2 3 ; do
+	declare -i uncert ;
+	for uncert in -1 0 1 2 3 4 ; do
+	    for fluctDirect in 0 1 ; do
+if [[ ( ( "${uncert}" = "3" ) || ( "${uncert}" = "3" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
+continue ;
+fi ;
+		iCont=$(cat default_input_values.txt | grep "RTT_syst_uncert_rel[${useCase}][${uncert}][${fluctDirect}][${channel}]=" | sed -e "s/RTT_syst_uncert_rel[${useCase}][${uncert}][${fluctDirect}][${channel}]=[ ]*\([+\-[0-9]\.]\)*[ ]*;/\1/") ;
+		declare -i iBin ;
+		iBin=${uncert}*2+${fluctDirect} ;
+		if [ "${uncert}" = "323" ] ; then
+		    cat makeSystUncertSummaryPlot.C \
+			| sed -e "s/Xaxis->SetBinLabel(j,binlabel\[j\].c_str());/Xaxis->SetBinLabel(j,binlabel[j].c_str());\nif (j==${iBin}) { BinContent=${iCont}; BinError=0.; }/" \
+			> tmp.C
+		    mv tmp.C makeSystUncertSummaryPlot.C ;
+		fi ;
+	    done ;
+	done ;
 	cat <<EOD | root -l -b > syst_RTT_channel${channel}_${useCase}.txt 2>&1
 .L makeSystUncertSummaryPlot.C++
 makeSystUncertSummaryPlot(${useCase}, ${channel})
 .q
 EOD
+	declare -i uncert ;
+	for uncert in -1 0 1 2 3 ; do
+	    for fluctDirect in 0 1 ; do
+if [[ ( "${uncert}" = "3" ) && ( "${fluctDirect}" = "1" ) ]] ; then 
+continue ;
+fi ;
+		iCont=$(cat default_input_values.txt | grep "rel_syst_uncert[${useCase}][${uncert}][${fluctDirect}][${channel}]=" | sed -e "s/rel_syst_uncert[${useCase}][${uncert}][${fluctDirect}][${channel}]=[ ]*\([+\-[0-9]\.]\)*[ ]*;/\1/") ;
+		declare -i iBin ;
+		iBin=${uncert}*2+${fluctDirect} ;
+		if [ "${uncert}" = "323" ] ; then
+		    cat makeSystUncertSummaryPlot.C \
+			| sed -e "s/Xaxis->SetBinLabel(j,binlabel\[j-1\].c_str());/Xaxis->SetBinLabel(j,binlabel[j].c_str());\nif (j==${iBin}) { BinContent=${iCont}; BinError=0.; }/" \
+			> tmp.C
+		    mv tmp.C makeSystUncertSummaryPlot.C ;
+		fi ;
+	    done ;
+	done ;
 	cat <<EOD | root -l -b > syst_RV_channel${channel}_${useCase}.txt 2>&1
 .L makeSystUncertSummaryPlot_VJets.C++
 makeSystUncertSummaryPlot_VJets(${useCase}, ${channel})
@@ -58,6 +93,8 @@ EOD
 done ;
 
 echo " ---> Trend systematics ...." ;
+
+for useCase in 0 1 2 3 ; do
 cp ../makeSystUncertTrendPlot_Summary_VJets.C makeSystUncertTrendPlot_Summary_VJets.C ;
 for channel in 1 2 3 ; do
     cat makeSystUncertTrendPlot_Summary_VJets.C \
@@ -103,27 +140,60 @@ EOD
 	for channel in 1 2 3 ; do
 	    echo "Resultats channel : ${channel}  tmp(useCase ${useCase}, syst ${syst})" ;
 #echo "channel : $channel"
-	    declare -i index ;
-	    index=0 ;
+
+	    if [[ ( "${syst}" = "-1" ) || ( "${syst}" = "3" ) ]]; then # No extrapolation in any case (event for extrapolated systematics combination)
+		declare -a iBin;
+		if [ "${syst}" = "-1" ]; then
+		    iBin=1+${index} ;
+		elif [ "${syst}" = "3" ]; then
+		    iBin=3 ;
+		fi ;
+		relErr=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "^Bin[+\-] ${iBin}" | sed -e "s/^Bin[+\-] ${iBin}, Content : \([0-9\.\-]*\) / Error : \([0-9\.\-]*\)/\1/" )
+		cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
+		    | sed -e "s/\(rel_syst_uncert\[${useCase}\]\[$((${syst}+1))\]\[${indexPattern}\]\)=.*; /\1 = ${relErr} ; \//" \
+		    > tmp.C ;
+		mv tmp.C makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
+	    else # Extrapolated systematics (when systematics combination)
+		declare -i index ;
+		index=0 ;
 #cat syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt
 #		| grep -c "Extrapolated uncert. "
-	    if [ -f syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt ] ; then 
-		for relErr in $(cat syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt \
-		    | grep "Extrapolated uncert" \
-		    | sed -e "s/^.*Extrapolated uncert\. (.*) at [0-9\.]* = \([0-9eE\.+\-]*\)[ ]*$/\1/" ) ; do 
-		  echo "${index} : ${relErr}" ;
-		  index=${index}+1 ;
-		  indexPattern=${index};
-		  find5D=$(cat syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt \
-		      | grep "Extrapolated uncert\. (5D Rew\. (" ) ;
-		  if [ "${find5D}" != "" ] ; then 
-		      indexPattern="[01]" ;
-		  fi ;
-		  cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
-		      | sed -e "s/\(rel_syst_uncert\[${useCase}\]\[$((${syst}+1))\]\[${indexPattern}\]\)=.*; /\1 = ${relErr} ; \//" \
-		      > tmp.C ;
-		  mv tmp.C makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
-		done ;
+		if [ -f syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt ] ; then 
+		    for relErr in $(cat syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt \
+			| grep "Extrapolated uncert" \
+			| sed -e "s/^.*Extrapolated uncert\. (.*) at [0-9\.]* = \([0-9eE\.+\-]*\)[ ]*$/\1/" ) ; do 
+			echo "${index} : ${relErr}" ;
+			index=${index}+1 ;
+			indexPattern=${index};
+			
+#		  find5D=$(cat syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt \
+#		      | grep "Extrapolated uncert\. (5D Rew\. (" ) ;
+#		  if [ "${find5D}" != "" ] ; then 
+#		      indexPattern="[01]" ;
+#		  fi ;
+			cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
+			    | sed -e "s/\(rel_syst_uncert\[${useCase}\]\[$((${syst}+1))\]\[${indexPattern}\]\)=.*; /\1 = ${relErr} ; \//" \
+			    > tmp.C ;
+			mv tmp.C makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
+		    done ;
+		fi ;
+declare -i uncert ;
+for uncert in -1 0 1 2 3 ; do
+for fluctDirect in 0 1 ; do
+if [[ ( "${uncert}" = "3" ) && ( "${fluctDirect}" = "1" ) ]] ; then 
+continue ;
+fi ;
+iCont=$(cat default_input_values.txt | grep "rel_syst_uncert[${useCase}][${uncert}][${fluctDirect}][${channel}]=" | sed -e "s/rel_syst_uncert[${useCase}][${uncert}][${fluctDirect}][${channel}]=[ ]*\([+\-[0-9]\.]\)*[ ]*;/\1/") ;
+declare -i iBin ;
+iBin=${uncert}*2+${fluctDirect} ;
+if [ "${uncert}" = "323" ] ; then
+cat makeSystUncertSummaryPlot.C \
+| sed -e "s/rel_syst_uncert[${useCase}][${uncert}][${fluctDirect}][${channel}]=[\.0-9\-]*/rel_syst_uncert[${useCase}][${uncert}][${fluctDirect}][${channel}]=${iCont}/" \
+> tmp.C
+mv tmp.C makeSystUncertSummaryPlot.C ;
+fi ;
+done ;
+done ;
 	    fi ;
 	done ;
     done ;
