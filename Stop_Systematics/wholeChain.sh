@@ -62,7 +62,7 @@ for channel in 1 2 3 ; do
 if [[ ( ( "${uncert}" = "3" ) || ( "${uncert}" = "3" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
 continue ;
 fi ;
-		iCont=$(cat default_input_values.txt | grep "RTT_syst_uncert_rel\[${useCase}\]\[${uncert}\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RTT_syst_uncert_rel\[${useCase}\]\[${uncert}\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
+    iCont=$(cat default_input_values.txt | grep "RTT_syst_uncert_rel\[${useCase}\]\[$(${uncert}+1)\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RTT_syst_uncert_rel\[${useCase}\]\[$(${uncert}+1)\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
 		declare -i iBin ;
 		iBin=${uncert}*2+${fluctDirect} ;
 		if [ "${uncert}" = "323" ] ; then
@@ -84,7 +84,7 @@ EOD
 if [[ ( "${uncert}" = "3" ) && ( "${fluctDirect}" = "1" ) ]] ; then 
 continue ;
 fi ;
-		iCont=$(cat default_input_values.txt | grep "rel_syst_uncert\[${useCase}\]\[${uncert}\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/rel_syst_uncert\[${useCase}\]\[${uncert}\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;/\1/") ;
+		iCont=$(cat default_input_values.txt | grep "rel_syst_uncert\[${useCase}\]\[$(${uncert}+1)\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/rel_syst_uncert\[${useCase}\]\[$(${uncert}+1)\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;/\1/") ;
 		declare -i iBin ;
 		iBin=${uncert}*2+${fluctDirect} ;
 		if [ "${uncert}" = "323" ] ; then
@@ -194,12 +194,12 @@ EOD
 if [[ ( "${uncert}" = "3" ) && ( "${fluctDirect}" = "1" ) ]] ; then 
 continue ;
 fi ;
-iCont=$(cat default_input_values.txt | grep "rel_syst_uncert\[${useCase}\]\[${uncert}\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/rel_syst_uncert\[${useCase}\]\[${uncert}\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;/\1/") ;
+iCont=$(cat default_input_values.txt | grep "rel_syst_uncert\[${useCase}\]\[$(${uncert}+1)\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/rel_syst_uncert\[${useCase}\]\[$(${uncert}+1)\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;/\1/") ;
 declare -i iBin ;
 iBin=${uncert}*2+${fluctDirect} ;
 if [ "${uncert}" = "323" ] ; then
 cat makeSystUncertSummaryPlot.C \
-| sed -e "s/rel_syst_uncert[${useCase}][${uncert}][${fluctDirect}][${channel}]=[0-9\.+\-]*/rel_syst_uncert[${useCase}][${uncert}][${fluctDirect}][${channel}]=${iCont}/" \
+| sed -e "s/rel_syst_uncert[${useCase}][$(${uncert}+1)][${fluctDirect}][${channel}]=[0-9\.+\-]*/rel_syst_uncert[${useCase}][$(${uncert}+1)][${fluctDirect}][${channel}]=${iCont}/" \
 > tmp.C
 mv tmp.C makeSystUncertSummaryPlot.C ;
 fi ;
@@ -420,7 +420,7 @@ TotalEstimatedNumbers_Errors_IndivChannel("corrMatr_${channel}.txt", ${useCase},
 .q
 EOD
 	fi;
-      echo "NN : ${MVA[${useCase}]} , channel : ${channelLabel[${channel}]} : $(cat TotNumbers_channel_${channel}_${useCase}.txt | grep 'Ntotal = ')" ;
+        echo "NN : ${MVA[${useCase}]} , channel : ${channelLabel[${channel}]} : $(cat TotNumbers_channel_${channel}_${useCase}.txt | grep 'Ntotal = ')" ;
     done
 done
 
