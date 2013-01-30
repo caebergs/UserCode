@@ -25,10 +25,21 @@ cp ../VJetEstimation.cc ./VJetEstimation.cc
 # 1 : muon
 # 2 : electron
 # 3 : both
+declare -a channelLabel ;
+channelLabel[1]="Muon" ;
+channelLabel[2]="Electron" ;
+channelLabel[3]="Combined" ;
+
 for channel in 1 2 3 ; do
     sh /user/caebergs/VJetEstimation/extractCorrMatrix.sh ${outputFromVJetsEstimation} ${channel} > corrMatr_${channel}.txt ;
     sh /user/caebergs/VJetEstimation/extractFitResult.sh ${outputFromVJetsEstimation} ${channel} > fitResult_${channel}.txt ;
 done ;
+
+declare -a MVA ;
+MVA[0]="LowDM" ;
+MVA[1]="IntDM1" ;
+MVA[2]="IntDM2" ;
+MVA[3]="HighDM" ;
 
 echo -e "\n --> Neural Network cut efficiency and systematics ....\n" ;
 #Uncertainties on RTT
@@ -409,7 +420,7 @@ TotalEstimatedNumbers_Errors_IndivChannel("corrMatr_${channel}.txt", ${useCase},
 .q
 EOD
 	fi;
-	echo "UseCase : ${useCase} , channel : ${channel} : $(cat TotNumbers_channel_${channel}_${useCase}.txt | grep 'Ntotal = ')" ;
+echo "NN : ${MVA[${useCase}]} , channel : ${channelLabel[${channel}]} : $(cat TotNumbers_channel_${channel}_${useCase}.txt | grep 'Ntotal = ')" ;
     done
 done
 
