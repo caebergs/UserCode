@@ -59,10 +59,11 @@ for channel in 1 2 3 ; do
 	declare -i uncert ;
 	for uncert in -1 0 1 2 3 4 ; do
 	    for fluctDirect in 0 1 ; do
-if [[ ( ( "${uncert}" = "3" ) || ( "${uncert}" = "3" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
+if [[ ( ( "${uncert}" = "3" ) || ( "${uncert}" = "4" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
 continue ;
 fi ;
     iCont=$(cat default_input_values.txt | grep "RTT_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RTT_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
+    echo "iCont [${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}] = ${iCont}"
 		declare -i iBin ;
 		iBin=${uncert}*2+${fluctDirect} ;
 		if [ "${uncert}" = "323" ] ; then
@@ -85,7 +86,8 @@ if [[ ( "${uncert}" = "3" ) && ( "${fluctDirect}" = "1" ) ]] ; then
 continue ;
 fi ;
 		iCont=$(cat default_input_values.txt | grep "rel_syst_uncert\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/rel_syst_uncert\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;/\1/") ;
-		declare -i iBin ;
+    echo "iCont [${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}] = ${iCont}"
+    declare -i iBin ;
 		iBin=${uncert}*2+${fluctDirect} ;
 		if [ "${uncert}" = "323" ] ; then
 		    cat makeSystUncertSummaryPlot.C \
@@ -125,20 +127,20 @@ cat ../makeSystUncertTrendPlot_JES_VJets.C \
     > makeSystUncertTrendPlot_JES_VJets.C ;
 
 for useCase in 0 1 2 3 ; do
-    declare -i syst ;
-    for syst in -1 0 1 2 ; do
-	if [ "${syst}" = "-1" ] ; then
+  declare -i syst ;
+  for syst in -1 0 1 2 ; do
+    if [ "${syst}" = "-1" ] ; then
 	    for channel in 1 2 3 ; do
-		declare -i index ;
-		index=0 ;
+        declare -i index ;
+        index=0 ;
 #		echo "Production channel : ${channel}  tmp(useCase ${useCase}, syst ${syst})" ;
-		cat <<EOD | root -l -b > syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt 2>&1
+        cat <<EOD | root -l -b > syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt 2>&1
 .L makeSystUncertTrendPlot_JES_VJets.C++
 makeSystUncertTrendPlot_JES_VJets(${useCase}, ${channel})
 .q
 EOD
 	    done ;
-	else
+    else
 	    for channel in 1 2 3 ; do
 #		echo "Production channel : ${channel}  tmp(useCase ${useCase}, syst ${syst})"
 		cat <<EOD | root -l -b > syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt 2>&1 ;
@@ -147,67 +149,67 @@ makeSystUncertTrendPlot_VJets(${useCase}, ${syst}, ${channel})
 .q
 EOD
 	    done ;
-	fi ;
-	for channel in 1 2 3 ; do
+    fi ;
+    for channel in 1 2 3 ; do
 	    echo "Resultats channel : ${channel}  tmp(useCase ${useCase}, syst ${syst})" ;
 #echo "channel : $channel"
 
 	    if [[ ( "${syst}" = "-1" ) || ( "${syst}" = "3" ) ]]; then # No extrapolation in any case (event for extrapolated systematics combination)
-		declare -a iBin;
-		if [ "${syst}" = "-1" ]; then
-		    iBin=1+${index} ;
-		elif [ "${syst}" = "3" ]; then
-		    iBin=3 ;
-		fi ;
-		relErr=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "^Bin[+\-] ${iBin}" | sed -e "s/^Bin[+\-] ${iBin}, Content : \([0-9\.+\-]*\) / Error : \([0-9\.+\-]*\)/\1/" )
-		cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
-		    | sed -e "s/\(rel_syst_uncert\[${useCase}\]\[$((${syst}+1))\]\[${indexPattern}\]\)=.*; /\1 = ${relErr} ; \//" \
-		    > tmp.C ;
-		mv tmp.C makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
+        declare -a iBin;
+        if [ "${syst}" = "-1" ]; then
+          iBin=1+${index} ;
+        elif [ "${syst}" = "3" ]; then
+          iBin=3 ;
+        fi ;
+        relErr=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "^Bin[+\-] ${iBin}" | sed -e "s/^Bin[+\-] ${iBin}, Content : \([0-9\.+\-]*\) / Error : \([0-9\.+\-]*\)/\1/" )
+        cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
+          | sed -e "s/\(rel_syst_uncert\[${useCase}\]\[$((${syst}+1))\]\[${indexPattern}\]\)=.*; /\1 = ${relErr} ; \//" \
+          > tmp.C ;
+        mv tmp.C makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
 	    else # Extrapolated systematics (when systematics combination)
-		declare -i index ;
-		index=0 ;
+        declare -i index ;
+        index=0 ;
 #cat syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt
 #		| grep -c "Extrapolated uncert. "
-		if [ -f syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt ] ; then 
-		    for relErr in $(cat syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt \
-			| grep "Extrapolated uncert" \
-			| sed -e "s/^.*Extrapolated uncert\. (.*) at [0-9\.]* = \([0-9eE\.+\-]*\)[ ]*$/\1/" ) ; do 
-			echo "${index} : ${relErr}" ;
-			index=${index}+1 ;
-			indexPattern=${index};
+        if [ -f syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt ] ; then 
+          for relErr in $(cat syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt \
+              | grep "Extrapolated uncert" \
+              | sed -e "s/^.*Extrapolated uncert\. (.*) at [0-9\.]* = \([0-9eE\.+\-]*\)[ ]*$/\1/" ) ; do 
+            echo "${index} : ${relErr}" ;
+            index=${index}+1 ;
+            indexPattern=${index};
 			
 #		  find5D=$(cat syst_RV_Trend_syst${syst}_channel${channel}_${useCase}.txt \
 #		      | grep "Extrapolated uncert\. (5D Rew\. (" ) ;
 #		  if [ "${find5D}" != "" ] ; then 
 #		      indexPattern="[01]" ;
 #		  fi ;
-			cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
-			    | sed -e "s/\(rel_syst_uncert\[${useCase}\]\[$((${syst}+1))\]\[${indexPattern}\]\)=.*; /\1 = ${relErr} ; \//" \
-			    > tmp.C ;
-			mv tmp.C makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
-		    done ;
-		fi ;
-    declare -i uncert ;
-    for uncert in -1 0 1 2 3 ; do
-      for fluctDirect in 0 1 ; do
-if [[ ( "${uncert}" = "3" ) && ( "${fluctDirect}" = "1" ) ]] ; then 
-continue ;
-fi ;
-iCont=$(cat default_input_values.txt | grep "rel_syst_uncert\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/rel_syst_uncert\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;/\1/") ;
-declare -i iBin ;
-iBin=${uncert}*2+${fluctDirect} ;
-if [ "${uncert}" = "323" ] ; then
-cat makeSystUncertSummaryPlot.C \
-| sed -e "s/rel_syst_uncert[${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}]=[0-9\.+\-]*/rel_syst_uncert[${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}]=${iCont}/" \
-> tmp.C
-mv tmp.C makeSystUncertSummaryPlot.C ;
-fi ;
-done ;
-done ;
+            cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
+              | sed -e "s/\(rel_syst_uncert\[${useCase}\]\[$((${syst}+1))\]\[${indexPattern}\]\)=.*; /\1 = ${relErr} ; \//" \
+              > tmp.C ;
+            mv tmp.C makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
+          done ;
+        fi ;
+        declare -i uncert ;
+        for uncert in -1 0 1 2 3 ; do
+          for fluctDirect in 0 1 ; do
+            if [[ ( "${uncert}" = "3" ) && ( "${fluctDirect}" = "1" ) ]] ; then 
+              continue ;
+            fi ;
+            iCont=$(cat default_input_values.txt | grep "rel_syst_uncert\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/rel_syst_uncert\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;/\1/") ;
+            echo "iCont [${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}] = ${iCont}"
+            declare -i iBin ;
+            iBin=${uncert}*2+${fluctDirect} ;
+            if [ "${uncert}" = "323" ] ; then
+              cat makeSystUncertSummaryPlot.C \
+              | sed -e "s/rel_syst_uncert[${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}]=[0-9\.+\-]*/rel_syst_uncert[${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}]=${iCont}/" \
+              > tmp.C
+              mv tmp.C makeSystUncertSummaryPlot.C ;
+            fi ;
+          done ;
+        done ;
 	    fi ;
 	done ;
-    done ;
 done ;
 
 
@@ -220,53 +222,53 @@ declare -a RVrelM ;
 declare -a RVnom ;
 declare -a RVnomTrend ;
 for channel in 1 2 3 ; do
-    for useCase in 0 1 2 3 ; do
-  RTTrelP[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (+) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (+) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
-echo "${RTTrelP[${channel}*${nbOfUseCase}+${useCase}]}"
-	RTTrelM[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (-) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (-) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
-echo "${RTTrelM[${channel}*${nbOfUseCase}+${useCase}]}"
-	RTTnom[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "\\$R_{TT}\\$ & \$[0-9]*\.[0-9]*\\\pm[0-9]*\.[0-9]*^{+[0-9]*\.[0-9]*}_{-[0-9]*\.[0-9]*}\\$" | head -n 1 | sed -e "s/\\\$R_{TT}\\\$ \& \\\$\([0-9\.]*\)\\\\pm[0-9\.]*^{+[0-9\.]*}_{-[0-9\.]*}\\\$/\1/")
-	RVrelP[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (+) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (+) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
-	RVrelM[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (-) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (-) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
-	RVnom[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "\\$R_{V}\\$ & \$[0-9]*\.[0-9]*\\\pm[0-9]*\.[0-9]*^{+[0-9]*\.[0-9]*}_{-[0-9]*\.[0-9]*}\\$" | head -n 1 | sed -e "s/\\\$R_{V}\\\$ \& \\\$\([0-9\.]*\)\\\\pm[0-9\.]*^{+[0-9\.]*}_{-[0-9\.]*}\\\$/\1/")
-	echo "Channel ${channel} , UseCase ${useCase}" ;
-	echo "  RTT : ${RTTnom[${channel}*${nbOfUseCase}+${useCase}]} +rel ${RTTrelP[${channel}*${nbOfUseCase}+${useCase}]} -rel ${RTTrelM[${channel}*${nbOfUseCase}+${useCase}]}" ;
-	echo "  RV : ${RVnom[${channel}*${nbOfUseCase}+${useCase}]} +rel ${RVrelP[${channel}*${nbOfUseCase}+${useCase}]} -rel ${RVrelM[${channel}*${nbOfUseCase}+${useCase}]}" ;
-    done ;
+  for useCase in 0 1 2 3 ; do
+    RTTrelP[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (+) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (+) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
+    echo "${RTTrelP[${channel}*${nbOfUseCase}+${useCase}]}"
+    RTTrelM[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (-) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (-) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
+    echo "${RTTrelM[${channel}*${nbOfUseCase}+${useCase}]}"
+    RTTnom[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RTT_channel${channel}_${useCase}.txt | grep "\\$R_{TT}\\$ & \$[0-9]*\.[0-9]*\\\pm[0-9]*\.[0-9]*^{+[0-9]*\.[0-9]*}_{-[0-9]*\.[0-9]*}\\$" | head -n 1 | sed -e "s/\\\$R_{TT}\\\$ \& \\\$\([0-9\.]*\)\\\\pm[0-9\.]*^{+[0-9\.]*}_{-[0-9\.]*}\\\$/\1/")
+    RVrelP[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (+) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (+) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
+    RVrelM[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (-) (stat\.+syst\.) uncert : [0-9]*\.[0-9]*" | sed -e "s/Rel\. Comb\. (-) (stat\.+syst\.) uncert : \([0-9\.]*\)/\1/")
+    RVnom[${channel}*${nbOfUseCase}+${useCase}]=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "\\$R_{V}\\$ & \$[0-9]*\.[0-9]*\\\pm[0-9]*\.[0-9]*^{+[0-9]*\.[0-9]*}_{-[0-9]*\.[0-9]*}\\$" | head -n 1 | sed -e "s/\\\$R_{V}\\\$ \& \\\$\([0-9\.]*\)\\\\pm[0-9\.]*^{+[0-9\.]*}_{-[0-9\.]*}\\\$/\1/")
+    echo "Channel ${channel} , UseCase ${useCase}" ;
+    echo "  RTT : ${RTTnom[${channel}*${nbOfUseCase}+${useCase}]} +rel ${RTTrelP[${channel}*${nbOfUseCase}+${useCase}]} -rel ${RTTrelM[${channel}*${nbOfUseCase}+${useCase}]}" ;
+    echo "  RV : ${RVnom[${channel}*${nbOfUseCase}+${useCase}]} +rel ${RVrelP[${channel}*${nbOfUseCase}+${useCase}]} -rel ${RVrelM[${channel}*${nbOfUseCase}+${useCase}]}" ;
+  done ;
 done ;
 echo "Ici"
 for channel in 1 2 3 ; do
-    var1=${RVnom[$((${channel}*${nbOfUseCase}+0))]} ;
-    var2=${RVnom[$((${channel}*${nbOfUseCase}+1))]} ;
-    var3=${RVnom[$((${channel}*${nbOfUseCase}+2))]} ;
-    var4=${RVnom[$((${channel}*${nbOfUseCase}+3))]} ;
-    cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
-	| sed -e "s/\(  const double RV\[NbOfUseCase\] = {\)[0-9eE\.+\-]*,[0-9eE\.+\-]*,[0-9eE\.+\-]*,[0-9eE\.+\-]*\(};\)/\1${var1},${var2},${var3},${var4}\2/" \
-	> tmp.C
-    mv tmp.C makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
-    grep -H "const double RV" makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
+  var1=${RVnom[$((${channel}*${nbOfUseCase}+0))]} ;
+  var2=${RVnom[$((${channel}*${nbOfUseCase}+1))]} ;
+  var3=${RVnom[$((${channel}*${nbOfUseCase}+2))]} ;
+  var4=${RVnom[$((${channel}*${nbOfUseCase}+3))]} ;
+  cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
+    | sed -e "s/\(  const double RV\[NbOfUseCase\] = {\)[0-9eE\.+\-]*,[0-9eE\.+\-]*,[0-9eE\.+\-]*,[0-9eE\.+\-]*\(};\)/\1${var1},${var2},${var3},${var4}\2/" \
+    > tmp.C
+  mv tmp.C makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
+  grep -H "const double RV" makeSystUncertTrendPlot_Summary_VJets_${channel}.C ;
 done ;
 echo "La"
 for channel in 1 2 3 ; do
-    for useCase in 0 1 2 3 ; do
-	cat <<EOD | root -l -b > syst_RV_Trend_Summary_channel${channel}_${useCase}.txt 2>&1
+  for useCase in 0 1 2 3 ; do
+    cat <<EOD | root -l -b > syst_RV_Trend_Summary_channel${channel}_${useCase}.txt 2>&1
 .L makeSystUncertTrendPlot_Summary_VJets_${channel}.C++g
 makeSystUncertTrendPlot_Summary_VJets(${useCase})
 .q
 EOD
-	relP=$(cat syst_RV_Trend_Summary_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (+) syst\. uncert : [0-9eE\.+\-]*" | sed -e "s/Rel\. Comb\. (+) syst\. uncert : \([0-9eE\.+\-]*\)/\1/")
-	relM=$(cat syst_RV_Trend_Summary_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (-) syst\. uncert : [0-9eE\.+\-]*" | sed -e "s/Rel\. Comb\. (-) syst\. uncert : \([0-9eE\.+\-]*\)/\1/")
-	nom=$(cat syst_RV_Trend_Summary_channel${channel}_${useCase}.txt | grep "R_{V} = [0-9eE\.+\-]*^{+[0-9eE\.+\-]*}_{-[0-9eE\.+\-]*}" | head -n 1 | sed -e "s/R_{V} = \([0-9eE\.+\-]*\)^{+[0-9eE\.+\-]*}_{-[0-9eE\.+\-]*}$/\1/")
-	echo "  RV combined (ch ${channel} , case ${useCase}) : ${nom} +rel ${relP} -rel ${relM}" ;
-	if [ "${extrapolatedRV}" = "true" ] ; then
+    relP=$(cat syst_RV_Trend_Summary_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (+) syst\. uncert : [0-9eE\.+\-]*" | sed -e "s/Rel\. Comb\. (+) syst\. uncert : \([0-9eE\.+\-]*\)/\1/")
+    relM=$(cat syst_RV_Trend_Summary_channel${channel}_${useCase}.txt | grep "Rel\. Comb\. (-) syst\. uncert : [0-9eE\.+\-]*" | sed -e "s/Rel\. Comb\. (-) syst\. uncert : \([0-9eE\.+\-]*\)/\1/")
+    nom=$(cat syst_RV_Trend_Summary_channel${channel}_${useCase}.txt | grep "R_{V} = [0-9eE\.+\-]*^{+[0-9eE\.+\-]*}_{-[0-9eE\.+\-]*}" | head -n 1 | sed -e "s/R_{V} = \([0-9eE\.+\-]*\)^{+[0-9eE\.+\-]*}_{-[0-9eE\.+\-]*}$/\1/")
+    echo "  RV combined (ch ${channel} , case ${useCase}) : ${nom} +rel ${relP} -rel ${relM}" ;
+    if [ "${extrapolatedRV}" = "true" ] ; then
 	    echo "Replacing    ${RVrelP[${channel}*${nbOfUseCase}+${useCase}]}   by   ${relP}" ;
 	    RVrelP[${channel}*${nbOfUseCase}+${useCase}]=${relP} ;
 	    echo "Replacing    ${RVrelM[${channel}*${nbOfUseCase}+${useCase}]}   by   ${relM}" ;
 	    RVrelM[${channel}*${nbOfUseCase}+${useCase}]=${relM} ;
 	    echo "Replacing    ${RVnom[${channel}*${nbOfUseCase}+${useCase}]}   by   ${nom}" ;
 	    RVnom[${channel}*${nbOfUseCase}+${useCase}]=${nom} ;
-	fi ;
-    done
+    fi ;
+  done
 done
 echo "Ici aussi"
 #exit 1 ;
