@@ -69,7 +69,7 @@ for channel in 1 2 3 ; do
         iBin=${uncert}*2+${fluctDirect} ;
         if [ "${uncert}" = "323" ] ; then
           cat makeSystUncertSummaryPlot.C \
-            | sed -e "s/Xaxis->SetBinLabel(j,binlabel\[j\].c_str());/Xaxis->SetBinLabel(j,binlabel[j].c_str());\nif (j==${iBin}) { BinContent=${iCont}; BinError=0.; }/" \
+            | sed -e "s/Xaxis->SetBinLabel(j,binlabel\[j\]\.c_str());/Xaxis->SetBinLabel(j,binlabel[j].c_str());\nif (j==${iBin}) { BinContent=${iCont}; BinError=0.; }/" \
             > tmp.C
           mv tmp.C makeSystUncertSummaryPlot.C ;
         fi ;
@@ -92,7 +92,7 @@ EOD
         iBin=${uncert}*2+${fluctDirect} ;
         if [ "${uncert}" = "323" ] ; then
           cat makeSystUncertSummaryPlot.C \
-            | sed -e "s/Xaxis->SetBinLabel(j,binlabel\[j-1\].c_str());/Xaxis->SetBinLabel(j,binlabel[j].c_str());\nif (j==${iBin}) { BinContent=${iCont}; BinError=0.; }/" \
+            | sed -e "s/Xaxis->SetBinLabel(j,binlabel\[j-1\]\.c_str());/Xaxis->SetBinLabel(j,binlabel[j].c_str());\nif (j==${iBin}) { BinContent=${iCont}; BinError=0.; }/" \
             > tmp.C
           mv tmp.C makeSystUncertSummaryPlot.C ;
         fi ;
