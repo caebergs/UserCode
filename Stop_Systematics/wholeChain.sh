@@ -63,7 +63,7 @@ for channel in 1 2 3 ; do
         if [[ ( ( "${uncert}" = "3" ) || ( "${uncert}" = "4" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
           continue ;
         fi ;
-        iCont=$(cat default_input_values.txt | grep "RTT_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RTT_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
+        iCont=$(cat default_input_values.txt | grep "RTT_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[$((${channel}-1))\]=" | sed -e "s/^[ ]*RTT_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[$((${channel-1))}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
         echo "iCont [${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}] = ${iCont}"
         declare -i iBin ;
         iBin=${uncert}*2+${fluctDirect} ;
@@ -86,7 +86,7 @@ EOD
         if [[ ( ( "${uncert}" = "2" ) || ( "${uncert}" = "3" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
           continue ;
         fi ;
-        iCont=$(cat default_input_values.txt | grep "RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
+        iCont=$(cat default_input_values.txt | grep "RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[$((${channel}-1))\]=" | sed -e "s/^[ ]*RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[$((${channel}-1))\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
         echo "iCont [${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}] = ${iCont}"
         declare -i iBin ;
         iBin=${uncert}*2+${fluctDirect} ;
@@ -162,7 +162,7 @@ EOD
         elif [ "${syst}" = "3" ]; then
           iBin=3 ;
         fi ;
-        relErr=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "^Bin[+\-] ${iBin}" | sed -e "s/^Bin[+\-] ${iBin}, Content : \([0-9\.+\-]*\) / Error : \([0-9\.+\-]*\)/\1/" )
+        relErr=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "^Bin[+\-] ${iBin}" | sed -e "s/^Bin[+\-] ${iBin}, Content : \([0-9\.+\-]*\) \\\/ Error : \([0-9\.+\-]*\)/\1/" )
         cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
           | sed -e "s/\(rel_syst_uncert\[${useCase}\]\[$((${syst}+1))\]\[${indexPattern}\]\)=.*; /\1 = ${relErr} ; \//" \
           > tmp.C ;
@@ -197,7 +197,7 @@ EOD
             if [[ ( ( "${uncert}" = "2" ) || ( "${uncert}" = "3" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
               continue ;
             fi ;
-            iCont=$(cat default_input_values.txt | grep "RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
+            iCont=$(cat default_input_values.txt | grep "RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[$((${channel}-1))\]=" | sed -e "s/^[ ]*RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[$((${channel}-1))\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
             echo "iCont [${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}] = ${iCont}"
             declare -i iBin ;
             iBin=${uncert}*2+${fluctDirect} ;
