@@ -86,7 +86,7 @@ EOD
         if [[ ( ( "${uncert}" = "2" ) || ( "${uncert}" = "3" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
           continue ;
         fi ;
-        iCont=$(cat default_input_values.txt | grep "RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;/\1/") ;
+        iCont=$(cat default_input_values.txt | grep "RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
         echo "iCont [${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}] = ${iCont}"
         declare -i iBin ;
         iBin=${uncert}*2+${fluctDirect} ;
@@ -197,7 +197,7 @@ EOD
             if [[ ( ( "${uncert}" = "2" ) || ( "${uncert}" = "3" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
               continue ;
             fi ;
-            iCont=$(cat default_input_values.txt | grep "RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;/\1/") ;
+            iCont=$(cat default_input_values.txt | grep "RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=" | sed -e "s/^[ ]*RV_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[${channel}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
             echo "iCont [${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}] = ${iCont}"
             declare -i iBin ;
             iBin=${uncert}*2+${fluctDirect} ;
