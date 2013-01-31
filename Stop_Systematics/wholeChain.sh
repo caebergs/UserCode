@@ -162,7 +162,7 @@ EOD
         elif [ "${syst}" = "3" ]; then
           iBin=3 ;
         fi ;
-        relErr=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "^Bin[+\-] ${iBin}" | sed -e "s/^Bin[+\-] ${iBin}, Content : \([0-9\.+\-]*\) \\\/ Error : \([0-9\.+\-]*\)/\1/" )
+        relErr=$(cat syst_RV_channel${channel}_${useCase}.txt | grep "^Bin[+\-] ${iBin}" | sed -e "s/^Bin[+\-] ${iBin}, Content : \([0-9\.+\-]*\) \/ Error : \([0-9\.+\-]*\)/\1/" )
         cat makeSystUncertTrendPlot_Summary_VJets_${channel}.C \
           | sed -e "s/\(rel_syst_uncert\[${useCase}\]\[$((${syst}+1))\]\[${indexPattern}\]\)=.*; /\1 = ${relErr} ; \//" \
           > tmp.C ;
