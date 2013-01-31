@@ -63,7 +63,7 @@ for channel in 1 2 3 ; do
         if [[ ( ( "${uncert}" = "3" ) || ( "${uncert}" = "4" ) ) && ( "${fluctDirect}" = "1" ) ]] ; then 
           continue ;
         fi ;
-        iCont=$(cat default_input_values.txt | grep "RTT_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[$((${channel}-1))\]=" | sed -e "s/^[ ]*RTT_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[$((${channel-1))}\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
+        iCont=$(cat default_input_values.txt | grep "RTT_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[$((${channel}-1))\]=" | sed -e "s/^[ ]*RTT_syst_uncert_rel\[${useCase}\]\[$((${uncert}+1))\]\[${fluctDirect}\]\[$((${channel}-1))\]=[ ]*\([0-9\.+\-]*\)[ ]*;.*/\1/") ;
         echo "iCont [${useCase}][$((${uncert}+1))][${fluctDirect}][${channel}] = ${iCont}"
         declare -i iBin ;
         iBin=${uncert}*2+${fluctDirect} ;
