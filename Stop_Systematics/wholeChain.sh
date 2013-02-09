@@ -33,8 +33,8 @@ channelLabel[2]="Electron" ;
 channelLabel[3]="Combined" ;
 
 for channel in 1 2 3 ; do
-  sh /user/caebergs/VJetEstimation/extractCorrMatrix.sh ${outputFromVJetsEstimation} ${channel} > corrMatr_${channel}.txt ;
-  sh /user/caebergs/VJetEstimation/extractFitResult.sh ${outputFromVJetsEstimation} ${channel} > fitResult_${channel}.txt ;
+  sh ../extractCorrMatrix.sh ${outputFromVJetsEstimation} ${channel} > corrMatr_${channel}.txt ;
+  sh ../extractFitResult.sh ${outputFromVJetsEstimation} ${channel} > fitResult_${channel}.txt ;
 done ;
 
 declare -a MVA ;
