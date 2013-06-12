@@ -49,6 +49,7 @@
 #include "RooTable.h"
 #include "Roo1DTable.h"
 #include "TF1.h"
+#include "RooWorkspace.h"
 
 #include "TChainElement.h"
 
@@ -437,12 +438,12 @@ Int_t StopSearches_VJetsBckgdEst_NoFiles_SevJets(std::string signalFile="", Doub
   
   bool Wbb_from_WJets = true;
   bool doPE = false;
-  bool isOnData = false;
+  bool isOnData = true;
   bool reloadHisto = false;
     //  bool isWbbFromWbbMeas = false; //else, take the measure cross-section ; not using the Flavour History Path
   bool semiMuon = true;
-  bool semiElectron = true;
-
+  bool semiElectron = false;
+  
   Bool_t WnJets = kTRUE ;
   Bool_t DYnJets = kTRUE ;
   Bool_t TTJets_inclusive = kTRUE ;
@@ -3251,7 +3252,13 @@ Int_t StopSearches_VJetsBckgdEst_NoFiles_SevJets(std::string signalFile="", Doub
   RooFormulaVar ****geq1b_v    = new RooFormulaVar***[NbOfChannels];
   RooFormulaVar ****geq1b_v_n  = new RooFormulaVar***[NbOfChannels];
   RooFormulaVar ****geq1b_tot_n= new RooFormulaVar***[NbOfChannels];
-  //  RooFormulaVar ****geq1b_tt_n_add = new RooFormulaVar***[NbOfChannels];
+  RooFormulaVar ****geq1b_st_n = new RooFormulaVar***[NbOfChannels];
+  RooFormulaVar ****geq1b_vv_n = new RooFormulaVar***[NbOfChannels];
+  RooFormulaVar ****geq1b_vb_n = new RooFormulaVar***[NbOfChannels];
+  RooRealVar    ****p_st_k     = new RooRealVar***[NbOfChannels];
+  RooRealVar    ****p_vv_k     = new RooRealVar***[NbOfChannels];
+  RooRealVar    ****p_vb_k     = new RooRealVar***[NbOfChannels];
+//  RooFormulaVar ****geq1b_tt_n_add = new RooFormulaVar***[NbOfChannels];
   //  RooFormulaVar ****geq1b_v_n_add  = new RooFormulaVar***[NbOfChannels];
   RooAddition ***geq1b_tt_jInc_n = new RooAddition**[NbOfChannels];
   RooAddition ***geq1b_v_jInc_n  = new RooAddition**[NbOfChannels];
@@ -3280,7 +3287,13 @@ Int_t StopSearches_VJetsBckgdEst_NoFiles_SevJets(std::string signalFile="", Doub
     geq1b_v[c]    = new RooFormulaVar**[NbOfJetBins];
     geq1b_v_n[c]  = new RooFormulaVar**[NbOfJetBins];
     geq1b_tot_n[c]= new RooFormulaVar**[NbOfJetBins];
-    //    geq1b_tt_n_add[c] = new RooFormulaVar**[NbOfJetBins];
+    geq1b_st_n[c]  = new RooFormulaVar**[NbOfJetBins];
+    geq1b_vv_n[c]  = new RooFormulaVar**[NbOfJetBins];
+    geq1b_vb_n[c]  = new RooFormulaVar**[NbOfJetBins];
+    p_st_k[c]      = new RooRealVar**[NbOfJetBins];
+    p_vv_k[c]      = new RooRealVar**[NbOfJetBins];
+    p_vb_k[c]      = new RooRealVar**[NbOfJetBins];
+//    geq1b_tt_n_add[c] = new RooFormulaVar**[NbOfJetBins];
     //    geq1b_v_n_add[c]  = new RooFormulaVar**[NbOfJetBins];
     tt_geq1b_jInc[c] = new RooArgList*[NbOfWP];
     v_geq1b_jInc[c]  = new RooArgList*[NbOfWP];
@@ -3309,7 +3322,13 @@ Int_t StopSearches_VJetsBckgdEst_NoFiles_SevJets(std::string signalFile="", Doub
       geq1b_v[c][i]    = new RooFormulaVar*[NbOfWP];
       geq1b_v_n[c][i]  = new RooFormulaVar*[NbOfWP];
       geq1b_tot_n[c][i]= new RooFormulaVar*[NbOfWP];
-      //      geq1b_tt_n_add[c][i] = new RooFormulaVar*[NbOfWP];
+      geq1b_st_n[c][i]  = new RooFormulaVar*[NbOfWP];
+      geq1b_vv_n[c][i]  = new RooFormulaVar*[NbOfWP];
+      geq1b_vb_n[c][i]  = new RooFormulaVar*[NbOfWP];
+      p_st_k[c][i] = new RooRealVar*[NbOfWP];
+      p_vv_k[c][i] = new RooRealVar*[NbOfWP];
+      p_vb_k[c][i] = new RooRealVar*[NbOfWP];
+//      geq1b_tt_n_add[c][i] = new RooFormulaVar*[NbOfWP];
       //      geq1b_v_n_add[c][i]  = new RooFormulaVar*[NbOfWP];
       if (i==NbOfJetBins-1) {
         geq1b_tt_jInc_n[c] = new RooAddition*[NbOfWP];
@@ -3361,17 +3380,23 @@ Int_t StopSearches_VJetsBckgdEst_NoFiles_SevJets(std::string signalFile="", Doub
         geq1b_v[c][i][j]    = new RooFormulaVar((std::string()+"geq1b_v"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(), "geq1b_v" ,"@0+@1+@2+@3+@4",RooArgList(*(p1bjets_v[c][i][j]),*(p2bjets_v[c][i][j]),*(p3bjets_v[c][i][j]),*(p4bjets_v[c][i][j]),*(p5bjets_v[c][i][j])));
         geq1b_v_n[c][i][j]  = new RooFormulaVar((std::string()+"geq1b_v_n"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(), "geq1b_v_n" ,"@0*(@2+@3+@4+@5+@6)/(@1+@2+@3+@4+@5+@6)",RooArgList(*(Nv[c][i]),*(p0bjets_v[c][i][j]),*(p1bjets_v[c][i][j]),*(p2bjets_v[c][i][j]),*(p3bjets_v[c][i][j]),*(p4bjets_v[c][i][j]),*(p5bjets_v[c][i][j])));
 
-        RooRealVar p_st_k((std::string()+"p_st_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(std::string()+"p_st_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(hNbtaggedJets_stjets[c][i][j]->Integral()-hNbtaggedJets_stjets[c][i][j]->GetBinContent(hNbtaggedJets_stjets[c][i][j]->FindBin(0.)))/hNbtaggedJets_stjets[c][i][j]->Integral());
-        RooRealVar p_vv_k((std::string()+"p_vv_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(std::string()+"p_vv_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(hNbtaggedJets_vvjets[c][i][j]->Integral()-hNbtaggedJets_vvjets[c][i][j]->GetBinContent(hNbtaggedJets_vvjets[c][i][j]->FindBin(0.)))/hNbtaggedJets_vvjets[c][i][j]->Integral());
-        RooRealVar p_vb_k((std::string()+"p_vb_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(std::string()+"p_vb_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(hNbtaggedJets_vbjets[c][i][j]->Integral()-hNbtaggedJets_vbjets[c][i][j]->GetBinContent(hNbtaggedJets_vbjets[c][i][j]->FindBin(0.)))/hNbtaggedJets_vbjets[c][i][j]->Integral());
-        p_st_k.setConstant();
-        p_vv_k.setConstant();
-        p_vb_k.setConstant();
+        p_st_k[c][i][j] = new RooRealVar((std::string()+"p_st_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(std::string()+"p_st_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(hNbtaggedJets_stjets[c][i][j]->Integral()-hNbtaggedJets_stjets[c][i][j]->GetBinContent(hNbtaggedJets_stjets[c][i][j]->FindBin(0.)))/hNbtaggedJets_stjets[c][i][j]->Integral());
+        p_vv_k[c][i][j] = new RooRealVar((std::string()+"p_vv_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(std::string()+"p_vv_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(hNbtaggedJets_vvjets[c][i][j]->Integral()-hNbtaggedJets_vvjets[c][i][j]->GetBinContent(hNbtaggedJets_vvjets[c][i][j]->FindBin(0.)))/hNbtaggedJets_vvjets[c][i][j]->Integral());
+        p_vb_k[c][i][j] = new RooRealVar((std::string()+"p_vb_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(std::string()+"p_vb_k"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(),(hNbtaggedJets_vbjets[c][i][j]->Integral()-hNbtaggedJets_vbjets[c][i][j]->GetBinContent(hNbtaggedJets_vbjets[c][i][j]->FindBin(0.)))/hNbtaggedJets_vbjets[c][i][j]->Integral());
+        p_st_k[c][i][j]->setConstant();
+        p_vv_k[c][i][j]->setConstant();
+        p_vb_k[c][i][j]->setConstant();
+
+        geq1b_st_n[c][i][j]  = new RooFormulaVar((std::string()+"geq1b_st_n"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(), "geq1b_st_n" ,"@0*@1",RooArgList(*((RooRealVar*) Nst[c][i]), *((RooRealVar*) p_st_k[c][i][j])));
+        geq1b_vv_n[c][i][j]  = new RooFormulaVar((std::string()+"geq1b_vv_n"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(), "geq1b_vv_n" ,"@0*@1",RooArgList(*((RooRealVar*) Nvv[c][i]), *((RooRealVar*) p_vv_k[c][i][j])));
+        geq1b_vb_n[c][i][j]  = new RooFormulaVar((std::string()+"geq1b_vb_n"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(), "geq1b_vb_n" ,"@0*@1",RooArgList(*((RooRealVar*) Nvb[c][i]), *((RooRealVar*) p_vb_k[c][i][j])));
+
+        //        geq1b_st_n[c][i][j] =  new RooFormulaVar((std::string()+"geq1b_st_n"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(), "geq1b_st_n" ,"@0*(@2+@3+@4+@5+@6)/(@1+@2+@3+@4+@5+@6)",RooArgList(*(Nv[c][i]),*(p0bjets_v[c][i][j]),*(p1bjets_v[c][i][j]),*(p2bjets_v[c][i][j]),*(p3bjets_v[c][i][j]),*(p4bjets_v[c][i][j]),*(p5bjets_v[c][i][j])));
         geq1b_tot_n[c][i][j]= new RooFormulaVar((std::string()+"geq1b_tot_n"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(), (std::string()+"geq1b_tot_n"+channelSuffix[c]+jtSuf[i]+wpSuf[j]).c_str(), "@0+@1+@2*@3+@4*@5+@6*@7",
                                                 RooArgList( *(geq1b_tt_n[c][i][j]), *(geq1b_v_n[c][i][j]),
-                                                           *((RooRealVar*) Nst[c][i]), p_st_k,
-                                                           *((RooRealVar*) Nvv[c][i]), p_vv_k,
-                                                           *((RooRealVar*) Nvb[c][i]), p_vb_k));
+                                                            *((RooRealVar*) Nst[c][i]), *((RooRealVar*) p_st_k[c][i][j]),
+                                                            *((RooRealVar*) Nvv[c][i]), *((RooRealVar*) p_vv_k[c][i][j]),
+                                                            *((RooRealVar*) Nvb[c][i]), *((RooRealVar*) p_vb_k[c][i][j])));
 
         tt_geq1b_jInc[c][j]->add(*(geq1b_tt_n[c][i][j]));
         v_geq1b_jInc[c][j]->add(*(geq1b_v_n[c][i][j]));
@@ -3432,21 +3457,21 @@ Int_t StopSearches_VJetsBckgdEst_NoFiles_SevJets(std::string signalFile="", Doub
         //                                          ,RooArgList(*(Ntt[c][i]),*(Ntt[c][i]),*(Ntt[c][i]),*(Ntt[c][i]),*(Ntt[c][i]),*(Ntt[c][i])));
         
 
-        pbjets_tt[c][i][j] = new RooGenericPdf("pbjets_tt","pbjets_tt","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(p0bjets_tt[c][i][j]),*(p1bjets_tt[c][i][j]),*(p2bjets_tt[c][i][j]),*(p3bjets_tt[c][i][j]),*(p4bjets_tt[c][i][j]),*(p5bjets_tt[c][i][j])));
-        pbjets_tt_ext[c][i][j] = new RooExtendPdf("pbjets_tt_ext","pbjets_tt_ext",*(pbjets_tt[c][i][j]),*(Ntt[c][i]));
+        pbjets_tt[c][i][j] = new RooGenericPdf((std::string()+"pbjets_tt"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(),"pbjets_tt","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(p0bjets_tt[c][i][j]),*(p1bjets_tt[c][i][j]),*(p2bjets_tt[c][i][j]),*(p3bjets_tt[c][i][j]),*(p4bjets_tt[c][i][j]),*(p5bjets_tt[c][i][j])));
+        pbjets_tt_ext[c][i][j] = new RooExtendPdf((std::string()+"pbjets_tt_ext"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(),"pbjets_tt_ext",*(pbjets_tt[c][i][j]),*(Ntt[c][i]));
         
-        pbjets_v[c][i][j] = new RooGenericPdf("pbjets_v","pbjets_v","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(p0bjets_v[c][i][j]),*(p1bjets_v[c][i][j]),*(p2bjets_v[c][i][j]),*(p3bjets_v[c][i][j]),*(p4bjets_v[c][i][j]),*(p5bjets_v[c][i][j])));
-        pbjets_v_ext[c][i][j] = new RooExtendPdf("pbjets_v_ext","pbjets_v_ext",*(pbjets_v[c][i][j]),*(Nv[c][i]));
+        pbjets_v[c][i][j] = new RooGenericPdf((std::string()+"pbjets_v"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(),"pbjets_v","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(p0bjets_v[c][i][j]),*(p1bjets_v[c][i][j]),*(p2bjets_v[c][i][j]),*(p3bjets_v[c][i][j]),*(p4bjets_v[c][i][j]),*(p5bjets_v[c][i][j])));
+        pbjets_v_ext[c][i][j] = new RooExtendPdf((std::string()+"pbjets_v_ext"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(),"pbjets_v_ext",*(pbjets_v[c][i][j]),*(Nv[c][i]));
         
-        pbjets_st[c][i][j] = new RooGenericPdf("pbjets_st","pbjets_st","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(n0bjets_st[c][i][j]),*(n1bjets_st[c][i][j]),*(n2bjets_st[c][i][j]),*(n3bjets_st[c][i][j]),*(n4bjets_st[c][i][j]),*(n5bjets_st[c][i][j])));
+        pbjets_st[c][i][j] = new RooGenericPdf((std::string()+"pbjets_st"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(),"pbjets_st","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(n0bjets_st[c][i][j]),*(n1bjets_st[c][i][j]),*(n2bjets_st[c][i][j]),*(n3bjets_st[c][i][j]),*(n4bjets_st[c][i][j]),*(n5bjets_st[c][i][j])));
         
-        pbjets_vb[c][i][j] = new RooGenericPdf("pbjets_vb","pbjets_vb","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(n0bjets_vb[c][i][j]),*(n1bjets_vb[c][i][j]),*(n2bjets_vb[c][i][j]),*(n3bjets_vb[c][i][j]),*(n4bjets_vb[c][i][j]),*(n5bjets_vb[c][i][j])));
-        pbjets_qcd[c][i][j] = new RooGenericPdf("pbjets_qcd","pbjets_qcd","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(n0bjets_qcd[c][i][j]),*(n1bjets_qcd[c][i][j]),*(n2bjets_qcd[c][i][j]),*(n3bjets_qcd[c][i][j]),*(n4bjets_qcd[c][i][j]),*(n5bjets_qcd[c][i][j])));
+        pbjets_vb[c][i][j] = new RooGenericPdf((std::string()+"pbjets_vb"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(),"pbjets_vb","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(n0bjets_vb[c][i][j]),*(n1bjets_vb[c][i][j]),*(n2bjets_vb[c][i][j]),*(n3bjets_vb[c][i][j]),*(n4bjets_vb[c][i][j]),*(n5bjets_vb[c][i][j])));
+        pbjets_qcd[c][i][j] = new RooGenericPdf((std::string()+"pbjets_qcd"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(),"pbjets_qcd","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(n0bjets_qcd[c][i][j]),*(n1bjets_qcd[c][i][j]),*(n2bjets_qcd[c][i][j]),*(n3bjets_qcd[c][i][j]),*(n4bjets_qcd[c][i][j]),*(n5bjets_qcd[c][i][j])));
         
-        pbjets_vv[c][i][j] = new RooGenericPdf("pbjets_vv","pbjets_vv","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(n0bjets_vv[c][i][j]),*(n1bjets_vv[c][i][j]),*(n2bjets_vv[c][i][j]),*(n3bjets_vv[c][i][j]),*(n4bjets_vv[c][i][j]),*(n5bjets_vv[c][i][j])));
+        pbjets_vv[c][i][j] = new RooGenericPdf((std::string()+"pbjets_vv"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(),"pbjets_vv","(nbjets==0)*@1+(nbjets==1)*@2+(nbjets==2)*@3+(nbjets==3)*@4+(nbjets==4)*@5+(nbjets==5)*@6",RooArgList(nbjets,*(n0bjets_vv[c][i][j]),*(n1bjets_vv[c][i][j]),*(n2bjets_vv[c][i][j]),*(n3bjets_vv[c][i][j]),*(n4bjets_vv[c][i][j]),*(n5bjets_vv[c][i][j])));
         
           //RooAddPdf model("model","model",RooArgList(pbjets_tt,pbjets_v),RooArgList(Ntt,Nv));
-        model[c][i][j] = new RooAddPdf("model","model",
+        model[c][i][j] = new RooAddPdf((std::string()+"model"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(),"model",
                                        (estimateQCDApart==kTRUE ? RooArgList(*(pbjets_tt[c][i][j]),*(pbjets_v[c][i][j]),*(pbjets_st[c][i][j]),*(pbjets_vb[c][i][j]),*(pbjets_qcd[c][i][j]),*(pbjets_vv[c][i][j]))
                                         : RooArgList(*(pbjets_tt[c][i][j]),*(pbjets_v[c][i][j]),*(pbjets_st[c][i][j]),*(pbjets_vb[c][i][j])/*,*(pbjets_qcd[c][i][j])*/,*(pbjets_vv[c][i][j]))),
                                        (estimateQCDApart==kTRUE ? RooArgList(*(Ntt[c][i]),*(Nv[c][i]),*(Nst[c][i]),*(Nvb[c][i]),*(Nqcd[c][i]),*(Nvv[c][i]))
@@ -3489,9 +3514,9 @@ Int_t StopSearches_VJetsBckgdEst_NoFiles_SevJets(std::string signalFile="", Doub
     Eudsc_constraint[c] = new RooGaussian*[NbOfWP];
     Euds_constraint[c] = new RooGaussian*[NbOfWP];
     for (UInt_t wp=0; wp<NbOfWP; wp++) {
-      Eb_constraint[c][wp] = new RooGaussian((std::string()+"Eb_constraint"+wpSuffix[wp]).c_str(),"Eb_constraint",*(eb[c][wp]),RooConst(Eb_const_mean[c][wp]),RooConst(Eb_const_error[c][wp]));
-      Eudsc_constraint[c][wp] = new RooGaussian((std::string()+"Eudsc_constraint"+wpSuffix[wp]).c_str(),"Eudsc_constraint",*(eudsc[c][wp]),RooConst(Eudsc_const_mean[c][wp]),RooConst(Eudsc_const_error[c][wp]));
-      Euds_constraint[c][wp] = new RooGaussian((std::string()+"Euds_constraint"+wpSuffix[wp]).c_str(),"Euds_constraint",*(euds[c][wp]),RooConst(Euds_const_mean[c][wp]),RooConst(Euds_const_error[c][wp]));
+      Eb_constraint[c][wp] = new RooGaussian((std::string()+"Eb_constraint"+channelSuffix[c]+wpSuffix[wp]).c_str(),"Eb_constraint",*(eb[c][wp]),RooConst(Eb_const_mean[c][wp]),RooConst(Eb_const_error[c][wp]));
+      Eudsc_constraint[c][wp] = new RooGaussian((std::string()+"Eudsc_constraint"+channelSuffix[c]+wpSuffix[wp]).c_str(),"Eudsc_constraint",*(eudsc[c][wp]),RooConst(Eudsc_const_mean[c][wp]),RooConst(Eudsc_const_error[c][wp]));
+      Euds_constraint[c][wp] = new RooGaussian((std::string()+"Euds_constraint"+channelSuffix[c]+wpSuffix[wp]).c_str(),"Euds_constraint",*(euds[c][wp]),RooConst(Euds_const_mean[c][wp]),RooConst(Euds_const_error[c][wp]));
     }
     Nst_constraint[c] = new RooGaussian*[NbOfJetBins];
     Nvb_constraint[c] = new RooGaussian*[NbOfJetBins];
@@ -3500,16 +3525,16 @@ Int_t StopSearches_VJetsBckgdEst_NoFiles_SevJets(std::string signalFile="", Doub
     model_constraint[c] = new RooProdPdf**[NbOfJetBins];
     
     for (UInt_t i=0; i<NbOfJetBins; i++) {
-      Nst_constraint[c][i]   = new RooGaussian((std::string()+"Nst_constraint"+jetSuffix[i]).c_str(),"Nst_constraint",*(Nst[c][i]),RooConst(Nstjets[c][i]),RooConst(Nstjets[c][i]*Nstjets_uncert[c][i]));
-      Nvb_constraint[c][i]   = new RooGaussian((std::string()+"Nvbb_constraint"+jetSuffix[i]).c_str(),"Nvbb_constraint",*(Nvb[c][i]),RooConst(Nvbjets[c][i]),RooConst(Nvbjets[c][i]*Nvbjets_uncert[c][i]));
-      Nqcd_constraint[c][i]  = new RooGaussian((std::string()+"Nqcd_constraint"+jetSuffix[i]).c_str(),"Nqcd_constraint",*(Nqcd[c][i]),RooConst(Nqcd_mean[c][i]),RooConst(Nqcd_mean[c][i]*Nqcd_uncert[c][i]/*+100000.*/));
-      Nvv_constraint[c][i]   = new RooGaussian((std::string()+"Nvv_constraint"+jetSuffix[i]).c_str(),"Nvv_constraint",*(Nvv[c][i]),RooConst(Nvvjets[c][i]),RooConst(Nvvjets[c][i]*Nvvjets_uncert[c][i]/*+100000.*/));
+      Nst_constraint[c][i]   = new RooGaussian((std::string()+"Nst_constraint"+channelSuffix[c]+jetSuffix[i]).c_str(),"Nst_constraint",*(Nst[c][i]),RooConst(Nstjets[c][i]),RooConst(Nstjets[c][i]*Nstjets_uncert[c][i]));
+      Nvb_constraint[c][i]   = new RooGaussian((std::string()+"Nvbb_constraint"+channelSuffix[c]+jetSuffix[i]).c_str(),"Nvbb_constraint",*(Nvb[c][i]),RooConst(Nvbjets[c][i]),RooConst(Nvbjets[c][i]*Nvbjets_uncert[c][i]));
+      Nqcd_constraint[c][i]  = new RooGaussian((std::string()+"Nqcd_constraint"+channelSuffix[c]+jetSuffix[i]).c_str(),"Nqcd_constraint",*(Nqcd[c][i]),RooConst(Nqcd_mean[c][i]),RooConst(Nqcd_mean[c][i]*Nqcd_uncert[c][i]/*+100000.*/));
+      Nvv_constraint[c][i]   = new RooGaussian((std::string()+"Nvv_constraint"+channelSuffix[c]+jetSuffix[i]).c_str(),"Nvv_constraint",*(Nvv[c][i]),RooConst(Nvvjets[c][i]),RooConst(Nvvjets[c][i]*Nvvjets_uncert[c][i]/*+100000.*/));
       model_constraint[c][i] = new RooProdPdf*[NbOfWP];
       for (UInt_t j=0 ; j<NbOfWP; j++) {
-        model_constraint[c][i][j] = new RooProdPdf((std::string()+"model_constraint"+jetSuffix[i]+wpSuffix[j]).c_str(),"model with constraint",(estimateQCDApart==kTRUE ?
+        model_constraint[c][i][j] = new RooProdPdf((std::string()+"model_constraint"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(),"model with constraint",(estimateQCDApart==kTRUE ?
           RooArgSet(*(model[c][i][j]),*(Eb_constraint[c][j]),*(Euds_constraint[c][j]),*(Eudsc_constraint[c][j]),*(Nst_constraint[c][i]),*(Nvb_constraint[c][i]),*(Nqcd_constraint[c][i]),*(Nvv_constraint[c][i])) :
           RooArgSet(*(model[c][i][j]),*(Eb_constraint[c][j]),*(Euds_constraint[c][j]),*(Eudsc_constraint[c][j]),*(Nst_constraint[c][i]),*(Nvb_constraint[c][i])/*,*(Nqcd_constraint[c][i])*/,*(Nvv_constraint[c][i])))
-) ;
+                                                   ) ;
       }
     }
   }
@@ -4128,16 +4153,10 @@ printf("%%%%%%  e_udsc : indirect (fit_result) %lf \\pm %lf \t direct (variable 
             //                                                                                                                                                                 *((RooRealVar*) fVal.find((std::string()+"Nvv"+channelSuffix[c]+jtSuf[i]).c_str())), RooConstVar("p_vv_k","p_vv_k",(hNbtaggedJets_vvjets[c][i][j]->Integral()==0.?0.:hNbtaggedJets_vvjets[c][i][j]->GetBinContent(hNbtaggedJets_vvjets[c][i][j]->FindBin(k))/hNbtaggedJets_vvjets[c][i][j]->Integral())),
             //                                                                                                                                                                 *((RooRealVar*) fVal.find((std::string()+"Nvb"+channelSuffix[c]+jtSuf[i]).c_str())), RooConstVar("p_vb_k","p_vb_k",(hNbtaggedJets_vbjets[c][i][j]->Integral()==0.?0.:hNbtaggedJets_vbjets[c][i][j]->GetBinContent(hNbtaggedJets_vbjets[c][i][j]->FindBin(k))/hNbtaggedJets_vbjets[c][i][j]->Integral()))
             //                                                                                                                                                                 ));
-            RooRealVar p_st_k("p_st_k","p_st_k",(hNbtaggedJets_stjets[c][i][j]->Integral()==0.?0.:hNbtaggedJets_stjets[c][i][j]->GetBinContent(hNbtaggedJets_stjets[c][i][j]->FindBin(k))/hNbtaggedJets_stjets[c][i][j]->Integral())) ;
-            RooRealVar p_vv_k("p_vv_k","p_vv_k",(hNbtaggedJets_vvjets[c][i][j]->Integral()==0.?0.:hNbtaggedJets_vvjets[c][i][j]->GetBinContent(hNbtaggedJets_vvjets[c][i][j]->FindBin(k))/hNbtaggedJets_vvjets[c][i][j]->Integral())) ;
-            RooRealVar p_vb_k("p_vb_k","p_vb_k",(hNbtaggedJets_vbjets[c][i][j]->Integral()==0.?0.:hNbtaggedJets_vbjets[c][i][j]->GetBinContent(hNbtaggedJets_vbjets[c][i][j]->FindBin(k))/hNbtaggedJets_vbjets[c][i][j]->Integral())) ;
-            p_st_k.setConstant();
-            p_vv_k.setConstant();
-            p_vb_k.setConstant();
             RooFormulaVar * tmptot = new RooFormulaVar((std::string()+"tottmp").c_str(), (std::string()+"tottmp").c_str(), "@0+@1+@2*@3+@4*@5+@6*@7", RooArgList( *tmptt, *tmpv,
-                                                                                                                                                                  *(Nst[c][i]), p_st_k,
-                                                                                                                                                                  *(Nvv[c][i]), p_vv_k,
-                                                                                                                                                                  *(Nvb[c][i]), p_vb_k
+                                                                                                                                                                  *(Nst[c][i]), *(p_st_k[c][i][j]),
+                                                                                                                                                                  *(Nvv[c][i]), *(p_vv_k[c][i][j]),
+                                                                                                                                                                  *(Nvb[c][i]), *(p_vb_k[c][i][j])
                                                                                                                                                                   ));
             printf("%d & $ ", k);
             printfValErr(tmptt->getVal(), tmptt->getPropagatedError(*(fit_result[c])));
@@ -4386,7 +4405,26 @@ printf("%%%%%%  e_udsc : indirect (fit_result) %lf \\pm %lf \t direct (variable 
       fit_result[c]->Print("v");
       fit_result[c]->correlationMatrix().Print() ;
       fit_result[c]->Write((std::string()+"FitResult"+channelSuffix[c]).c_str());
+
+      //      RooWorkspace *w = new RooWorkspace((std::string()+"Workspace"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str(), (std::string()+"Workspace"+channelSuffix[c]+jetSuffix[i]+wpSuffix[j]).c_str()) ;
+      RooWorkspace *w = new RooWorkspace((std::string()+"Workspace"+channelSuffix[c]).c_str(), (std::string()+"Workspace"+channelSuffix[c]).c_str()) ;
+      for (UInt_t i=0; i<NbOfJetBins; i++) {
+        for (UInt_t wp=0; wp<NbOfWP; wp++) {
+          // !!!! THE NAMES HAVE TO BE DIFFERENT FOR EACH VARIABLE ; EVERYTHING WILL BE CONNECTED TO EVERYTHING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          w->import(*(model[c][i][wp]), RooFit::RecycleConflictNodes()) ;
+          w->import(*(model_constraint[c][i][wp]), RooFit::RecycleConflictNodes()) ;
+          w->import(*(geq1b_tt_n[c][i][wp]), RooFit::RecycleConflictNodes());
+          w->import(*(geq1b_v_n [c][i][wp]), RooFit::RecycleConflictNodes());
+          w->import(*(geq1b_st_n[c][i][wp]), RooFit::RecycleConflictNodes());
+          w->import(*(geq1b_vv_n[c][i][wp]), RooFit::RecycleConflictNodes());
+          w->import(*(geq1b_vb_n[c][i][wp]), RooFit::RecycleConflictNodes());
+          w->Print() ;
+        }
+      }
+      w->import(*(data[c]));
+      w->Write();
     }
+
       //Save the fit values (to reload them for PE)
     for (UInt_t i=0; i<NbOfJetBins; i++) {
       save_tt[c][i] = Ntt[c][i]->getVal();
